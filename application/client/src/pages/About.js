@@ -22,9 +22,9 @@ const About = () => {
       </Row>
       <br/>
       <Row>
-          <Link to="/JunMinLi">
+          <Link to="/KevinLuong">
             <Button variant = "secondary">
-                member
+                Kevin Luong
             </Button>
         </Link>
      </Row>
