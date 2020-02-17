@@ -7,17 +7,3 @@ You are free to organize the contents of the folder as you see fit. But remember
 
 ## Please use the rest of the README.md to store important information for your team's application.
 
-
-# ---------------------------------------------
-# How to run.
-# installation
-- cd client
-- npm i 
-
-# Run your server
-- npm start 
-- URL http://localhost:3000/About
-
-- Please edit your name in the about page(About.js), and create your own page(YourName.js in the client/src/page).
-- Just to keep it simple, css is not applied.
-- Those extra files are built for further porject(hopefully works out).
