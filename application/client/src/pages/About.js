@@ -36,9 +36,9 @@ const About = () => {
         </Link>
      </Row>
      <Row>
-          <Link to="/JunMinLi">
+          <Link to="/Aitor">
             <Button variant = "secondary">
-                member
+                Aitor
             </Button>
         </Link>
      </Row>
