@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import About from './pages/About';
 import JunMinLi from './pages/JunMinLi';
+import CodyXu from './pages/CodyXu';
 import KevinLuong from './pages/KevinLuong';
 
 import { connect } from 'react-redux';
@@ -14,6 +15,7 @@ const App = () => {
       <div className="nav-bar">   
           <Switch>
             <Route exact path="/JunMinLi" component={JunMinLi} />
+            <Route exact path="/CodyXu" component={CodyXu}/>
             <Route exact path="/KevinLuong" component={KevinLuong} />
             <Route exact path="/About" component={About} />
           </Switch>
