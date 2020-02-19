@@ -69,11 +69,12 @@ const About = () => {
         <Route exact path="/JunMinLi" component={JunMinLi} />
       </Switch>
     </Container>
+
     );
 };
 const mapStateToProps = state => ({
 
-  isLoggedIn: state.userReducer.isLoggedIn,
+    isLoggedIn: state.userReducer.isLoggedIn,
 
 })
 export default connect(mapStateToProps)(About);

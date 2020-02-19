@@ -8,6 +8,7 @@ import YanruiXu from './pages/YanruiXu';
 import KevinLuong from './pages/KevinLuong';
 import DavidLin from './pages/DavidLin';
 
+
 import { connect } from 'react-redux';
 import './App.css';
 
@@ -28,9 +29,10 @@ const App = () => {
       </div>
     </div>
   );
+
 }
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.userReducer.isLoggedIn,
+    isLoggedIn: state.userReducer.isLoggedIn,
 })
 export default connect(mapStateToProps)(App);
