@@ -44,16 +44,16 @@ const About = () => {
         </Link>
      </Row>
      <Row>
-          <Link to="/JunMinLi">
+          <Link to="/YanruiXu">
             <Button variant = "secondary">
-                member
+                Yanrui Xu
             </Button>
         </Link>
      </Row>
      <Row>
-          <Link to="/JunMinLi">
+         <Link to="/DavidLin">
             <Button variant = "secondary">
-                member
+                David Lin
             </Button>
         </Link>
      </Row>
