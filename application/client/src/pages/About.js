@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import { Switch, Route, Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import JunMinLi from './JunMinLi';
+import CodyXu from './CodyXu';
 import './css/About.css';
 
 const About = () => {
@@ -57,9 +58,9 @@ const About = () => {
         </Link>
      </Row>
      <Row>
-          <Link to="/JunMinLi">
+          <Link to="/CodyXu">
             <Button variant = "secondary">
-                member
+                CodyXu
             </Button>
         </Link>
      </Row>
