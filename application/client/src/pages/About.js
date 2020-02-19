@@ -4,70 +4,72 @@ import { Button } from 'react-bootstrap';
 import { Switch, Route, Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import JunMinLi from './JunMinLi';
+import CodyXu from './CodyXu';
 import './css/About.css';
 
 const About = () => {
-    return (
-        <Container>
-            <Row>
-                <Col lg={{ span: 8, offset: 4 }}>
-                    <Label><b>Software Engineering class SFSU<br/>
-                        Spring 2020<br/>
-                        Section 01<br/>
-                        Team 02</b></Label>
-                </Col>
-            </Row><hr/>
-            <Row>
-                <b>Our team members</b>
-            </Row>
-            <br/>
-            <Row>
-                <Link to="/KevinLuong">
-                    <Button variant = "secondary">
-                        Kevin Luong
-                    </Button>
-                </Link>
-            </Row>
-            <Row>
-                <Link to="/JunMinLi">
-                    <Button variant = "secondary">
-                        JunMinLi
-                    </Button>
-                </Link>
-            </Row>
-            <Row>
-                <Link to="/JunMinLi">
-                    <Button variant = "secondary">
-                        member
-                    </Button>
-                </Link>
-            </Row>
-            <Row>
-                <Link to="/YanruiXu">
-                    <Button variant = "secondary">
-                        YanruiXu
-                    </Button>
-                </Link>
-            </Row>
-            <Row>
-                <Link to="/JunMinLi">
-                    <Button variant = "secondary">
-                        member
-                    </Button>
-                </Link>
-            </Row>
-            <Row>
-                <Link to="/JunMinLi">
-                    <Button variant = "secondary">
-                        member
-                    </Button>
-                </Link>
-            </Row>
+  return (
+    <Container>
+      <Row>
+        <Col lg={{ span: 8, offset: 4 }}>
+          <Label><b>Software Engineering class SFSU<br/>
+             Spring 2020<br/>
+             Section 01<br/>
+             Team 02</b></Label>
+        </Col>
+      </Row><hr/>
+      <Row>
+          <b>Our team members</b>
+      </Row>
+      <br/>
+      <Row>
+          <Link to="/KevinLuong">
+            <Button variant = "secondary">
+                Kevin Luong
+            </Button>
+        </Link>
+     </Row>
+     <Row>
+          <Link to="/JunMinLi">
+            <Button variant = "secondary">
+                JunMinLi
+            </Button>
+        </Link>
+     </Row>
+     <Row>
+          <Link to="/Aitor">
+            <Button variant = "secondary">
+                Aitor
+            </Button>
+        </Link>
+     </Row>
+     <Row>
+          <Link to="/YanruiXu">
+            <Button variant = "secondary">
+                Yanrui Xu
+            </Button>
+        </Link>
+     </Row>
+     <Row>
+         <Link to="/DavidLin">
+            <Button variant = "secondary">
+                David Lin
+            </Button>
+        </Link>
+     </Row>
+     <Row>
+          <Link to="/CodyXu">
+            <Button variant = "secondary">
+                CodyXu
+            </Button>
+        </Link>
+     </Row>
+     
+      <Switch>
+        <Route exact path="/JunMinLi" component={JunMinLi} />
+      </Switch>
+    </Container>
 
-            <Switch>
-                <Route exact path="/JunMinLi" component={JunMinLi} />
-            </Switch>
-        </Container>
     );
 };
 const mapStateToProps = state => ({
