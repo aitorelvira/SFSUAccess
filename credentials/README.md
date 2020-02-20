@@ -26,15 +26,15 @@ IP 52.53.184.216 PORT 3306
 # Instructions
 ## To log into remote server on AWS
 Create terminal window and change directories to your directory containing our SSH key
-chmod 400 csc648team02.pem
-ssh -i "csc648team02.pem" ubuntu@ec2-52-53-184-216.us-west-1.compute.amazonaws.com;
+<br>chmod 400 csc648team02.pem
+<br>ssh -i "csc648team02.pem" ubuntu@ec2-52-53-184-216.us-west-1.compute.amazonaws.com;
 ## To log into mysql database
 ### Via ec2 ssh session
 sudo mysql -u instructor -p
-enter csc648 for password.
+<br>enter csc648 for password.
 
 ### Via SSH application
-Fill out connection screen using the given IP, PORT. user:instructor and password: csc648
+Fill out connection screen using the given IP, PORT. <br>user:instructor and password: csc648
 ## to view live website
 Visit http://52.53.184.216/
 
