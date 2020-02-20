@@ -8,7 +8,6 @@ import YanruiXu from './pages/YanruiXu';
 import KevinLuong from './pages/KevinLuong';
 import DavidLin from './pages/DavidLin';
 
-
 import { connect } from 'react-redux';
 import './App.css';
 
@@ -24,7 +23,9 @@ const App = () => {
               <Route exact path="/YanruiXu" component={YanruiXu} />
               <Route exact path="/Aitor" component={Aitor} />
               <Route exact path="/DavidLin" component={DavidLin} />
+              <Route exact path="/" component={About} />
               <Route exact path="/About" component={About} />
+
           </Switch>
       </div>
     </div>
