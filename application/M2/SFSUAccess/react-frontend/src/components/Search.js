@@ -11,7 +11,7 @@ class Search extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('/search')
+        axios.get('/api/search')
             .then(response => {
                 console.log(response.data);
                 this.setState({lists: response.data})
@@ -22,13 +22,16 @@ class Search extends React.Component {
         return (
             <div>
                 <div>
-                    Search test
+                    Search component
                 </div>
+                <label htmlFor="cars">Choose a category:</label>
+                <select id="cars">
                 {this.state.lists.map((x) => {
-                    return (<div>
-                        <p>First: {x.first_name}, Gender: {x.gender} , Last: {x.last_name}</p>
-                    </div>)
+                    return (
+                        <option value="">{x.product_category_name}</option>
+                    )
                 })}
+                </select>
             </div>
         );
     }

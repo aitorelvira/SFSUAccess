@@ -54,10 +54,17 @@
       <option name="presentableId" value="Default" />
       <updated>1584158560974</updated>
       <workItem from="1584158579975" duration="8597000" />
+      <workItem from="1584330523459" duration="9389000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="100" y="123" width="1486" height="759" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1584403233486">
+      <screen x="0" y="23" width="1680" height="959" />
+    </state>
+    <state x="100" y="123" width="1486" height="759" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.23.1680.959@0.23.1680.959" timestamp="1584403233486" />
   </component>
 </project>
