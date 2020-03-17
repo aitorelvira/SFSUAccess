@@ -8,15 +8,35 @@
 # Below is a list of items required. Missing items will causes points to be deducted from multiple milestone submissions.
 
 1. Server URL or IP
+## http://52.53.184.216/
 2. SSH username
+## ubuntu
 3. SSH password or key.
-    <br> If a ssh key is used please upload the key to the credentials folder.
+## password: csc648 or use SSH key.
 4. Database URL or IP and port used.
+IP 52.53.184.216 PORT 3306
     <br><strong> NOTE THIS DOES NOT MEAN YOUR DATABASE NEEDS A PUBLIC FACING PORT.</strong> But knowing the IP and port number will help with SSH tunneling into the database. The default port is more than sufficient for this class.
 5. Database username
+## instructor
 6. Database password
+## csc648
 7. Database name (basically the name that contains all your tables)
+## proddb and testdb
 8. Instructions on how to use the above information.
+# Instructions
+## To log into remote server on AWS
+Create terminal window and change directories to your directory containing our SSH key
+<br>chmod 400 csc648team02.pem
+<br>ssh -i "csc648team02.pem" ubuntu@ec2-52-53-184-216.us-west-1.compute.amazonaws.com;
+## To log into mysql database
+### Via ec2 ssh session
+sudo mysql -u instructor -p
+<br>enter csc648 for password.
+
+### Via SSH application
+Fill out connection screen using the given IP, PORT. <br>user:instructor and password: csc648
+## to view live website
+Visit http://52.53.184.216/
 
 # Most important things to Remember
 ## These values need to kept update to date throughout the semester. <br>
