@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
 import pymysql
 
 app = Flask(__name__)
@@ -6,10 +6,10 @@ app = Flask(__name__)
 
 class Database:
     def __init__(self):
-        host = "127.0.0.1"
-        user = "root"
-        password = "localmysql"
-        db = "ProductionDB"
+        host = "csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com"
+        user = "admin"
+        password = "rdsmysql"
+        db = "ProdDB"
         self.con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.
                                    DictCursor)
         self.cur = self.con.cursor()
