@@ -9,15 +9,17 @@ You are free to organize the contents of the folder as you see fit. But remember
 
 
 # ---------------------------------------------
-# How to run.
+# How to run M2
 # installation
-- cd client
-- npm i 
+Open up the SFSUAccess folder as it's own project directory.
+cd into flask-backend and run py main.py
+cd into react-frontend and run yarn start
 
-# Run your server
-- npm start 
-- URL http://localhost:3000/About
 
-- Please edit your name in the about page(About.js), and create your own page(YourName.js in the client/src/page).
-- Just to keep it simple, css is not applied.
-- Those extra files are built for further porject(hopefully works out).
+#to build for production
+yarn build
+copy the build folder onto the server. rename build to html and place inside /var/www/ 
+
+#notes to development team
+any calls to the flask api will be done by appending /api/ to the call.
+For example calling /search app-route of flask, within React you will call it as /api/search
