@@ -4,10 +4,10 @@ import axios from 'axios'
 class Search extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            lists: []
-        }
+            lists: [],
+        };
     }
 
     componentDidMount() {
@@ -26,11 +26,11 @@ class Search extends React.Component {
                 </div>
                 <label htmlFor="cars">Choose a category:</label>
                 <select id="cars">
-                {this.state.lists.map((x) => {
-                    return (
-                        <option value="">{x.product_category_name}</option>
-                    )
-                })}
+                    {this.state.lists.map((x) => {
+                        return (
+                            <option value="">{x.product_category_name}</option>
+                        )
+                    })}
                 </select>
             </div>
         );

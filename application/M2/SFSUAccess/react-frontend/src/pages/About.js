@@ -1,11 +1,30 @@
 import React from 'react';
+import axios from "axios";
+import {Container, Row, Col, Label} from 'reactstrap';
 
-function About()  {
+function About() {
+    axios.get('/api/members')
+        .then(response => {
+        })
+
     return (
-       <div>
-          <h1>About US</h1>
-          <p>About US page body content</p>
-       </div>
+        <div>
+            <Container>
+                <Row>
+                    <Col lg={{span: 8, offset: 4}}>
+                        <Label><b>Software Engineering class SFSU<br/>
+                            Spring 2020<br/>
+                            Section 01<br/>
+                            Team 02</b></Label>
+                    </Col>
+                </Row>
+                <hr/>
+                <Row>
+                    <b>Our team members</b>
+                </Row>
+                <br/>
+            </Container>
+        </div>
     );
 }
 
