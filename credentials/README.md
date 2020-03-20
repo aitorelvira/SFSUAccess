@@ -14,14 +14,14 @@
 3. SSH password or key.
 ## password: csc648 or use SSH key.
 4. Database URL or IP and port used.
-IP 52.53.184.216 PORT 3306
+csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com  PORT 3306
     <br><strong> NOTE THIS DOES NOT MEAN YOUR DATABASE NEEDS A PUBLIC FACING PORT.</strong> But knowing the IP and port number will help with SSH tunneling into the database. The default port is more than sufficient for this class.
 5. Database username
-## instructor
+## admin
 6. Database password
-## csc648
+## rdsmysql
 7. Database name (basically the name that contains all your tables)
-## proddb and testdb
+## ProdDB and TestDB
 8. Instructions on how to use the above information.
 # Instructions
 ## To log into remote server on AWS
@@ -30,11 +30,11 @@ Create terminal window and change directories to your directory containing our S
 <br>ssh -i "csc648team02.pem" ubuntu@ec2-52-53-184-216.us-west-1.compute.amazonaws.com;
 ## To log into mysql database
 ### Via ec2 ssh session
-sudo mysql -u instructor -p
-<br>enter csc648 for password.
+sudo mysql -u admin -p
+<br>enter rdsmysql for password.
 
-### Via SSH application
-Fill out connection screen using the given IP, PORT. <br>user:instructor and password: csc648
+### Via mysql client application
+Fill out connection screen using the given URL, PORT. <br>user:admin and password: rdsmysql
 ## to view live website
 Visit http://52.53.184.216/
 
