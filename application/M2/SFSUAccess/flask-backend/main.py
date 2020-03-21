@@ -38,7 +38,6 @@ class Database:
             for field in product_fields:
                 query = "SELECT * FROM " + str(categoryname) + "_Products WHERE " + field + " LIKE '%" + paramsobject[
                     "search_query"] + "%' LIMIT 50"
-                print(query)
                 self.cur.execute(query)
                 result += self.cur.fetchall()
             return result
@@ -55,10 +54,17 @@ class Database:
 def get_search(category):
     db = Database()
     paramsobject = request.args
+    fixed_case = str(category.lower())
+    if category == "all":
+        emps = db.list_all_category_entries(paramsobject)
+        return jsonify(emps)
+    # capitalize all first letters of a category
+    fixed_case = fixed_case.capitalize()
+    print(fixed_case)
     if len(paramsobject) == 0:
-        emps = db.list_category_entries(category)
+        emps = db.list_category_entries(fixed_case)
     else:
-        emps = db.list_search_query_entries(category, paramsobject)
+        emps = db.list_search_query_entries(fixed_case, paramsobject)
     return jsonify(emps)
 
 
@@ -67,6 +73,14 @@ def get_search(category):
 def list_categories():
     db = Database()
     emps = db.list_categories()
+    return jsonify(emps)
+
+
+@app.route('/api/test')
+def test():
+    db = Database()
+    paramsobject = request.args
+    emps = db.list_all_category_entries(paramsobject)
     return jsonify(emps)
 
 
