@@ -1,0 +1,25 @@
+
+
+.cardButton{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width:200px;
+}
+
+.detail{
+    align-items: center;
+}
+
+.postItem{
+    width:80%;
+    height:100%;
+    padding-left:100px;
+    padding-top:30px;
+}
+
+.greeting{
+    align-items: center;
+    
+}
+

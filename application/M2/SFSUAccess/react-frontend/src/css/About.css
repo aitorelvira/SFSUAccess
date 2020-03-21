@@ -1,0 +1,16 @@
+
+
+  .page {
+    /* background-color: #282c34; */
+    text-align: center;
+    min-height: 1vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(4px + 2vmin);
+  }
+
+  .footer{
+    font-size: calc(12px);
+  }
