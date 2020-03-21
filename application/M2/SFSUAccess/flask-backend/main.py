@@ -9,13 +9,13 @@ class Database:
         host = "csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com"
         user = "admin"
         password = "rdsmysql"
-        db = "ProdDB"
+        db = "proddb"
         self.con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.
                                    DictCursor)
         self.cur = self.con.cursor()
 
     def list_categories(self):
-        self.cur.execute("SELECT product_category_name FROM Product_Categories LIMIT 50")
+        self.cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
         result = self.cur.fetchall()
         return result
 
@@ -25,7 +25,7 @@ class Database:
         return result
 
     def list_category_entries(self, categoryname):
-        query = "SELECT * FROM " + str(categoryname) + "_Products LIMIT 50"
+        query = "SELECT * FROM " + str(categoryname) + "_products LIMIT 50"
         self.cur.execute(query)
         result = self.cur.fetchall()
         return result
@@ -36,14 +36,14 @@ class Database:
         if "search_query" in paramsobject and len(paramsobject) == 1:
             result = []
             for field in product_fields:
-                query = "SELECT * FROM " + str(categoryname) + "_Products WHERE " + field + " LIKE '%" + paramsobject[
+                query = "SELECT * FROM " + str(categoryname) + "_products WHERE " + field + " LIKE '%" + paramsobject[
                     "search_query"] + "%' LIMIT 50"
                 self.cur.execute(query)
                 result += self.cur.fetchall()
             return result
         for field in product_fields:
             if field in paramsobject:
-                query = "SELECT * FROM " + str(categoryname) + "_Products WHERE " + field + " LIKE '%" + paramsobject[
+                query = "SELECT * FROM " + str(categoryname) + "_products WHERE " + field + " LIKE '%" + paramsobject[
                     field] + "%' LIMIT 50"
         self.cur.execute(query)
         return self.cur.fetchall()
@@ -59,7 +59,7 @@ def get_search(category):
         emps = db.list_all_category_entries(paramsobject)
         return jsonify(emps)
     # capitalize all first letters of a category
-    fixed_case = fixed_case.capitalize()
+    # fixed_case = fixed_case.capitalize()
     print(fixed_case)
     if len(paramsobject) == 0:
         emps = db.list_category_entries(fixed_case)
