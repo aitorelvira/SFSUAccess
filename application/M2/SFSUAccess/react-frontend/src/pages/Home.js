@@ -1,4 +1,3 @@
-
 import React,{useState, useEffect}from 'react';
 import axios from 'axios';
 import { Nav, NavItem, NavLink } from 'reactstrap';
@@ -113,6 +112,7 @@ const submitSearch = ()=> {
     <div > 
     <div className="greeting">
            <h3> Software Engineering class SFSU Spring 2020, Section 01 <br/> Team 02 <br/> vertical SW prototype</h3></div><br/>
+
         </div>
 
     

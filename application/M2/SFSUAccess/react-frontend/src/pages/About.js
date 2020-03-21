@@ -7,7 +7,8 @@ import Footer from '../components/Footer';
 
 import '../css/About.css'
 
-function About()  {
+
+const About = () => {
     return (
      
    
@@ -40,6 +41,6 @@ function About()  {
           <Footer/>
        </div>
     );
-}
+    }
 
 export default About;
