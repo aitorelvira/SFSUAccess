@@ -30,6 +30,30 @@ class Database:
         result = self.cur.fetchall()
         return result
 
+    def list_all_category_entries(self, paramobjects):
+        product_categories = ["class_notes", "video", "music"]
+        product_fields = ["product_name", "product_file_size", "product_description", "product_author"]
+        result = []
+        for category in product_categories:
+            if "search_query" in paramobjects and len(paramobjects) == 1:
+                result = []
+                for field in product_fields:
+                    query = "SELECT * FROM " + category + "_products WHERE " + field + " LIKE '%" + \
+                            paramobjects[
+                                "search_query"] + "%' LIMIT 50"
+                    self.cur.execute(query)
+                    result += self.cur.fetchall()
+                return result
+            for field in product_fields:
+                if field in paramobjects:
+                    query = "SELECT * FROM " + category + "_products WHERE " + field + " LIKE '%" + \
+                            paramobjects[
+                                field] + "%' LIMIT 50"
+                    self.cur.execute(query)
+                    result += self.cur.fetchall()
+        return result
+
+    # this function will return any entry where any field matches the search_query url parameter or if a field is specified. FROM SPECIFIED CATEGORY
     def list_search_query_entries(self, categoryname, paramsobject):
         product_fields = ["product_name", "product_file_size", "product_description", "product_author"]
 
@@ -45,7 +69,7 @@ class Database:
             if field in paramsobject:
                 query = "SELECT * FROM " + str(categoryname) + "_products WHERE " + field + " LIKE '%" + paramsobject[
                     field] + "%' LIMIT 50"
-        self.cur.execute(query)
+            self.cur.execute(query)
         return self.cur.fetchall()
 
 
@@ -55,7 +79,7 @@ def get_search(category):
     db = Database()
     paramsobject = request.args
     fixed_case = str(category.lower())
-    if category == "all":
+    if category == "all" or category == "All":
         emps = db.list_all_category_entries(paramsobject)
         return jsonify(emps)
     # capitalize all first letters of a category
@@ -76,6 +100,8 @@ def list_categories():
     return jsonify(emps)
 
 
+# this is for the flask team to test new functionality easily by calling the /api/test endpoint
+# this function will only test whatever code is inside test(). you are welcome to erase the definition to test your own
 @app.route('/api/test')
 def test():
     db = Database()
