@@ -21,7 +21,7 @@ csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com  PORT 3306
 6. Database password
 ## rdsmysql
 7. Database name (basically the name that contains all your tables)
-## ProdDB and TestDB
+## proddb and testdb
 8. Instructions on how to use the above information.
 # Instructions
 ## To log into remote server on AWS
