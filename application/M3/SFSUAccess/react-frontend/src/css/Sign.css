@@ -1,0 +1,21 @@
+.overAll{
+    padding-top:50px;
+    align-items: center;
+    width:400px;
+}
+
+.greeting{
+    text-align: center;
+    font: 30px arial, sans-serif;
+}
+
+.rightlinks{
+    padding-top:10px;
+   text-align:right;
+   font-size: 12px;
+}
+
+.leftlinks{
+    text-align:left;
+    font-size: 12px;
+ }
