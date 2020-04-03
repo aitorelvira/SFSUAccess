@@ -145,7 +145,7 @@ def loginUser():
 @app.route('/api/test')
 def test():
     db = Database()
-    paramsobject = request.args
+    paramsobject = request.args['search_query']
     emps = db.list_all_category_entries(paramsobject)
     return jsonify(emps)
 
