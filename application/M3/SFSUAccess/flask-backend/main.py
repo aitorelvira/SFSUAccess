@@ -11,7 +11,7 @@ class Database:
         password = "rdsmysql"
         db = "proddb"
         self.con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.
-                                   DictCursor)
+                                   DictCursor, autocommit=True)
         self.cur = self.con.cursor()
 
     def list_categories(self):
@@ -72,6 +72,27 @@ class Database:
             self.cur.execute(query)
         return self.cur.fetchall()
 
+    def check_is_unregistered(self, email):
+        query = "SELECT email FROM registered_users WHERE email ='" + email + "'"
+        return not bool(self.cur.execute(query))
+
+    def check_is_registered(self, email):
+        query = "SELECT email FROM registered_users WHERE email ='" + email + "'"
+        return bool(self.cur.execute(query))
+
+    def authenticate_login(self, content):
+        query = "SELECT email,first_name,last_name,id FROM registered_users WHERE email ='" + content[
+            'email'] + "' AND password ='" + content['password'] + "'"
+        if bool(self.cur.execute(query)):
+            return self.cur.fetchall()
+
+    def register_user(self, registration_info):
+        query = "INSERT INTO registered_users(id,email,password,first_name,last_name) VALUES (0,'" + registration_info[
+            'email'] + "','" + registration_info['password'] + "','" + registration_info['first_name'] + "','" + \
+                registration_info['last_name'] + "')"
+        print(query)
+        print(self.cur.execute(query))
+
 
 # this function returns all requested data searched from given category
 @app.route('/api/search/<category>')
@@ -100,6 +121,25 @@ def list_categories():
     return jsonify(emps)
 
 
+@app.route('/api/register', methods=['POST'])
+def registerNewUser():
+    db = Database()
+    content = request.get_json()
+    if db.check_is_unregistered(content['email']):
+        db.register_user(content)
+        return content['email'] + " has been registered"
+    else:
+        return content['email'] + " is already registered,check email and try again"
+
+
+@app.route('/api/login', methods=['POST'])
+def loginUser():
+    db = Database()
+    content = request.get_json()
+    if db.check_is_registered(content['email']):
+        return jsonify(db.authenticate_login(content))
+
+
 # this is for the flask team to test new functionality easily by calling the /api/test endpoint
 # this function will only test whatever code is inside test(). you are welcome to erase the definition to test your own
 @app.route('/api/test')
@@ -108,7 +148,6 @@ def test():
     paramsobject = request.args
     emps = db.list_all_category_entries(paramsobject)
     return jsonify(emps)
-
 
 # app run
 app.run(debug=True)
