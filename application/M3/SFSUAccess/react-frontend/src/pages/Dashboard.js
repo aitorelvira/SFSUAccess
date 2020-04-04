@@ -1,22 +1,25 @@
-import React from 'react';
-import { Switch, Route, Link, Redirect } from "react-router-dom";
-import { Nav, Navbar, Form, FormControl,Button, Container, Row, Col } from 'react-bootstrap';
-import {
-  Card, CardImg, CardText, CardBody,
-  CardTitle, CardSubtitle, Table
-} from 'reactstrap';
+import React, {useEffect} from 'react';
+import { Form, Button, Container, Col } from 'react-bootstrap';
+import { Table } from 'reactstrap';
 import { connect } from 'react-redux';
-import {setUsername, setIsLoggedIn} from '../redux/actions/userActions.js';
+import {setUsername} from '../redux/actions/userActions.js';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import '../css/Dashboard.css';
 
-import Content from './Content';
-import Home from './Home';
 import Footer from '../components/Footer';
 
 
-const Dashboard = ({dispatch, username,}) => {
+const Dashboard = ({ dispatch, username,}) => {
+  useEffect (()=>{
+     dispatch(setUsername(window.location.search.substr(1)));
+  },[]);
+
+
+
+  const goHomepage = () =>{
+      window.location.href = '/user_name?' + username;
+  }
 
 
   return (
@@ -25,7 +28,7 @@ const Dashboard = ({dispatch, username,}) => {
       <div className="navLogo">SFSUAccess</div>
       <div className="loginSection"> 
         {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-         <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
+         <Button variant="warning" onClick = {goHomepage}>Home Page</Button>&nbsp;&nbsp;
       </div>
       </div>
 

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import '../css/Content.css';
 
 
-const Content = ({dispatch, searchinfo, notes}) => {
+const Content = ({dispatch, searchinfo, notes, username}) => {
   const[modal, setModal] = useState(false);
 
   // useEffect (()=>{
@@ -83,14 +83,13 @@ const Content = ({dispatch, searchinfo, notes}) => {
 const mapStateToProps = state => ({
 
   // isLoggedIn: state.userReducer.isLoggedIn,
-  // username: state.userReducer.username,
+  username: state.userReducer.username,
   // list: state.userReducer.list,
   notes: state.notesReducer.notes,
   searchinfo: state.notesReducer.searchinfo,
   
   })
   export default connect(mapStateToProps)(Content);
-// export default Content;
 
 
 

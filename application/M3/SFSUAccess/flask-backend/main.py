@@ -127,9 +127,11 @@ def registerNewUser():
     content = request.get_json()
     if db.check_is_unregistered(content['email']):
         db.register_user(content)
-        return content['email'] + " has been registered"
+        #return content['email'] + " has been registered"
+        return content['email']
     else:
-        return content['email'] + " is already registered,check email and try again"
+        return ""
+        #return content['email'] + " is already registered,check email and try again"
 
 
 @app.route('/api/login', methods=['POST'])

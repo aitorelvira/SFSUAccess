@@ -1,8 +1,8 @@
 import React,{useState, useEffect}from 'react';
 import axios from 'axios';
-import { Nav, NavItem, NavLink } from 'reactstrap';
-import { Navbar, Form, FormControl,DropdownButton,Button, Jumbotron,  NavDropdown, Col} from 'react-bootstrap';
-import { Switch, Route, Link } from "react-router-dom";
+import { Nav, NavItem } from 'reactstrap';
+import { Navbar, Button } from 'react-bootstrap';
+import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
 import {setNotes, setSearchInfo} from '../redux/actions/notesActions.js';
@@ -14,7 +14,7 @@ import '../css/Home.css';
 
 
 
-const Home = ({dispatch, searchinfo, username, isLoggedIn}) => {
+const Home = ({ dispatch, username }) => {
   const[lists, setList] = useState([]);             // The list of categroies
   const[searchKey, setSearchKey] = useState('');    // user input for searching
 
@@ -24,6 +24,11 @@ const Home = ({dispatch, searchinfo, username, isLoggedIn}) => {
         .then(response => {         
          setList(response.data);  
      });
+
+
+     dispatch(setUsername(window.location.search.substr(1)));
+
+
   },[]);
 
 //Search function for Navbar search section
@@ -74,6 +79,21 @@ const submitSearch = ()=> {
    dispatch(setSearchInfo(page + '  Category.'));
   }
 
+  const goHomepage = () =>{
+    window.location.href = '/user_name?' + username;
+  }
+  const goDashboard = () =>{
+    window.location.href = '/Dashboard/user_name?' + username;
+  }
+
+  const logOut = () =>{
+    window.location.href = '/' + '';
+  }
+
+  const goAbout = () =>{
+    window.location.href = '/About/user_name?' + username;
+  }
+
   
   
   return (  
@@ -105,8 +125,8 @@ const submitSearch = ()=> {
           {username &&(
             <div>             
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-            <Button variant="warning" href="/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
-            <Button variant="warning" onClick ={(e) => dispatch(setUsername(''))}>Log out</Button>
+            <Button variant="warning" onClick ={goDashboard}>My Dashboard</Button>&nbsp;&nbsp;
+            <Button variant="warning" onClick ={logOut}>Log out</Button>
             </div>
           )}
         </div> 
@@ -114,7 +134,7 @@ const submitSearch = ()=> {
           
       <Navbar expand="sm">
       <Nav >
-      <NavItem><a href="/"><button className ="navButton">Home</button></a></NavItem>       
+      <NavItem><button className ="navButton" onClick = {goHomepage}>Home</button></NavItem>       
           {lists.map((x) => {
             if(x.product_category_name !== 'All')
             return (
@@ -125,7 +145,7 @@ const submitSearch = ()=> {
             )
           }).reverse()
         }
-        &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><a href="/About"><button className ="navButton">About us</button></a></NavItem>
+        &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><button className ="navButton" onClick = {goAbout}>About us</button></NavItem>
           
       </Nav>
     </Navbar>

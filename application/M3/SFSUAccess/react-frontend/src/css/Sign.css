@@ -19,3 +19,8 @@
     text-align:left;
     font-size: 12px;
  }
+
+ .message{
+     color: red;
+     text-align: center;
+ }
