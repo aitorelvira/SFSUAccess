@@ -1,6 +1,8 @@
 import json
+import os
+from pathlib import Path
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import pymysql
 
 app = Flask(__name__)
@@ -70,8 +72,10 @@ class Database:
         user_id = self.cur.fetchall()
         id = self.get_category_id(category)
         query = "INSERT INTO products(id,product_category_id,product_name,product_author,product_description,registered_user_id," \
-                    "download_link) VALUES (0,'"+id+"','"+name+"','"+author+"','"+description+"','"+str(user_id[0]['id'])+"','"+dlink+"')"
+                "download_link) VALUES (0,'" + id + "','" + name + "','" + author + "','" + description + "','" + str(
+            user_id[0]['id']) + "','" + dlink + "')"
         self.cur.execute(query)
+
 
 @app.route('/api/search/<category>')
 def categorical(category):
@@ -109,11 +113,18 @@ def loginUser():
         return jsonify(db.authenticate_login(content))
 
 
+@app.route('/api/get-item/<product_id>')
+def getFileDownload(product_id):
+    filepath = str(Path.home()) + "/Desktop/" + product_id + ".mp3"
+    return send_file(filepath, as_attachment=True)
+
+
 @app.route('/api/postitem', methods=['POST'])
 def postItem():
     db = Database()
     content = request.get_json()
     db.post_item(content)
     return "posted!"
+
 
 app.run(debug=True)
