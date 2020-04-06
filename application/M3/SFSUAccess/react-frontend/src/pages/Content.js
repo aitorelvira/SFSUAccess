@@ -1,33 +1,47 @@
-import React,{useState, useEffect}from 'react';
-import axios from 'axios';
-import Alert from 'react-bootstrap/Alert'
-import { Switch, Route, Link } from "react-router-dom";
-import { Nav, Navbar, Form, FormControl,Button, Container, Row, Col } from 'react-bootstrap';
+import React,{ useState }from 'react';
+// import axios from 'axios';
+// import Alert from 'react-bootstrap/Alert'
+import { Button, Container, Row, Col } from 'react-bootstrap';
 import {
-  Card, CardImg, CardText, CardBody,
-  CardTitle, CardSubtitle, Modal, ModalHeader, ModalBody, ModalFooter
+  Card, CardText, CardBody,
+  CardTitle, CardSubtitle
 } from 'reactstrap';
 import { connect } from 'react-redux';
+import Pagination from './Pagination';
 import '../css/Content.css';
 
 
-const Content = ({dispatch, searchinfo, notes, username}) => {
+const Content = ({ dispatch, searchinfo, notes, notes_perpage }) => {
   const[modal, setModal] = useState(false);
 
-  // useEffect (()=>{
-  //   // axios.get('/api/search')
-  //   //     .then(response => {         
-  //   //      setList(response.data);  
-  //   //  });
-  //   setSearchInfo('This is content page.')
-  // },[]);
 
-  const toggle =() => setModal(!modal);
+ const toggle =() => setModal(!modal);
+
+  const display =  notes_perpage.map((x,item_number) => {  
+    if(item_number < 1) // initialized how many items per page. 
+    return(
+      <Col  sm="3" key={item_number}>
+      <div className = "carddiv">
+      <Card>
+      <div className="thumbnails"><img  src={x.product_image_link} alt ="img"/></div>
+          <CardBody>
+          <CardTitle className="descriptionFormat"><b> {x.product_name}</b></CardTitle>
+            <CardSubtitle>Author: {x.product_author}</CardSubtitle>
+            <CardText>File Size: {x.product_file_size}</CardText>
+            <CardText >Description: {x.product_description}</CardText>
+            <Button className="cardButton" variant="warning" onClick={toggle}>See details</Button>
+          </CardBody>
+     </Card>
+     </div>
+     </Col> 
+    )
+  }) 
+  
 
   return (
     <div className="content">
        <Container>
-          { modal && (
+          {/* { modal && (
       <div>
       <Modal isOpen={modal} toggle={toggle} >
         <ModalHeader toggle={toggle}>Computer Basics Absolute Beginner's Guide, Windows 10 Edition</ModalHeader>
@@ -45,49 +59,35 @@ const Content = ({dispatch, searchinfo, notes, username}) => {
         </ModalFooter>
       </Modal>
     </div>
-    )}
+    )} */}
 
-         {!searchinfo && <p> Basic UI. No function calls have been made after the VP.<br/>
-           Individual about pages are not implemented.<br/>
-           For testing purpose, a default user, Jimmy, is set as logged in. If you want to change it, go to /redux/userReducer.js, then set username: 'Jimmy' to username: '' (2nd line).<br/> 
+         {!searchinfo && <p> Updates.<br/>
+           <b>4/05 Basic LogIn and SignUp pages are implemented.</b> Maybe missing some details, verification is needed.<br/>
+           <b>4/06 Basic pagination is implemented. Showing one item per page.</b> Need more work....<br/><hr/>
+
+
+           Need to do.<br/>
+           Individual about pages.<br/> 
            </p>}
-         <Row>{searchinfo}</Row><br/>
+        <Row>{searchinfo}</Row><br/>
         <Row>
-        {notes.map((x,itemnumber) => {   
-          return(
-            <Col  sm="3" key={itemnumber}>
-              <div className = "carddiv">
-            <Card>
-            <div className="thumbnails"><img  src={x.product_image_link} alt ="img"/></div>
-                <CardBody>
-                <CardTitle className="descriptionFormat"><b> {x.product_name}</b></CardTitle>
-                  <CardSubtitle>Author: {x.product_author}</CardSubtitle>
-                  <CardText>File Size: {x.product_file_size}</CardText>
-                  <CardText >Description: {x.product_description}</CardText>
-                  <Button className="cardButton" variant="warning" onClick={toggle}>See details</Button>
-                </CardBody>
-           </Card>
-           </div>
-           </Col>
-          )
-        })}
-         </Row>
+          {display}
+        </Row>
+         <Row>
+           <Pagination/>
+        </Row>
          <br/><br/><br/><br/><br/>
          </Container>
-    
   </div>
   );
 }
 
 
 const mapStateToProps = state => ({
-
-  // isLoggedIn: state.userReducer.isLoggedIn,
   username: state.userReducer.username,
-  // list: state.userReducer.list,
   notes: state.notesReducer.notes,
   searchinfo: state.notesReducer.searchinfo,
-  
+  notes_perpage: state.notesReducer.notes_perpage, 
   })
   export default connect(mapStateToProps)(Content);
 

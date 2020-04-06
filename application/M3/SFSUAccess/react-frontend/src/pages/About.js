@@ -3,7 +3,6 @@ import { Container, Row, ButtonToolbar } from 'reactstrap';
 import {setUsername} from '../redux/actions/userActions.js';
 import {Button}  from 'react-bootstrap';
 import { connect } from 'react-redux';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/About.css'
@@ -12,7 +11,7 @@ import '../css/About.css'
 const About = ({ dispatch, username }) => {
    useEffect (()=>{
       dispatch(setUsername(window.location.search.substr(1)));
-   },[]);
+   },[dispatch]);
 
    const goHomepage = () =>{
       window.location.href = '/user_name?' + username;

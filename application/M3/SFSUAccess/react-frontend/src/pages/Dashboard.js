@@ -10,10 +10,11 @@ import '../css/Dashboard.css';
 import Footer from '../components/Footer';
 
 
-const Dashboard = ({ dispatch, username,}) => {
+const Dashboard = ({ dispatch, username }) => {
+
   useEffect (()=>{
-     dispatch(setUsername(window.location.search.substr(1)));
-  },[]);
+    dispatch(setUsername(window.location.search.substr(1)));
+  },[dispatch]);
 
 
 

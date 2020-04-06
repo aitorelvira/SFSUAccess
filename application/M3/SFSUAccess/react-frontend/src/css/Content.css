@@ -30,3 +30,12 @@
 .content{
     padding-top:50px;
 }
+
+.pagination{
+    display: flex;
+    width:35px;
+}
+
+.paginationButton{
+    padding:3px;
+}

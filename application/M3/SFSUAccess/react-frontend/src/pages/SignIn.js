@@ -29,8 +29,9 @@ const SignIn = () => {
           password: password
         })
         .then((response) =>{
-          if(response.data){           
-            window.location.href = '/user_name?' + response.data[0].first_name;
+          if(response.data){     
+            setMessage(email + ' logged in successfully. Redirecting to home page...');      
+            setTimeout(function(){ window.location.href = '/user_name?' + response.data[0].first_name },5000);
           }
           else
             setMessage('User name not found, or incorrect password.');

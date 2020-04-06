@@ -23,3 +23,8 @@ export const setSearchInfo = searchinfo => ({
   type: 'NOTES_SET_INFO',
   searchinfo,
 })
+
+export const setNotes_perpage = notes_perpage => ({
+  type: 'NOTES_SET_NOTESPERPAGE',
+  notes_perpage,
+})
