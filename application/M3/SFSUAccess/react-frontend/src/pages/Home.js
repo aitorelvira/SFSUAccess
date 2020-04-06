@@ -20,7 +20,7 @@ const Home = ({ dispatch, username, notes }) => {
    
  
  
-//Loading the init categories from the db   
+//Loading the init categories from the db to the Nav bar and dropdowns.
   useEffect (()=>{
     axios.get('/api/search')
         .then(response => {         
@@ -43,40 +43,51 @@ const submitSearch = ()=> {
         }
       })
       .then(response => {
-        dispatch(setNotes(response.data));
-        dispatch(setNotes_perpage(response.data));
+        let last = getRange_last(response.data);
+        // If nothing was found , return items in the same category. 
         if(!response.data.length){
-         dispatch( setSearchInfo('Nothing found with search key:  \'' + userSelection.replace(/_/g, " ") + '\' and \'' + searchKey + '\'. Here are items in the same cateory.'));
           axios.get('/api/search/'+ userSelection)
             .then(response => {
-              dispatch(setNotes(response.data));
-              dispatch(setNotes_perpage(response.data));
+              let last = getRange_last(response.data);
+               dispatch(setSearchInfo('Nothing found with search key:  \'' + userSelection + '\' and \'' + searchKey + '\'. Here are items in the same cateory. ' + 
+              'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
           })
         }
-        else{
-          dispatch(setSearchInfo('   Results with search key:   \'' + userSelection + '\' ,\' ' + searchKey + '\'.    ' + response.data.length + ' items found.'));
+        else{ // If something was found, return items.
+          dispatch(setSearchInfo('   Results with search key:   \'' + userSelection + '\' ,\' ' + searchKey + '\'. '  + 
+          'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
         }
       })
     }
-    else{         // search by category only
+    else{ // search by category + '' as searchKey, return items in that category.
       axios.get('/api/search/'+ userSelection)
         .then(response => {
-          dispatch(setNotes(response.data));
-          dispatch(setNotes_perpage(response.data));
+          let last = getRange_last(response.data);
+          dispatch(setSearchInfo('   Search results for:   ' + userSelection + '. ' + 
+          'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
         })
-        dispatch(setSearchInfo('   Search results for:   ' + userSelection.replace(/_/g, " ")));
     }
   }
 
-  //Search funtion for Navbar buttons
+  //Search funtion for Navbar buttons, return items in that category.
   const search_by_category = (e) =>{
    let page = e.target.id
    axios.get('/api/search/'+ page)
    .then(response => {
-      dispatch(setNotes(response.data));
-      dispatch(setNotes_perpage(response.data));
-      dispatch(setSearchInfo(page + '  Category.   ' + response.data.length + ' items found.'));
+      let last = getRange_last(response.data);  
+      dispatch(setSearchInfo(page + '  Category. ' + 
+      'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
   })
+  }
+
+  //Helper function to format the search result.
+  const getRange_last = (data) =>{
+    dispatch(setNotes(data));
+    dispatch(setNotes_perpage(data));
+    if(4 > data.length)
+      return data.length
+    else
+      return 4;
   }
 
   const goHomepage = () =>{
@@ -105,7 +116,7 @@ const submitSearch = ()=> {
           <select id="category" >
           {lists.map((x) => {
             return (
-                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name.replace(/_/g, " ")}</option>)
+                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                 }).reverse()}
           </select>&nbsp;
           <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setSearchKey(e.target.value)} />&nbsp;&nbsp;
@@ -135,14 +146,16 @@ const submitSearch = ()=> {
       <Nav >
       <NavItem><button className ="navButton" onClick = {goHomepage}>Home</button></NavItem>       
           {lists.map((x) => {
-            if(x.product_category_name !== 'All')
+            if(x.product_category_name !== 'All'){
             return (
               <NavItem title="Category" key = {x.product_category_name}>
                 <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                onClick ={search_by_category}>{x.product_category_name.replace(/_/g, " ")}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                onClick ={search_by_category}>{x.product_category_name}</button>&nbsp;&nbsp;&nbsp;&nbsp;
               </NavItem>             
-            )
-          }).reverse()
+            )}
+            else
+              return('');
+          }).reverse()       
         }
         &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><button className ="navButton" onClick = {goAbout}>About us</button></NavItem>
           
@@ -155,11 +168,9 @@ const submitSearch = ()=> {
     <Switch>
         <Route path ="/" component = {Content}/> 
     </Switch>
-
-      
+    
     <Footer/>
     </div>
-
   );
 };
 

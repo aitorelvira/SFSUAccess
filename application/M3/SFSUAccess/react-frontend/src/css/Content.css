@@ -33,9 +33,5 @@
 
 .pagination{
     display: flex;
-    width:35px;
-}
-
-.paginationButton{
-    padding:3px;
+    align-items: center;
 }

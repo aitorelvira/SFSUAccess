@@ -11,14 +11,13 @@ import Pagination from './Pagination';
 import '../css/Content.css';
 
 
-const Content = ({ dispatch, searchinfo, notes, notes_perpage }) => {
+const Content = ({ searchinfo, notes_perpage }) => {
   const[modal, setModal] = useState(false);
-
-
- const toggle =() => setModal(!modal);
+  
+  const toggle =() => setModal(!modal);
 
   const display =  notes_perpage.map((x,item_number) => {  
-    if(item_number < 1) // initialized how many items per page. 
+    if(item_number < 4){ // initialized how many items per page. 
     return(
       <Col  sm="3" key={item_number}>
       <div className = "carddiv">
@@ -34,7 +33,9 @@ const Content = ({ dispatch, searchinfo, notes, notes_perpage }) => {
      </Card>
      </div>
      </Col> 
-    )
+    )}
+    else
+      return('');
   }) 
   
 
@@ -60,12 +61,9 @@ const Content = ({ dispatch, searchinfo, notes, notes_perpage }) => {
       </Modal>
     </div>
     )} */}
-
          {!searchinfo && <p> Updates.<br/>
-           <b>4/05 Basic LogIn and SignUp pages are implemented.</b> Maybe missing some details, verification is needed.<br/>
-           <b>4/06 Basic pagination is implemented. Showing one item per page.</b> Need more work....<br/><hr/>
-
-
+           4/05 Basic LogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
+           4/06 Basic pagination is implemented. Showing one item per page. Need more work....<br/><br/>
            Need to do.<br/>
            Individual about pages.<br/> 
            </p>}
