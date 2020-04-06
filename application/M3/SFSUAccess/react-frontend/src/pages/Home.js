@@ -46,7 +46,7 @@ const submitSearch = ()=> {
         dispatch(setNotes(response.data));
         dispatch(setNotes_perpage(response.data));
         if(!response.data.length){
-         dispatch( setSearchInfo('Nothing found with search key:  \'' + userSelection + '\' and \'' + searchKey + '\'. Here are items in the same cateory.'));
+         dispatch( setSearchInfo('Nothing found with search key:  \'' + userSelection.replace(/_/g, " ") + '\' and \'' + searchKey + '\'. Here are items in the same cateory.'));
           axios.get('/api/search/'+ userSelection)
             .then(response => {
               dispatch(setNotes(response.data));
@@ -64,7 +64,7 @@ const submitSearch = ()=> {
           dispatch(setNotes(response.data));
           dispatch(setNotes_perpage(response.data));
         })
-        dispatch(setSearchInfo('   Search results for:   ' + userSelection));
+        dispatch(setSearchInfo('   Search results for:   ' + userSelection.replace(/_/g, " ")));
     }
   }
 
@@ -105,7 +105,7 @@ const submitSearch = ()=> {
           <select id="category" >
           {lists.map((x) => {
             return (
-                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name.replace(/_/g, " ")}</option>)
                 }).reverse()}
           </select>&nbsp;
           <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setSearchKey(e.target.value)} />&nbsp;&nbsp;
@@ -139,7 +139,7 @@ const submitSearch = ()=> {
             return (
               <NavItem title="Category" key = {x.product_category_name}>
                 <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                onClick ={search_by_category}>{x.product_category_name}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                onClick ={search_by_category}>{x.product_category_name.replace(/_/g, " ")}</button>&nbsp;&nbsp;&nbsp;&nbsp;
               </NavItem>             
             )
           }).reverse()
