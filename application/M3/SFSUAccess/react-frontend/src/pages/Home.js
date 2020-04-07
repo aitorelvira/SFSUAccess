@@ -5,7 +5,7 @@ import { Navbar, Button } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
-import {setNotes, setSearchInfo, setNotes_perpage} from '../redux/actions/notesActions.js';
+import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from '../redux/actions/notesActions.js';
 import {setUsername} from '../redux/actions/userActions.js';
 import Content from './Content';
 import '../css/Home.css';
@@ -43,28 +43,25 @@ const submitSearch = ()=> {
         }
       })
       .then(response => {
-        let last = getRange_last(response.data);
+        getRange_last(response.data);
         // If nothing was found , return items in the same category. 
         if(!response.data.length){
           axios.get('/api/search/'+ userSelection)
             .then(response => {
-              let last = getRange_last(response.data);
-               dispatch(setSearchInfo('Nothing found with search key:  \'' + userSelection + '\' and \'' + searchKey + '\'. Here are items in the same cateory. ' + 
-              'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
+               getRange_last(response.data);
+               dispatch(setSearchInfo('Nothing found with search key:  \'' + userSelection + '\' and \'' + searchKey + '\'. Here are items in the same cateory. '));
           })
         }
         else{ // If something was found, return items.
-          dispatch(setSearchInfo('   Results with search key:   \'' + userSelection + '\' ,\' ' + searchKey + '\'. '  + 
-          'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
+          dispatch(setSearchInfo('   Results with search key:   \'' + userSelection + '\' ,\' ' + searchKey + '\'. '));
         }
       })
     }
     else{ // search by category + '' as searchKey, return items in that category.
       axios.get('/api/search/'+ userSelection)
         .then(response => {
-          let last = getRange_last(response.data);
-          dispatch(setSearchInfo('   Search results for:   ' + userSelection + '. ' + 
-          'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
+          getRange_last(response.data);
+          dispatch(setSearchInfo('   Search results for:   ' + userSelection + '. ' ));
         })
     }
   }
@@ -74,20 +71,22 @@ const submitSearch = ()=> {
    let page = e.target.id
    axios.get('/api/search/'+ page)
    .then(response => {
-      let last = getRange_last(response.data);  
-      dispatch(setSearchInfo(page + '  Category. ' + 
-      'Showing ' + 1 + '-' + last + ' out of ' + response.data.length + '.'));
+      getRange_last(response.data);  
+      dispatch(setSearchInfo(page + '  Category. '));
   })
   }
 
   //Helper function to format the search result.
   const getRange_last = (data) =>{
-    dispatch(setNotes(data));
-    dispatch(setNotes_perpage(data));
+    let last;
+    dispatch(setNotes(data));           // All the items
+    dispatch(setNotes_perpage(data));   // Itmes shown per page.
     if(4 > data.length)
-      return data.length
+      last = data.length;
     else
-      return 4;
+      last =4;
+    dispatch(setShow_number_of_items('Showing ' + 1 + '-' + last + ' out of ' + data.length + '.')); // Showing 1-4 out of 5..
+    return last;
   }
 
   const goHomepage = () =>{

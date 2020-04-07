@@ -3,6 +3,7 @@ const INITIAL_STATE = {
   notes: [],
   notes_perpage:[],
   searchinfo:'',
+  show_numberOfitems:'',
 };
 
 const notesReducer = (state = INITIAL_STATE, action) => {
@@ -26,6 +27,11 @@ const notesReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         notes_perpage: action.notes_perpage,
+      };
+    case "NOTES_SET_SHOW_NUMBER_OF_ITEMS":
+      return {
+        ...state,
+        show_numberOfitems: action.show_numberOfitems,
       };
     default:
       return state;

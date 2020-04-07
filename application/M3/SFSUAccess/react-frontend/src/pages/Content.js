@@ -11,7 +11,7 @@ import Pagination from './Pagination';
 import '../css/Content.css';
 
 
-const Content = ({ searchinfo, notes_perpage }) => {
+const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const[modal, setModal] = useState(false);
   
   const toggle =() => setModal(!modal);
@@ -63,11 +63,12 @@ const Content = ({ searchinfo, notes_perpage }) => {
     )} */}
          {!searchinfo && <p> Updates.<br/>
            4/05 Basic LogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
-           4/06 Basic pagination is implemented. Showing one item per page. Need more work....<br/><br/>
+           4/06 Basic pagination is implemented. Showing 4 items per page.<br/><br/>
            Need to do.<br/>
+           A default home content page.<br/>
            Individual about pages.<br/> 
            </p>}
-        <Row>{searchinfo}</Row><br/>
+         <Row>{searchinfo}{show_numberOfitems}</Row><br/>
         <Row>
           {display}
         </Row>
@@ -86,6 +87,7 @@ const mapStateToProps = state => ({
   notes: state.notesReducer.notes,
   searchinfo: state.notesReducer.searchinfo,
   notes_perpage: state.notesReducer.notes_perpage, 
+  show_numberOfitems:state.notesReducer.show_numberOfitems,
   })
   export default connect(mapStateToProps)(Content);
 
