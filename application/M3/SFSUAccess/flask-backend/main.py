@@ -36,7 +36,6 @@ class Database:
         result = []
         for category in product_categories:
             if "search_query" in paramobjects and len(paramobjects) == 1:
-                result = []
                 for field in product_fields:
                     query = "SELECT * FROM " + category + "_products WHERE " + field + " LIKE '%" + \
                             paramobjects[
@@ -44,6 +43,10 @@ class Database:
                     self.cur.execute(query)
                     result += self.cur.fetchall()
                 return result
+            elif len(paramobjects) == 0:
+                query = "SELECT * FROM " + category + "_products LIMIT 50"
+                self.cur.execute(query)
+                result += self.cur.fetchall()
             for field in product_fields:
                 if field in paramobjects:
                     query = "SELECT * FROM " + category + "_products WHERE " + field + " LIKE '%" + \
