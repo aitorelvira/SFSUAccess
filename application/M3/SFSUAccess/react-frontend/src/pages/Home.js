@@ -1,7 +1,8 @@
 import React,{useState, useEffect}from 'react';
+import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { Nav, NavItem } from 'reactstrap';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button, Container } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
@@ -14,9 +15,10 @@ import '../css/Home.css';
 
 
 
-const Home = ({ dispatch, username, notes }) => {
+const Home = ({ dispatch, username }) => {
   const[lists, setList] = useState([]);             // The list of categroies
   const[searchKey, setSearchKey] = useState('');    // user input for searching
+  const [cookies, setCookies] = useCookies(['username']);
    
  
  
@@ -26,8 +28,8 @@ const Home = ({ dispatch, username, notes }) => {
         .then(response => {         
          setList(response.data);  
      });
-     dispatch(setUsername(window.location.search.substr(1)));
-  },[dispatch]);
+  dispatch(setUsername(cookies.username));
+  },[dispatch, cookies.username]);
 
 //Search function for Navbar search section
 const submitSearch = ()=> {
@@ -89,21 +91,11 @@ const submitSearch = ()=> {
     return last;
   }
 
-  const goHomepage = () =>{
-    window.location.href = '/user_name?' + username;
-  }
-  const goDashboard = () =>{
-    window.location.href = '/Dashboard/user_name?' + username;
-  }
+  const logOut =()=>{
+    setCookies('username', '');
+    dispatch(setUsername(cookies.username)); 
 
-  const logOut = () =>{
-    window.location.href = '/';
-  }
-
-  const goAbout = () =>{
-    window.location.href = '/About/user_name?' + username;
-  }
-
+}
       
   return (  
     <div>
@@ -134,7 +126,7 @@ const submitSearch = ()=> {
           {username &&(
             <div>             
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-            <Button variant="warning" onClick ={goDashboard}>My Dashboard</Button>&nbsp;&nbsp;
+            <Button variant="warning" href="/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
             <Button variant="warning" onClick ={logOut}>Log out</Button>
             </div>
           )}
@@ -143,20 +135,20 @@ const submitSearch = ()=> {
           
       <Navbar expand="sm">
       <Nav >
-      <NavItem><button className ="navButton" onClick = {goHomepage}>Home</button></NavItem>       
+      <NavItem><a href="/"><button className ="navButton" href="/">Home</button></a></NavItem>       
           {lists.map((x) => {
             if(x.product_category_name !== 'All'){
             return (
               <NavItem title="Category" key = {x.product_category_name}>
                 <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                onClick ={search_by_category}>{x.product_category_name}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                onClick ={search_by_category}>{x.product_category_name} </button> &nbsp;&nbsp;&nbsp;&nbsp;
               </NavItem>             
             )}
             else
               return('');
           }).reverse()       
         }
-        &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><button className ="navButton" onClick = {goAbout}>About us</button></NavItem>
+        &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
           
       </Nav>
     </Navbar>

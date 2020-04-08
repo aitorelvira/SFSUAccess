@@ -3,6 +3,7 @@ import 'react-app-polyfill/stable';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { CookiesProvider } from 'react-cookie';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -15,9 +16,11 @@ const store = createStore(rootReducer, applyMiddleware(thunk)); // MUST APPLY TH
 
 ReactDOM.render(
   <Provider store={store}>
+    <CookiesProvider>
     <Router>
       <App />
     </Router>
+    </CookiesProvider>
   </Provider>
   ,
   document.getElementById('root'));

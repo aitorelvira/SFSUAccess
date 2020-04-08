@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { Link } from "react-router-dom";
@@ -12,6 +13,7 @@ var md5 = require('md5');
 const SignIn = () => {
 
   const [message, setMessage] = useState(''); //Error message
+  const [cookies, setCookies] = useCookies(['username']);
 
 
   // user login function..
@@ -30,8 +32,10 @@ const SignIn = () => {
         })
         .then((response) =>{
           if(response.data){     
-            setMessage(email + ' logged in successfully. Redirecting to home page...');      
+            setMessage(email + ' logged in successfully. Redirecting to home page...');  
+            setCookies('username', response.data[0].first_name);   
             setTimeout(function(){ window.location.href = '/user_name?' + response.data[0].first_name },5000);
+            
           }
           else
             setMessage('User name not found, or incorrect password.');
@@ -77,4 +81,6 @@ const SignIn = () => {
   );
 }
 
-export default SignIn;
+
+
+export default SignIn; 

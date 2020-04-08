@@ -1,4 +1,5 @@
 import React, {useEffect}from 'react';
+import { useCookies } from 'react-cookie';
 import { Container, Row, ButtonToolbar } from 'reactstrap';
 import {setUsername} from '../redux/actions/userActions.js';
 import {Button}  from 'react-bootstrap';
@@ -9,13 +10,11 @@ import '../css/About.css'
 
 
 const About = ({ dispatch, username }) => {
+   const cookies = useCookies(['username']);
+  
    useEffect (()=>{
-      dispatch(setUsername(window.location.search.substr(1)));
-   },[dispatch]);
-
-   const goHomepage = () =>{
-      window.location.href = '/user_name?' + username;
-  }
+     dispatch(setUsername(cookies.username));
+   },[dispatch, cookies.username]);
 
 
 
@@ -25,7 +24,7 @@ const About = ({ dispatch, username }) => {
       <div className="navLogo">SFSUAccess</div>
       <div className="loginSection"> 
         {'Welcome '+ username + '   '}&nbsp;&nbsp;
-         <Button variant="warning" onClick = {goHomepage}>Home Page</Button>&nbsp;&nbsp;
+         <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
       </div>
       </div>
           <Container className = "page">

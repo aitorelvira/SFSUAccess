@@ -28,7 +28,7 @@ const Pagination = ({ dispatch, notes }) => {
     dispatch(setNotes_perpage(items));
     dispatch(setShow_number_of_items('Showing ' + range_first + '-' + range_last + ' out of ' + notes.length + '.'));
     
-    //set active css..
+    //set active, changing states css to all buttons..
     let current = document.getElementById(id);
     current.setAttribute("class", "pagination_button active");
 
