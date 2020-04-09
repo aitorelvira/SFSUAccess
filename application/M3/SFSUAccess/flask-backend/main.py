@@ -3,8 +3,6 @@ import pymysql
 
 #TODO for back end team, check all to dos in file... add response status codes to any that are missing
 
-
-
 # Connect to the database
 connection = pymysql.connect(host='csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com',
                              user='admin',
@@ -21,8 +19,6 @@ def get_categories():
     results = cur.fetchall()
     return jsonify(results)
 
-#this function can be made shorter if I used the product category name as the foreign key of products
-#that way I can just select using the url category
 #TODO front end needs to adapt for GET and POST
 @app.route('/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
@@ -37,6 +33,20 @@ def get_category_items(category):
         cur.execute(sql,(category,str(search_query['search_query'])))
         results = cur.fetchall()
         return jsonify(results)
+
+@app.route('/user_types')
+def get_user_types():
+    sql = "SELECT privelege_type FROM user_priveleges"
+    cur.execute(sql)
+    results = cur.fetchall()
+    return jsonify(results)
+
+@app.route('/product_license')
+def get_product_licenses():
+    sql = "SELECT license_type FROM licenses"
+    cur.execute(sql)
+    results = cur.fetchall()
+    return jsonify(results)
 
 @app.route('/register', methods=['POST'])
 def register_user():
