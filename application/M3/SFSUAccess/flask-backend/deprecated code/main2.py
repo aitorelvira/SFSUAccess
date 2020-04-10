@@ -13,7 +13,7 @@ class Database:
         host = "csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com"
         user = "admin"
         password = "rdsmysql"
-        db = "testdb"
+        db = "fixedAGAIN"
         self.con = pymysql.connect(host=host, user=user, password=password, db=db, cursorclass=pymysql.cursors.
                                    DictCursor, autocommit=True)
         self.cur = self.con.cursor()
