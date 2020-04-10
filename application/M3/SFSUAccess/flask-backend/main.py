@@ -131,14 +131,46 @@ def post_product():
 
 @app.route('/product/<id>', methods=['PUT','DELETE'])
 def manage_product(id):
+
     if request.method=='PUT':
+        sql = "SELECT "
         #check if product id still exists, if so move along
-        # update product post TODO
-        return "put test"
+        sql = "SELECT product_name FROM products WHERE id = %S"
+        # Check if the product still exists
+        if bool(sql):
+            #Change product name
+            #p_name = request.form['product_name']
+            product_name = request.form['product_name']
+            sql = "UPDATE products SET product_name = %s WHERE id = %s"
+            cur.execute(sql,(product_name,id))
+            # Change product category
+            product_category = request.form['product_category']
+            sql = "UPDATE products SET product_category = %s WHERE id = %s"
+            cur.execute(sql,(product_category, id))
+            #Change product description
+            product_description = request.form['product_description']
+            sql = "UPDATE products SET product_description = %s WHERE id = %s"
+            cur.execute(sql,(product_description, id))
+            connection.commit()
+            # Change product license
+            product_license = request.form['product_license']
+            sql = "UPDATE products SET product_license = %s WHERE id = %s"
+            cur.execute(sql,(product_license, id))
+            connection.commit()
+            status_code = Response(status=200)
+            return status_code
+
     if request.method=='DELETE':
-        #check if product id still exists, if so move along TODO
-        # delete product post
-        return "delete test"
+        sql = "SELECT product_name FROM products WHERE id = %S"
+        #Check if the product still exists
+        if bool(sql):
+            # Delete product
+            sql = "DELETE FROM products WHERE id = %s"
+            cur.execute(sql,(id))
+            connection.commit()
+            status_code = Response(status=200)
+            return status_code
+
 
 if __name__ == "__main__":
     app.run(debug=True)
