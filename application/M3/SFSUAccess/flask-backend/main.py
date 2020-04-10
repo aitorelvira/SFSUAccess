@@ -13,14 +13,14 @@ cur = connection.cursor()
 app = Flask(__name__)
 
 #products / categories / searches
-@app.route('/search')
+@app.route('/api/search')
 def get_categories():
     cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
     results = cur.fetchall()
     return jsonify(results)
 
 #TODO front end needs to adapt for GET and POST
-@app.route('/search/<category>',methods=['GET','POST'])
+@app.route('/api/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
     if request.method=='GET':
         sql = "SELECT * FROM products WHERE product_category = %s"
@@ -34,21 +34,21 @@ def get_category_items(category):
         results = cur.fetchall()
         return jsonify(results)
 
-@app.route('/user_types')
+@app.route('/api/user_types')
 def get_user_types():
     sql = "SELECT privelege_type FROM user_priveleges"
     cur.execute(sql)
     results = cur.fetchall()
     return jsonify(results)
 
-@app.route('/product_license')
+@app.route('/api/product_license')
 def get_product_licenses():
     sql = "SELECT license_type FROM licenses"
     cur.execute(sql)
     results = cur.fetchall()
     return jsonify(results)
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register_user():
 #     this block of comment is if we get around to fixing React to post a FORM instead of JSON
 #     email = request.form['email']
@@ -75,7 +75,7 @@ def register_user():
         status_code = Response(status=409)
         return status_code
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     form = request.get_json()
     email = form['email']
@@ -92,7 +92,7 @@ def login():
 #@app.route('/account')
 
 #all user listings, active or pending
-@app.route('/user_listings', methods=['POST'])
+@app.route('/api/user_listings', methods=['POST'])
 def user_listings():
     form = request.get_json()
     email = form['email']
@@ -114,7 +114,7 @@ def user_listings():
         status_code = Response(status=204)
         return status_code
 
-@app.route('/product',methods=['POST'])
+@app.route('/api/product',methods=['POST'])
 def post_product():
     # create product post TODO FOR KEVIN still need to figure out file system
     product_name = request.form['product_name']
@@ -129,7 +129,7 @@ def post_product():
     status_code = Response(status=201)
     return status_code
 
-@app.route('/product/<id>', methods=['PUT','DELETE'])
+@app.route('/api/product/<id>', methods=['PUT','DELETE'])
 def manage_product(id):
 
     if request.method=='PUT':

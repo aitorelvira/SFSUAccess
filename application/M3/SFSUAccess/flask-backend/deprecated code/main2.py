@@ -84,7 +84,7 @@ def categorical(category):
     if len(request.args) == 0:
         return jsonify(db.get_category_products(id))
     else:
-        return jsonify(db.get_category_results(id, request.args["search_query"]))
+        return jsonify(db.get_category_results(id, request.args["product_name"]))
 
 
 @app.route('/api/search')
@@ -111,13 +111,6 @@ def loginUser():
     content = request.get_json()
     if db.check_is_registered(content['email']):
         return jsonify(db.authenticate_login(content))
-
-
-@app.route('/api/get-item/<product_id>')
-def getFileDownload(product_id):
-    filepath = str(Path.home()) + "/Desktop/" + product_id + ".mp3"
-    return send_file(filepath, as_attachment=True)
-
 
 @app.route('/api/postitem', methods=['POST'])
 def postItem():
