@@ -131,39 +131,24 @@ def post_product():
 
 @app.route('/api/product/<id>', methods=['PUT','DELETE'])
 def manage_product(id):
-
     if request.method=='PUT':
-        sql = "SELECT "
-        #check if product id still exists, if so move along
-        sql = "SELECT product_name FROM products WHERE id = %S"
+        sql = "SELECT product_name FROM products WHERE id = %s"
         # Check if the product still exists
-        if bool(sql):
-            #Change product name
-            #p_name = request.form['product_name']
+        if bool(cur.execute(sql,id)):
+            sql = "UPDATE products SET product_name=%s,product_author=%s,product_category=%s,product_description=%s,product_license=%s WHERE id = %s"
             product_name = request.form['product_name']
-            sql = "UPDATE products SET product_name = %s WHERE id = %s"
-            cur.execute(sql,(product_name,id))
-            # Change product category
+            product_author = request.form['product_author']
             product_category = request.form['product_category']
-            sql = "UPDATE products SET product_category = %s WHERE id = %s"
-            cur.execute(sql,(product_category, id))
-            #Change product description
             product_description = request.form['product_description']
-            sql = "UPDATE products SET product_description = %s WHERE id = %s"
-            cur.execute(sql,(product_description, id))
-            connection.commit()
-            # Change product license
             product_license = request.form['product_license']
-            sql = "UPDATE products SET product_license = %s WHERE id = %s"
-            cur.execute(sql,(product_license, id))
+            cur.execute(sql,(product_name,product_author,product_category,product_description,product_license,id))
             connection.commit()
             status_code = Response(status=200)
             return status_code
-
     if request.method=='DELETE':
-        sql = "SELECT product_name FROM products WHERE id = %S"
+        sql = "SELECT product_name FROM products WHERE id = %s"
         #Check if the product still exists
-        if bool(sql):
+        if bool(cur.execute(sql,id)):
             # Delete product
             sql = "DELETE FROM products WHERE id = %s"
             cur.execute(sql,(id))
