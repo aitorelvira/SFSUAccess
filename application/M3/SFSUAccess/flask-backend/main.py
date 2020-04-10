@@ -34,6 +34,7 @@ def get_category_items(category):
         results = cur.fetchall()
         return jsonify(results)
 
+
 @app.route('/api/user_types')
 def get_user_types():
     sql = "SELECT privelege_type FROM user_priveleges"
@@ -114,6 +115,7 @@ def user_listings():
         status_code = Response(status=204)
         return status_code
 
+#this endpoint is for students/faculty, NOT admin
 @app.route('/api/product',methods=['POST'])
 def post_product():
     # create product post TODO FOR KEVIN still need to figure out file system
@@ -128,6 +130,34 @@ def post_product():
     connection.commit()
     status_code = Response(status=201)
     return status_code
+
+#admin approval on pending posts
+@app.route('/api/admin/review',methods=['POST'])
+def review_product():
+    product_id = request.form['product_id']
+    decision = request.form['decision']
+    if(decision=="Approve"):
+        sql = "UPDATE products SET product_status = 'ACTIVE' WHERE id = %s"
+    if(decision=="Deny"):
+        sql = "UPDATE products SET product_status = 'DENIED' WHERE id = %s"
+    cur.execute(sql,product_id)
+    connection.commit()
+    status_code = Response(status=200)
+    return status_code
+
+@app.route('/api/product',methods=['GET'])
+def get_products():
+    user_id = request.args["user_id"]
+    product_status = request.args["status"]
+    if product_status == "active":
+        sql = "SELECT * FROM products WHERE product_status ='ACTIVE' AND registered_user_id = %s"
+    if product_status == "pending":
+            sql = "SELECT * FROM products WHERE product_status ='PENDING' AND registered_user_id = %s"
+    if product_status == "all":
+            sql = "SELECT * FROM products WHERE registered_user_id = %s"
+    cur.execute(sql,(user_id))
+    results = cur.fetchall()
+    return jsonify(results)
 
 @app.route('/api/product/<id>', methods=['PUT','DELETE'])
 def manage_product(id):
