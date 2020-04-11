@@ -30,8 +30,8 @@ def get_category_items(category):
         return jsonify(results)
     if request.method=='POST':
         search_query = request.get_json()
-        sql = "SELECT * FROM products WHERE product_category = %s AND product_name LIKE %s"
-        cur.execute(sql,(category,str(search_query['product_name'])))
+        sql = "SELECT * FROM products WHERE product_category = %s AND product_name LIKE '%%"+search_query['product_name']+"%%'"
+        cur.execute(sql,(category))
         results = cur.fetchall()
         return jsonify(results)
 
