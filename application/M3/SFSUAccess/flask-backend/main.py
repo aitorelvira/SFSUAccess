@@ -20,6 +20,7 @@ def get_categories():
     return jsonify(results)
 
 #TODO front end needs to adapt for GET and POST
+#POST REQUEST USING JSON DATA
 @app.route('/api/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
     if request.method=='GET':
@@ -50,6 +51,7 @@ def get_product_licenses():
     return jsonify(results)
 
 @app.route('/api/register', methods=['POST'])
+#POST REQUEST USING JSON DATA, THE COMMENT BLOCK IS FORM-DATA
 def register_user():
 #     this block of comment is if we get around to fixing React to post a FORM instead of JSON
 #     email = request.form['email']
@@ -76,6 +78,7 @@ def register_user():
         status_code = Response(status=409)
         return status_code
 
+#POST REQUEST USING JSON DATA
 @app.route('/api/login', methods=['POST'])
 def login():
     form = request.get_json()
@@ -90,9 +93,9 @@ def login():
         status_code = Response(status=401)
         return status_code
 
-#@app.route('/account')
 
 #all user listings, active or pending
+#POST REQUEST USING JSON DATA
 @app.route('/api/user_listings', methods=['POST'])
 def user_listings():
     form = request.get_json()
@@ -116,6 +119,7 @@ def user_listings():
         return status_code
 
 #this endpoint is for students/faculty, NOT admin
+#POST REQUEST USING FORM-DATA
 @app.route('/api/product',methods=['POST'])
 def post_product():
     # create product post TODO FOR KEVIN still need to figure out file system
@@ -132,6 +136,7 @@ def post_product():
     return status_code
 
 #admin approval on pending posts
+#POST REQUEST USING FORM-DATA
 @app.route('/api/admin/review',methods=['POST'])
 def review_product():
     product_id = request.form['product_id']
@@ -145,6 +150,8 @@ def review_product():
     status_code = Response(status=200)
     return status_code
 
+# /api/product?user_id=13&status=active
+#GET REQUEST USING HEADERS
 @app.route('/api/product',methods=['GET'])
 def get_products():
     user_id = request.args["user_id"]
@@ -159,6 +166,7 @@ def get_products():
     results = cur.fetchall()
     return jsonify(results)
 
+#PUT REQUEST USING FORM-DATA
 @app.route('/api/product/<id>', methods=['PUT','DELETE'])
 def manage_product(id):
     if request.method=='PUT':
