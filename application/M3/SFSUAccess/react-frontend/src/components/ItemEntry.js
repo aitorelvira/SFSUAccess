@@ -1,5 +1,5 @@
 import React from "react";
+import { Container } from "reactstrap";
 
-class ItemEntry extends React.Component {
 
-}
+export default ItemEntry;

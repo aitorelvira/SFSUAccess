@@ -9,19 +9,15 @@ import { connect } from 'react-redux';
 import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from '../redux/actions/notesActions.js';
 import {setUsername} from '../redux/actions/userActions.js';
 import Content from './Content';
+import Notice from '../components/Notice'
 import '../css/Home.css';
-
-
-
 
 
 const Home = ({ dispatch, username }) => {
   const[lists, setList] = useState([]);             // The list of categroies
-  const[searchKey, setSearchKey] = useState('');    // user input for searching
+  const[product_name, setProduct_name] = useState('');    // user input for searching
   const[cookies, setCookies] = useCookies(['username']);
-   
- 
- 
+
 //Loading the init categories from the db to the Nav bar and dropdowns.
   useEffect (()=>{
     axios.get('/api/search')
@@ -31,50 +27,62 @@ const Home = ({ dispatch, username }) => {
   dispatch(setUsername(cookies.username));
   },[dispatch, cookies.username]);
 
+
+  axios.interceptors.response.use((response) =>{
+    return response;
+  },error =>{
+    return error.response.status;
+  })
+
+
 //Search function for Navbar search section
 const submitSearch = ()=> {
     // getting the category input from the dropdown menu
     let select = document.getElementById("category");
     let index = select.selectedIndex;
-    let userSelection = select.options[index].value;
+    let category = select.options[index].value;
 
-    if(searchKey){    // search by category + searchKey
-      axios.get('/api/search/'+ userSelection,{
+    if(product_name){    // search by category + searchKey
+      axios.post('/api/search/' + category,{
         params:{
-          product_name: searchKey.toLowerCase()
+          product_name: product_name.toLowerCase()
         }
       })
-      .then(response => {
-        getRange_last(response.data);
+      .then((response) => {
         // If nothing was found , return items in the same category. 
         if(!response.data.length){
-          axios.get('/api/search/'+ userSelection)
+          console.log("Category: " + category + ". SearchKey: " + product_name);
+          axios.get('/api/search/'+ category)
             .then(response => {
                getRange_last(response.data);
-               dispatch(setSearchInfo('Nothing found with search key:  \'' + userSelection + '\' and \'' + searchKey + '\'. Here are items in the same cateory. '));
-          })
-        }
+               dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are items in the same cateory. '));
+            })
+        }     
         else{ // If something was found, return items.
-          dispatch(setSearchInfo('   Results with search key:   \'' + userSelection + '\' ,\' ' + searchKey + '\'. '));
+           console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
+           getRange_last(response.data);
+           dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\' ' + product_name + '\'. '));
         }
       })
+      .catch(error => console.log("error: " + error))
     }
     else{ // search by category + '' as searchKey, return items in that category.
-      axios.get('/api/search/'+ userSelection)
+      console.log("Category: " + category +". SearchKey: Null" )
+      axios.get('/api/search/'+ category)
         .then(response => {
           getRange_last(response.data);
-          dispatch(setSearchInfo('   Search results for:   ' + userSelection + '. ' ));
-        })
+          dispatch(setSearchInfo('   Search results for:   ' + category + '. ' ));
+       })
     }
   }
 
   //Search funtion for Navbar buttons, return items in that category.
   const search_by_category = (e) =>{
-   let page = e.target.id
-   axios.get('/api/search/'+ page)
+   let category = e.target.id
+   axios.get('/api/search/'+ category)
    .then(response => {
       getRange_last(response.data);  
-      dispatch(setSearchInfo(page + '  Category. '));
+      dispatch(setSearchInfo(category + '  Category. '));
   })
   }
 
@@ -110,9 +118,9 @@ const submitSearch = ()=> {
                 <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                 }).reverse()}
           </select>&nbsp;
-          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setSearchKey(e.target.value)} />&nbsp;&nbsp;
+          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setProduct_name(e.target.value)} />&nbsp;&nbsp;
           <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;
-          {/* <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;          */}
+          <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
         <div className = "loginSection">
 
         {/* Display signIn, signUp, signOut buttons according to the user status */}
@@ -155,7 +163,7 @@ const submitSearch = ()=> {
     </div>
     </div>
     {/* Navbar end here     */}
-   
+    <Notice/>
     <Switch>
         <Route path ="/" component = {Content}/> 
     </Switch>

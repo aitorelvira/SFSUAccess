@@ -49,7 +49,8 @@ const Pagination = ({ dispatch, notes }) => {
     <Container>
       <div id = "pagination" className="pagination">
      {
-     notes.map((note, index) => {   
+      typeof notes !=='undefined' &&(
+      notes.map((note, index) => {   
        if(index % 4 === 0){
         return(
           <div  key = {index}>
@@ -61,7 +62,7 @@ const Pagination = ({ dispatch, notes }) => {
       }
       else
         return('');
-      }) 
+      })) 
       }
       </div>
     </Container>

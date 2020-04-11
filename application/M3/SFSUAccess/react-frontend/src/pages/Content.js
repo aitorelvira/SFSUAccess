@@ -62,11 +62,11 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
     </div>
     )} */}
          {!searchinfo && <p> Updates.<br/>
-           4/05 Basic LogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
+           4/05 Basic iogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
            4/06 Basic pagination is implemented. Showing 4 items per page.<br/><br/>
+           4/09 Added individual about pages, changed sign in/up to from data.
            Need to do.<br/>
            A default home content page.<br/>
-           Individual about pages.<br/> 
            </p>}
          <Row>{searchinfo}{show_numberOfitems}</Row><br/>
         <Row>

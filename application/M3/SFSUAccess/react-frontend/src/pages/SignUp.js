@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import '../css/Sign.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Notice from '../components/Notice'
 var md5 = require('md5');
 
 const SignUp = () => {
@@ -66,6 +67,7 @@ const SignUp = () => {
   return (
     <div>
      <Header/>
+     <Notice/>
      <Container className="overAll">
         <div className="greeting">Sign up</div><br/>
         <div className="message">{message}</div><br/>
@@ -108,6 +110,7 @@ const SignUp = () => {
           </Form.Group>
       </Form>
     </Container>
+    <br/><br/><br/><br/><br/>
     <Footer/>
     </div>
   );

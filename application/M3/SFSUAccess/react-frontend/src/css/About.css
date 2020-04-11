@@ -2,13 +2,14 @@
 
   .page {
     /* background-color: #282c34; */
+    padding-top:20px;
     text-align: center;
     min-height: 1vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: calc(4px + 2vmin);
+    font-size: calc(2px + 2vmin);
   }
 
   .footer{
@@ -16,6 +17,6 @@
   }
 
   .greeting{
-    text-align: center;
+    /* text-align: center; */
     font: 30px arial, sans-serif;
 }
