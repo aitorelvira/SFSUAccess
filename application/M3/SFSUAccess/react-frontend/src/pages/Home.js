@@ -43,12 +43,12 @@ const submitSearch = ()=> {
     let category = select.options[index].value;
 
     if(product_name){    // search by category + searchKey
-      axios.post('/api/search/' + category,{
-        params:{
-          product_name: product_name.toLowerCase()
-        }
-      })
+      const body = {
+        product_name : product_name.toLowerCase()
+    }
+      axios.post('/api/search/' + category,body)
       .then((response) => {
+        
         // If nothing was found , return items in the same category. 
         if(!response.data.length){
           console.log("Category: " + category + ". SearchKey: " + product_name);

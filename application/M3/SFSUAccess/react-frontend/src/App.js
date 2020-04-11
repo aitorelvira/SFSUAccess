@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Postitem from "./pages/Postitem";
+import ItemDetail from "./pages/ItemDetail";
 import './css/Home.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <div>
                 <Switch>
                 <Route exact path ="/Postitem" component = {Postitem}/>
+                <Route exact path = "/ItemDetail" component = {ItemDetail}/>
                 <Route path ="/Dashboard" component = {Dashboard}/>
                 <Route exact path="/SignUp" component={SignUp}/>
                 <Route exact path="/SignIn" component={SignIn}/>

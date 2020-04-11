@@ -7,7 +7,7 @@ import '../css/Sign.css';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Notice from '../components/Notice'
+import Notice from '../components/Notice';
 
 var md5 = require('md5');
 
@@ -64,11 +64,11 @@ const SignIn = () => {
         <div className="greeting">Sign in</div><br/>
         <div className="message">{message}</div><br/>
         <Form>
-          <Form.Group controlId="email">{email}
+          <Form.Group controlId="email">
             <Form.Control type="text" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
           </Form.Group>
 
-          <Form.Group controlId="password">{password}
+          <Form.Group controlId="password">
             <Form.Control type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
           </Form.Group>
               <Button variant="warning" block onClick={login} disabled = {isLoading? true : false}>{isLoading ? 'logged in successfully...': 'SIGN IN'}</Button>    

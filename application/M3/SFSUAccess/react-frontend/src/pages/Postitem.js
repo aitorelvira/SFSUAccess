@@ -1,9 +1,6 @@
 import React , {useEffect} from 'react';
+import { useCookies } from 'react-cookie';
 import { Form, Button, Container, Col } from 'react-bootstrap';
-// import {
-//   Card, CardImg, CardText, CardBody,
-//   CardTitle, CardSubtitle, Table
-// } from 'reactstrap';
 import { connect } from 'react-redux';
 import {setUsername} from '../redux/actions/userActions.js';
 import '../css/Dashboard.css';
@@ -12,15 +9,14 @@ import Footer from '../components/Footer';
 
 
 const Postitem = ({ dispatch, username }) => {
-  useEffect (()=>{
-    dispatch(setUsername(window.location.search.substr(1)));
-  },[dispatch]);
+  const [cookies, setCookies] = useCookies(['username']);
+  
+   useEffect (()=>{
+      if(typeof cookies.username !== 'undefined')
+      dispatch(setUsername(cookies.username));
+   },[dispatch, cookies.username]);
 
 
-
-  const goHomepage = () =>{
-      window.location.href = '/user_name?' + username;
-  }
 
   return (
     <div>
@@ -28,14 +24,14 @@ const Postitem = ({ dispatch, username }) => {
       <div className="navLogo">SFSUAccess</div>
       <div className="loginSection"> 
         {'Welcome  '+ username + '   '}&nbsp;&nbsp;
-         <Button variant="warning" onClick = {goHomepage}>Home Page</Button>&nbsp;&nbsp;
+         <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
       </div>
       </div>
 
 
     {/* Dash content   */}
     <Container className="dashboard">
-      <h3>Post an item</h3><hr/>
+      <h3>Post an item</h3><hr/><Col md={{ offset: 2 }}>
         <Form className="postItem">
             <Form.Row>
               <Form.Group as={Col} controlId="">
@@ -104,9 +100,9 @@ const Postitem = ({ dispatch, username }) => {
            
             </Form.Row>           
         </Form>
-        <br/><br/><br/><br/><br/>
-       
+        </Col>
     </Container>
+    <br/><br/><br/><br/><br/>
     <Footer/>
     </div>
   );
