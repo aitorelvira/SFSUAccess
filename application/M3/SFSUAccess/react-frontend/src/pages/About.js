@@ -10,17 +10,20 @@ import '../css/About.css'
 
 
 const About = ({ dispatch, username }) => {
-   const cookies = useCookies(['username']);
+   const [cookies, setCookies] = useCookies(['username']);
   
    useEffect (()=>{
-     dispatch(setUsername(cookies.username));
+      if(cookies.username !=='')
+      dispatch(setUsername(cookies.username));
+     else
+     dispatch(setUsername(''));
    },[dispatch, cookies.username]);
 
 
 
     return (
        <div>
-           <div className="navBar">  
+      <div className="navBar">  
       <div className="navLogo">SFSUAccess</div>
       <div className="loginSection"> 
         {'Welcome '+ username + '   '}&nbsp;&nbsp;

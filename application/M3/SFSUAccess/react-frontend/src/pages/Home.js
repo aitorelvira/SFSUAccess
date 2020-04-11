@@ -2,7 +2,7 @@ import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { Nav, NavItem } from 'reactstrap';
-import { Navbar, Button, Container } from 'react-bootstrap';
+import { Navbar, Button } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
@@ -18,7 +18,7 @@ import '../css/Home.css';
 const Home = ({ dispatch, username }) => {
   const[lists, setList] = useState([]);             // The list of categroies
   const[searchKey, setSearchKey] = useState('');    // user input for searching
-  const [cookies, setCookies] = useCookies(['username']);
+  const[cookies, setCookies] = useCookies(['username']);
    
  
  

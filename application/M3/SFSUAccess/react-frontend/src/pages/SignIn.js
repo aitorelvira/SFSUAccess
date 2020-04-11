@@ -11,42 +11,47 @@ import Footer from '../components/Footer';
 var md5 = require('md5');
 
 const SignIn = () => {
+  const [message, setMessage] = useState('');               //Error message
+  const [cookies, setCookies] = useCookies(['username']);  
+  const [isLoading, setLoading] = useState(false);          //Loading state for the login button
+  const [email, setEmail] = useState('');               
+  const [password, setPassword] = useState('');
 
-  const [message, setMessage] = useState(''); //Error message
-  const [cookies, setCookies] = useCookies(['username']);
 
-
-  // user login function..
-  const login = () =>{
-     let email = document.getElementById("email").value.trim().toLowerCase();
-     let password = md5(document.getElementById("password").value.trim().toLowerCase());
-
-    if(!email || !password){
-      setMessage("Oops ! Email and password are required.")
+  axios.interceptors.response.use((response) =>{
+    if(response.status === 202){
+      setCookies('username', response.data[0].first_name);
+      setLoading(true);
+      setTimeout(function(){ window.location.href = '/'},1000);
     }
-    else{
-      if(email.endsWith("@mail.sfsu.edu")){
-        axios.post('/api/login',{
-          email: email,
-          password: password
-        })
-        .then((response) =>{
-          if(response.data){     
-            setMessage(email + ' logged in successfully. Redirecting to home page...');  
-            setCookies('username', response.data[0].first_name);   
-            setTimeout(function(){ window.location.href = '/user_name?' + response.data[0].first_name },5000);
-            
-          }
-          else
-            setMessage('User name not found, or incorrect password.');
-        })
-        .catch(err => console.log(err));
-        console.log("login request sent..")
-      }
-      else
-        setMessage('Invalid email format. Please enter a SFSU email.');
+    return response;
+  },error =>{
+    if(error.response.status === 401){
+      setMessage('User name not found, or incorrect password.');
     }
+    return error;
+  })
+  
+
+ // user login function..
+ const login = () =>{
+    setEmail(email.trim().toLowerCase());
+    setPassword(password.trim().toLowerCase());
+
+  if(!email || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
+    setMessage("Oops ! Email and password are required.")
   }
+  else{
+    if(email.endsWith("@mail.sfsu.edu")){
+      axios.post('/api/login',{
+        email, password
+      })
+      .catch(err => console.log(err));
+    }
+    else
+      setMessage('Invalid email format. Please enter a SFSU email.');
+  }
+}
 
 
   return (
@@ -55,26 +60,27 @@ const SignIn = () => {
      <Container className="overAll">
         <div className="greeting">Sign in</div><br/>
         <div className="message">{message}</div><br/>
-          <Form>
-        <Form.Group controlId="email">
-          <Form.Control type="text" placeholder="Email Address *" />
-        </Form.Group>
+        <Form>
+          <Form.Group controlId="email">{email}
+            <Form.Control type="text" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
+          </Form.Group>
 
-        <Form.Group controlId="password">
-          <Form.Control type="password" placeholder="Password *" />
-        </Form.Group>
-  
-            <Button variant="warning" block  onClick = {login}>SIGN IN</Button>    
-            <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>     
-        <Row>
-          <Col>
-          <Link className="leftlinks" to ="">Forgot password</Link>  
-          </Col>          
-          <Col>
-          <Link className="rightlinks" to = "/SignUp" >Don't have an account? Sign Up</Link> 
-          </Col>
-        </Row>
-      </Form>
+          <Form.Group controlId="password">{password}
+            <Form.Control type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
+          </Form.Group>
+              <Button variant="warning" block onClick={login} disabled = {isLoading? true : false}>{isLoading ? 'logged in successfully...': 'SIGN IN'}</Button>    
+          {!isLoading &&(    
+              <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button> 
+          )}        
+          <Row>
+            <Col>
+            <Link className="leftlinks" to ="">Forgot password</Link>  
+            </Col>          
+            <Col>
+            <Link className="rightlinks" to = "/SignUp" >Don't have an account? Sign Up</Link> 
+            </Col>
+          </Row>
+        </Form>
     </Container>
     <Footer/>
     </div>
@@ -83,4 +89,4 @@ const SignIn = () => {
 
 
 
-export default SignIn; 
+export default SignIn;
