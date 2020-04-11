@@ -13,11 +13,18 @@ cur = connection.cursor()
 app = Flask(__name__)
 
 #products / categories / searches
-@app.route('/api/search')
+@app.route('/api/search',methods=['GET','POST'])
 def get_categories():
-    cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
-    results = cur.fetchall()
-    return jsonify(results)
+    if request.method=='GET':
+        cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
+        results = cur.fetchall()
+        return jsonify(results)
+    if request.method=='POST':
+        search_query = request.get_json()
+        sql = "SELECT * FROM products WHERE product_name LIKE '%%"+search_query['product_name']+"%%'"
+        cur.execute(sql)
+        results = cur.fetchall()
+        return jsonify(results)
 
 #TODO front end needs to adapt for GET and POST
 #POST REQUEST USING JSON DATA
@@ -34,6 +41,8 @@ def get_category_items(category):
         cur.execute(sql,(category))
         results = cur.fetchall()
         return jsonify(results)
+
+
 
 
 @app.route('/api/user_types')
