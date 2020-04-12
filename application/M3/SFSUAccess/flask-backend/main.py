@@ -32,19 +32,28 @@ def get_categories():
 def get_category_items(category):
     if request.method=='GET':
         if category=="all" or category=="All":
-            print("xxxx")
             sql = "SELECT * FROM products"
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
         else:
-            print("yyyy")
             sql = "SELECT * FROM products WHERE product_category = %s"
             cur.execute(sql,(category))
             results = cur.fetchall()
             return jsonify(results)
     if request.method=='POST':
         search_query = request.get_json()
+        if category=="all" or category=="All":
+            sql = "SELECT * FROM products WHERE product_category = 'Music' AND product_name LIKE '%%"+search_query['product_name']+"%%'"
+            cur.execute(sql)
+            results = cur.fetchall()
+            sql = "SELECT * FROM products WHERE product_category = 'Video' AND product_name LIKE '%%"+search_query['product_name']+"%%'"
+            cur.execute(sql)
+            results += cur.fetchall()
+            sql = "SELECT * FROM products WHERE product_category = 'Notes' AND product_name LIKE '%%"+search_query['product_name']+"%%'"
+            cur.execute(sql)
+            results += cur.fetchall()
+            return jsonify(results)
         sql = "SELECT * FROM products WHERE product_category = %s AND product_name LIKE '%%"+search_query['product_name']+"%%'"
         cur.execute(sql,(category))
         results = cur.fetchall()
