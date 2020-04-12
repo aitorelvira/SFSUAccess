@@ -1,15 +1,34 @@
-import React, {useState}from 'react';
+import React, {useState, useEffect}from 'react';
+import { useCookies } from 'react-cookie';
+import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Notice from '../components/Notice';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
-
 import '../css/ItemDetail.css'
 
 const ItemDetail = () => {
     
-    const[text, setText] = useState('');
-    let id = window.location.search.substr(8);
+    const [text, setText] = useState('');
+    const [cookies, setCookies] = useCookies(['username']);
+    const [username, setUsername] = useState('');
+    const [item_detail, setItemDetail] = useState([]);
+    const [id, setId] = useState('')
+  
+
+    
+    useEffect (()=>{
+        if(typeof cookies.username !== 'undefined')
+        setUsername(cookies.username);
+        setId(window.location.search.substr(8));
+
+        if(id){
+        axios.get('/api/product/' + id)
+            .then(response => {   
+                setItemDetail(response.data);    
+                console.log(response.data);   
+         });}
+       },[cookies.username, id, username]);
+
 
     const sendMessage = () =>{
         console.log(text);
@@ -19,7 +38,6 @@ const ItemDetail = () => {
     <div>
         <Header/>
         <Container>
-            <Notice/>
         {/* product_name, product_category, product_author, product_description, registered_user_id, product_license
         product_status */}
             <Row>
@@ -32,26 +50,31 @@ const ItemDetail = () => {
                 </Figure>
             </Col>
             <Col>
+            {item_detail.map((detail, index) => {
+                return(
+                    <div key = {index}>
                 <div>
-                    product_name:
+                    <b>{detail.product_name}</b>
                 </div>
                 <div>
-                    by user_name:
+                    by: &nbsp;&nbsp;{detail.product_author}
                 </div>
                 <div>
-                    Price:
+                    Price: null
                 </div>
                 <div>
-                    product_description:
+                    product_description: &nbsp;&nbsp;{detail.product_description}
                 </div>
                 <div>
-                    product_name:
+                    license: &nbsp;&nbsp;{detail.product_license}
                 </div>
+                </div>
+                )
+            })}
             </Col>
             </Row>
            
-            <Row><Col md={{ span: 8, offset: 1 }}><hr/>
-            {text}
+            <Row><Col md={{ span: 8, offset: 1 }}><hr/><b>Leave a message.</b>
             <div contentEditable ="true" className="textarea" onInput = {e=> setText(e.target.innerText)} id ="textarea"></div>
             </Col></Row>
             <br/>

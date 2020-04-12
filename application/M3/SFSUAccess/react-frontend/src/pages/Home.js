@@ -2,7 +2,7 @@ import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { Nav, NavItem } from 'reactstrap';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button} from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
@@ -108,10 +108,11 @@ const submitSearch = ()=> {
   return (  
     <div>
     {/* Navbar section  */}
-    <div className="navBar">
-      <div className="navLogo">SFSUAccess</div>
-      <div className="navbarcenten">
-          <div className="searchSection">
+    
+      <Navbar bg="dark" variant="dark" className="navbar">
+      <Navbar.Brand>SFSUAccess</Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
           <select id="category" >
           {lists.map((x) => {
             return (
@@ -121,10 +122,11 @@ const submitSearch = ()=> {
           <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setProduct_name(e.target.value)} />&nbsp;&nbsp;
           <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;
           <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
-        <div className = "loginSection">
-
+        
+        <Navbar.Collapse className="justify-content-end">       
+        
         {/* Display signIn, signUp, signOut buttons according to the user status */}
-         {!username &&(
+        {!username &&(
            <div>
           <Button variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
           <Button variant="warning" href="/SignUp">Sign up</Button>
@@ -138,31 +140,35 @@ const submitSearch = ()=> {
             <Button variant="warning" onClick ={logOut}>Log out</Button>
             </div>
           )}
-        </div> 
-      </div>
-          
-      <Navbar expand="sm">
-      <Nav >
-      <NavItem><a href="/"><button className ="navButton" href="/">Home</button></a></NavItem>       
-          {lists.map((x) => {
-            if(x.product_category_name !== 'All'){
-            return (
-              <NavItem title="Category" key = {x.product_category_name}>
-                <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                onClick ={search_by_category}>{x.product_category_name} </button> &nbsp;&nbsp;&nbsp;&nbsp;
-              </NavItem>             
-            )}
-            else
-              return('');
-          }).reverse()       
-        }
-        &nbsp;&nbsp;&nbsp;&nbsp;<NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
-          
-      </Nav>
-    </Navbar>
-    </div>
-    </div>
+        </Navbar.Collapse>
+        </Navbar.Collapse>
+        </Navbar>
+
+        <Navbar  bg="dark" variant="dark">
+        <Navbar.Brand className="navLogo"></Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+        <Nav>
+          <NavItem><a href="/"><button className ="navButton">Home</button></a></NavItem>       
+            {lists.map((x) => {
+              if(x.product_category_name !== 'All'){
+               return (
+                  <NavItem title="Category" key = {x.product_category_name}>
+                    <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
+                    onClick ={search_by_category}>{x.product_category_name} </button> 
+                  </NavItem>             
+                )}
+                else
+                  return('');
+              }).reverse()       
+            }
+          <NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
+        </Nav>
+        </Navbar.Collapse> 
+        </Navbar> 
+
     {/* Navbar end here     */}
+
     <Notice/>
     <Switch>
         <Route path ="/" component = {Content}/> 

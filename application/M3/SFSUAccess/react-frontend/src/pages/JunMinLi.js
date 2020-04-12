@@ -15,11 +15,9 @@ const JunMinLi = () => {
 
       <b>EDUCATION</b>
       <hr/>
-      <p>City College of SanFrancisco </p>
-      <p>Associate in Science Computer Science with High Honors.</p>
+      <p>City College of SanFrancisco - Associate in Science Computer Science with High Honors.</p>
 
-      <p>San Francisco State University </p>
-      <p>Currently enrolling.</p>
+      <p>San Francisco State University - Currently enrolling.</p>
 
       <br/><br/><br/><br/><br/>
       

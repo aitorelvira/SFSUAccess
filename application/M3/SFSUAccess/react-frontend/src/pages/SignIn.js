@@ -7,7 +7,6 @@ import '../css/Sign.css';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Notice from '../components/Notice';
 
 var md5 = require('md5');
 
@@ -58,7 +57,6 @@ const SignIn = () => {
   return (
     <div>
      <Header/>
-     <Notice/>
      <Container className="overAll">
         
         <div className="greeting">Sign in</div><br/>

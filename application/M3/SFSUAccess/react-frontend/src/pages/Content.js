@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import {
-  Card, CardText, CardBody,
+  Card, CardBody,
   CardTitle, CardSubtitle
 } from 'reactstrap';
 import { connect } from 'react-redux';
@@ -11,26 +11,22 @@ import '../css/Content.css';
 
 const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   
-  const toggle =(id) => {
-    console.log("id " + id)
+  const goItemDetail =(id) => {
     window.open("/ItemDetail?itemId=" + id);
   };
 
   const display =  notes_perpage.map((x,item_number) => {  
     if(item_number < 4){ // initialized how many items per page. 
     return(
-      <Col  sm="3" key={item_number}>
-      <div className = "carddiv">
-      <Card id = {item_number}>
-      <div className="thumbnails"><img  src={x.product_image_link} alt ="img"/></div>
+      <Col  sm="3" key={item_number} className = "carddiv">
+      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
+        <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
           <CardBody>
-          <CardTitle className="descriptionFormat"><b> {x.product_name}</b></CardTitle>
-            <CardSubtitle>Author: {x.product_author}</CardSubtitle>
-            <CardText >Description: {x.product_description}</CardText>
-            <Button className="cardButton" variant="warning" onClick={e => toggle(x.id)} id = {x.id}>See details</Button>
+          <CardTitle className="title">{x.product_name}</CardTitle>
+          <CardSubtitle>{x.product_author}</CardSubtitle><br/>
+            {/* <CardText >Description: {x.product_description}</CardText> */}
           </CardBody>
      </Card>
-     </div>
      </Col> 
     )}
     else
@@ -39,25 +35,26 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   
 
   return (
-    <div className="content">
        <Container>
          {!searchinfo && <p> Updates.<br/>
            4/05 Basic iogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
            4/06 Basic pagination is implemented. Showing 4 items per page.<br/>
            4/09 Added individual about pages, changed sign in/up to from data.<br/>
+           4/10 Added itemDetail page.<br/><br/>
            Need to do.<br/>
-           A default home content page.<br/>
+           A default home content page?<br/>
            </p>}
-         <Row>{searchinfo}{show_numberOfitems}</Row><br/>
-        <Row>
-          {display}
-        </Row>
-         <Row>
-           <Pagination/>
-        </Row>
+          <Row><Col>{searchinfo}{show_numberOfitems}</Col></Row><br/>
+          <Row>
+            {display}
+          </Row>
+          <Row>
+            <Col>
+              <Pagination/>
+            </Col>
+          </Row>
          <br/><br/><br/><br/><br/>
          </Container>
-  </div>
   );
 }
 

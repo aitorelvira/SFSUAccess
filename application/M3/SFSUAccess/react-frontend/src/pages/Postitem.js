@@ -6,6 +6,7 @@ import {setUsername} from '../redux/actions/userActions.js';
 import '../css/Dashboard.css';
 
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 
 const Postitem = ({ dispatch, username }) => {
@@ -20,17 +21,11 @@ const Postitem = ({ dispatch, username }) => {
 
   return (
     <div>
-      <div className="navBar">  
-      <div className="navLogo">SFSUAccess</div>
-      <div className="loginSection"> 
-        {'Welcome  '+ username + '   '}&nbsp;&nbsp;
-         <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
-      </div>
-      </div>
 
 
+    <Header/>
     {/* Dash content   */}
-    <Container className="dashboard">
+    <Container>
       <h3>Post an item</h3><hr/><Col md={{ offset: 2 }}>
         <Form className="postItem">
             <Form.Row>

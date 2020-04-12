@@ -15,7 +15,7 @@
 }
 
 .textarea:empty:before{ 
-    content: 'Leave a message to the seller...'; 
+    content: 'Message content...'; 
     color: gray; 
 } 
 .textarea:focus:before{

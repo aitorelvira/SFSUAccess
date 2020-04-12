@@ -9,28 +9,18 @@ import Tab from 'react-bootstrap/Tab';
 import '../css/Dashboard.css';
 
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 
-const Dashboard = ({ dispatch, username }) => {
+const Dashboard = ({dispatch, username}) => {
   const [cookies, setCookies] = useCookies(['username']);
   
-  useEffect (()=>{
-    dispatch(setUsername(cookies.username));
-  },[dispatch, cookies.username]);
 
 
 
   return (
     <div>
-      <div className="navBar">  
-      <div className="navLogo">SFSUAccess</div>
-      <div className="loginSection"> 
-        {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-         <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
-      </div>
-      </div>
-
-
+     <Header/>
     {/* Dash content   */}
     <Container className="dashboard">
       <h3>Dashboard</h3><br/>
@@ -183,14 +173,8 @@ const Dashboard = ({ dispatch, username }) => {
 
 
 const mapStateToProps = state => ({
-
-  isLoggedIn: state.userReducer.isLoggedIn,
   username: state.userReducer.username,
-  list: state.userReducer.list,
-  notes: state.notesReducer.notes,
-  searchinfo: state.notesReducer.searchinfo,
-  
-  })
+})
   export default connect(mapStateToProps)(Dashboard);
 
 

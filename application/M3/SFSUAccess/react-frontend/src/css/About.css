@@ -1,15 +1,7 @@
 
 
   .page {
-    /* background-color: #282c34; */
-    padding-top:20px;
-    text-align: center;
-    min-height: 1vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(2px + 2vmin);
+    padding-left:20px;
   }
 
   .footer{
@@ -19,4 +11,26 @@
   .greeting{
     /* text-align: center; */
     font: 30px arial, sans-serif;
+}
+
+.navLogo{
+  display:block;
+  width:85px;
+  /* background-color: black; */
+}
+
+.navButton{
+  padding:0px;
+  width:100px;
+  background-color:transparent; 
+  border-style: none;    
+  outline: none;  
+  color:white;
+  font-size: 15px;   
+}
+
+.navButton:focus{
+  background-color: #FFCC11;
+  color:black;
+  outline: none;
 }
