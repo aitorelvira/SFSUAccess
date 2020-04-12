@@ -40,7 +40,8 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
            4/05 Basic iogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
            4/06 Basic pagination is implemented. Showing 4 items per page.<br/>
            4/09 Added individual about pages, changed sign in/up to from data.<br/>
-           4/10 Added itemDetail page.<br/><br/>
+           4/10 Added itemDetail page.<br/>
+           4/12 Added api to itemDetail page. New UI.<br/><br/>
            Need to do.<br/>
            A default home content page?<br/>
            </p>}

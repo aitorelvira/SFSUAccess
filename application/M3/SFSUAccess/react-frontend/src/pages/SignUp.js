@@ -15,7 +15,6 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
-  const [privelege_type, setPriveliege_type] = useState('');
 
 
   axios.interceptors.response.use((response) =>{
@@ -38,7 +37,10 @@ const SignUp = () => {
     setEmail(email.trim().toLowerCase());
     setPassword(password.trim().toLowerCase());
     setConfirm_password(confirm_password.trim().toLowerCase());
-    setPriveliege_type(privelege_type.trim().toLowerCase());
+    let select = document.getElementById("privelege_type");
+    let index = select.selectedIndex;
+    let privelege_type = select.options[index].value;
+
 
     if(!first_name || !last_name || !email || !password || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0 || 
     confirm_password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
@@ -54,7 +56,7 @@ const SignUp = () => {
           first_name,
           last_name,
           password,
-          privelege_type,
+          privelege_type
         })
         .catch(err => console.log(err));
       }
@@ -92,8 +94,8 @@ const SignUp = () => {
 
           <Form.Group>Please choose your account type&nbsp;&nbsp;&nbsp;&nbsp;
           <select id="privelege_type">
-            <option value="2">Student</option>
-            <option value="3">Faculty</option>
+            <option value="3">Student</option>
+            <option value="2">Faculty</option>
             <option value="1">Admin</option>
           </select>
           </Form.Group><br/>

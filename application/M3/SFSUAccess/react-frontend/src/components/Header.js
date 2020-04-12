@@ -19,7 +19,7 @@ const Header = () => {
              {'Welcome  '+ cookies.username + '   '}&nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
-            </Navbar><br/><br/>
+            </Navbar><br/>
             <Notice/>
             </div>
         )
