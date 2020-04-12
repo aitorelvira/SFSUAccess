@@ -31,10 +31,18 @@ def get_categories():
 @app.route('/api/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
     if request.method=='GET':
-        sql = "SELECT * FROM products WHERE product_category = %s"
-        cur.execute(sql,(category))
-        results = cur.fetchall()
-        return jsonify(results)
+        if category=="all" or category=="All":
+            print("xxxx")
+            sql = "SELECT * FROM products"
+            cur.execute(sql)
+            results = cur.fetchall()
+            return jsonify(results)
+        else:
+            print("yyyy")
+            sql = "SELECT * FROM products WHERE product_category = %s"
+            cur.execute(sql,(category))
+            results = cur.fetchall()
+            return jsonify(results)
     if request.method=='POST':
         search_query = request.get_json()
         sql = "SELECT * FROM products WHERE product_category = %s AND product_name LIKE '%%"+search_query['product_name']+"%%'"
@@ -176,8 +184,13 @@ def get_products():
     return jsonify(results)
 
 #PUT REQUEST USING FORM-DATA
-@app.route('/api/product/<id>', methods=['PUT','DELETE'])
+@app.route('/api/product/<id>', methods=['GET','PUT','DELETE'])
 def manage_product(id):
+    if request.method=='GET':
+        sql = "SELECT * FROM products WHERE id = %s"
+        cur.execute(sql,(id))
+        product_detail = cur.fetchall()
+        return jsonify(product_detail)
     if request.method=='PUT':
         sql = "SELECT product_name FROM products WHERE id = %s"
         # Check if the product still exists
