@@ -20,10 +20,14 @@ def get_categories():
         results = cur.fetchall()
         return jsonify(results)
     if request.method=='POST':
+        product_fields = ["product_name", "product_category", "product_author", "product_description"]
         search_query = request.get_json()
-        sql = "SELECT * FROM products WHERE product_name LIKE '%%"+search_query['product_name']+"%%'"
-        cur.execute(sql)
-        results = cur.fetchall()
+        results = []
+        for fields in product_fields:
+            sql = "SELECT * FROM products WHERE {0} LIKE '%%".format(fields) + search_query['product_name'] + "%%'"
+            print("Executing: " + sql)
+            cur.execute(sql)
+            results += cur.fetchall()
         return jsonify(results)
 
 #TODO front end needs to adapt for GET and POST
@@ -31,7 +35,7 @@ def get_categories():
 @app.route('/api/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
     if request.method=='GET':
-        if category=="all" or category=="All":
+        if category.lower() == "all":
             print("xxxx")
             sql = "SELECT * FROM products"
             cur.execute(sql)
@@ -39,15 +43,21 @@ def get_category_items(category):
             return jsonify(results)
         else:
             print("yyyy")
-            sql = "SELECT * FROM products WHERE product_category = %s"
-            cur.execute(sql,(category))
+            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category)
+            cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
     if request.method=='POST':
+        product_fields = ["product_name", "product_category", "product_author", "product_description"]
         search_query = request.get_json()
-        sql = "SELECT * FROM products WHERE product_category = %s AND product_name LIKE '%%"+search_query['product_name']+"%%'"
-        cur.execute(sql,(category))
-        results = cur.fetchall()
+        results = []
+        for fields in product_fields:
+            sql = "SELECT * FROM products WHERE {category}" \
+                    .format(category="" if (category.lower() == "all") else "product_category = '{0}' AND ".format(category)) + \
+                    "{0} LIKE '%%".format(fields) + search_query['product_name'] +"%%'"
+            print("Executing: " + sql)
+            cur.execute(sql)
+            results += cur.fetchall()
         return jsonify(results)
 
 
