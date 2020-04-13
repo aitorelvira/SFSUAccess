@@ -8,7 +8,7 @@ class Footer extends React.Component {
     render() {
         return (
             
-            <Navbar bg="dark" fixed="bottom" className="footer">
+            <Navbar bg="dark" className="footer">
                  Software Engineering class SFSU Spring 2020 Section 01 <br/> Team 02
             </Navbar>
             

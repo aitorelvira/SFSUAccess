@@ -14,9 +14,10 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const goItemDetail =(id) => {
     window.open("/ItemDetail?itemId=" + id);
   };
+ 
 
-  const display =  notes_perpage.map((x,item_number) => {  
-    if(item_number < 4){ // initialized how many items per page. 
+  const searchResult =  notes_perpage.map((x,item_number) => {  
+    if(item_number < 8){ // initialized how many items per page. 
     return(
       <Col  sm="3" key={item_number} className = "carddiv">
       <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
@@ -36,18 +37,23 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
 
   return (
        <Container>
-         {!searchinfo && <p> Updates.<br/>
+         {!searchinfo && <div>
+           <p> Updates.<br/>
            4/05 Basic iogIn and SignUp pages are implemented. Maybe missing some details, verification is needed.<br/>
            4/06 Basic pagination is implemented. Showing 4 items per page.<br/>
            4/09 Added individual about pages, changed sign in/up to from data.<br/>
            4/10 Added itemDetail page.<br/>
-           4/12 Added api to itemDetail page. New UI.<br/><br/>
+           4/11 Added api to itemDetail page. New UI.<br/>
+           4/12 Added default home page.<br/><br/>
            Need to do.<br/>
            A default home content page?<br/>
-           </p>}
-          <Row><Col>{searchinfo}{show_numberOfitems}</Col></Row><br/>
+           </p>
+      
+          </div>
+           }
+          <Row><Col>{searchinfo}&nbsp;&nbsp;{show_numberOfitems}</Col></Row><br/>
           <Row>
-            {display}
+            {searchResult}
           </Row>
           <Row>
             <Col>

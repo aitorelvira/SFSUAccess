@@ -25,8 +25,8 @@
 }
 
 .pagination button.active{
-    background-color: #666;
-    color: white;
+    background-color: #FFCC11;
+    color: black;
     outline: none;
     float: left;
     padding: 8px 16px;

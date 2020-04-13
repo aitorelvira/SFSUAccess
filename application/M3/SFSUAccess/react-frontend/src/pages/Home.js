@@ -1,40 +1,49 @@
 import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { Nav, NavItem } from 'reactstrap';
-import { Navbar, Button} from 'react-bootstrap';
+import { Nav, NavItem, Container } from 'reactstrap';
+import { Navbar, Button, Col, Row } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer'
 import { connect } from 'react-redux';
 import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from '../redux/actions/notesActions.js';
 import {setUsername} from '../redux/actions/userActions.js';
 import Content from './Content';
-import Notice from '../components/Notice'
+import Notice from '../components/Notice';
+import {
+  Card, CardBody,
+  CardTitle, CardSubtitle
+} from 'reactstrap';
 import '../css/Home.css';
 
 
-const Home = ({ dispatch, username }) => {
+const Home = ({ dispatch, username, searchinfo}) => {
   const[lists, setList] = useState([]);             // The list of categroies
   const[product_name, setProduct_name] = useState('');    // user input for searching
   const[cookies, setCookies] = useCookies(['username']);
 
+  const [notes_list, set_notes_list] = useState([]);
+  const [video_list, set_video_list] = useState([]);
+  const [music_list, set_music_list] = useState([]);
+  
+
 //Loading the init categories from the db to the Nav bar and dropdowns.
   useEffect (()=>{
-    axios.get('/api/search')
-        .then(response => {         
-         setList(response.data);  
-     });
-  dispatch(setUsername(cookies.username));
-  },[dispatch, cookies.username]);
-
-
-  axios.interceptors.response.use((response) =>{
-    return response;
-  },error =>{
-    return error.response.status;
-  })
-
-
+    const fetchData = async() =>{
+      const category = await axios.get('/api/search');
+      const video = await axios.get('/api/search/video');
+      const music = await axios.get('/api/search/music');
+      const note  = await axios.get('/api/search/notes');
+           
+      set_notes_list(note.data);
+      set_video_list(video.data);
+      set_music_list(music.data);
+      setList(category.data);  
+    }
+    dispatch(setUsername(cookies.username));
+    fetchData();
+  },[dispatch, cookies.username]);  
+ 
 //Search function for Navbar search section
 const submitSearch = ()=> {
     // getting the category input from the dropdown menu
@@ -102,8 +111,11 @@ const submitSearch = ()=> {
   const logOut =()=>{
     setCookies('username', '');
     dispatch(setUsername(cookies.username)); 
+  }
 
-}
+  const goItemDetail =(id) => {
+    window.open("/ItemDetail?itemId=" + id);
+  };
       
   return (  
     <div>
@@ -113,6 +125,7 @@ const submitSearch = ()=> {
       <Navbar.Brand>SFSUAccess</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
+
           <select id="category" >
           {lists.map((x) => {
             return (
@@ -127,19 +140,18 @@ const submitSearch = ()=> {
         
         {/* Display signIn, signUp, signOut buttons according to the user status */}
         {!username &&(
-           <div>
-          <Button variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
-          <Button variant="warning" href="/SignUp">Sign up</Button>
+          <div>
+            <Button variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
+            <Button variant="warning" href="/SignUp">Sign up</Button>
           </div>
          )}  
-
-          {username &&(
-            <div>             
+        {username &&(
+          <div>             
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
             <Button variant="warning" href="/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
             <Button variant="warning" onClick ={logOut}>Log out</Button>
-            </div>
-          )}
+          </div>
+        )}
         </Navbar.Collapse>
         </Navbar.Collapse>
         </Navbar>
@@ -149,7 +161,7 @@ const submitSearch = ()=> {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
-          <NavItem><a href="/"><button className ="navButton">Home</button></a></NavItem>       
+          <NavItem><a href="/"><button className ="navButton">Home</button></a></NavItem>     
             {lists.map((x) => {
               if(x.product_category_name !== 'All'){
                return (
@@ -170,6 +182,74 @@ const submitSearch = ()=> {
     {/* Navbar end here     */}
 
     <Notice/>
+
+    {!searchinfo && (
+    <Container>
+      <Nav bg="light">Notes Category</Nav><br/>
+      <Row>{
+        notes_list.map((x,item_number) => {  
+          if(item_number < 4){ // initialized how many items per page. 
+            return(
+              <Col  sm="3" key={item_number} className = "carddiv">
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
+                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                  <CardBody>
+                  <CardTitle className="title">{x.product_name}</CardTitle>
+                  <CardSubtitle>{x.product_author}</CardSubtitle><br/>
+                  </CardBody>
+            </Card>
+            </Col> 
+            )}
+          else
+            return('');
+      })} 
+      </Row>
+      <Nav bg="light">Video Category</Nav><br/>
+      <Row>{
+        video_list.map((x,item_number) => {  
+          if(item_number < 4){ // initialized how many items per page. 
+            return(
+              <Col  sm="3" key={item_number} className = "carddiv">
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
+                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                  <CardBody>
+                  <CardTitle className="title">{x.product_name}</CardTitle>
+                  <CardSubtitle>{x.product_author}</CardSubtitle><br/>
+                  </CardBody>
+            </Card>
+            </Col> 
+            )}
+          else
+            return('');
+        })} 
+      </Row>
+      <Nav bg="light">Music Category</Nav><br/>
+      <Row>{
+        music_list.map((x,item_number) => {  
+          if(item_number < 4){ // initialized how many items per page. 
+            return(
+              <Col  sm="3" key={item_number} className = "carddiv">
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
+                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                  <CardBody>
+                  <CardTitle className="title">{x.product_name}</CardTitle>
+                  <CardSubtitle>{x.product_author}</CardSubtitle><br/>
+                  </CardBody>
+            </Card>
+            </Col> 
+            )}
+          else
+            return('');
+        })} 
+      </Row>
+    
+    
+    
+    </Container>
+    )  
+    }
+
+
     <Switch>
         <Route path ="/" component = {Content}/> 
     </Switch>

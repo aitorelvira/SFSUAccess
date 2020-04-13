@@ -11,7 +11,7 @@ const Pagination = ({ dispatch, notes }) => {
   // Using 2 indexes to get items in notes array(all items). 
   const setIndex = (id) => {
     let first_index = id;
-    let last_index = first_index + 4;
+    let last_index = first_index + 8;
     let items = [];
     let range_first = first_index+1;
     let range_last;
@@ -36,7 +36,7 @@ const Pagination = ({ dispatch, notes }) => {
     let all = pagination.getElementsByTagName("button");
     
   
-    let temp = id/4;
+    let temp = id/8;
     for(var i = 0; i<all.length; i++){
          if(i !== temp)
           all[i].setAttribute('class','pagination_button');
@@ -51,11 +51,11 @@ const Pagination = ({ dispatch, notes }) => {
      {
       typeof notes !=='undefined' &&(
       notes.map((note, index) => {   
-       if(index % 4 === 0){
+       if(index % 8 === 0){
         return(
           <div  key = {index}>
           <button key = {index} id = {index} onClick={e => { setIndex(index) }}  name = "button" className ={ index === 0 ? 'pagination_button active' : 'pagination_button'}>
-            {Math.round(Math.sqrt(index+1))}</button>
+            {Math.abs(Math.round(Math.sqrt(index)-1))}</button>
           &nbsp;&nbsp;
           </div>
         )
