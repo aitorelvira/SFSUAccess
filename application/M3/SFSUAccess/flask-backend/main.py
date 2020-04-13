@@ -22,12 +22,16 @@ def get_categories():
     if request.method=='POST':
         product_fields = ["product_name", "product_category", "product_author", "product_description"]
         search_query = request.get_json()
-        results = []
+        sql = "SELECT DISTINCT * FROM products WHERE ("
         for fields in product_fields:
-            sql = "SELECT * FROM products WHERE {0} LIKE '%%".format(fields) + search_query['product_name'] + "%%'"
-            print("Executing: " + sql)
-            cur.execute(sql)
-            results += cur.fetchall()
+            sql += "{0} LIKE '%".format(fields) + search_query['product_name'] + "%'"
+            if product_fields.index(fields) + 1 != len(product_fields):
+                sql += " OR "
+            else:
+                sql += ") AND product_status = 'ACTIVE'"
+        print("Executing: " + sql)
+        cur.execute(sql)
+        results = cur.fetchall()
         return jsonify(results)
 
 #TODO front end needs to adapt for GET and POST
@@ -37,27 +41,29 @@ def get_category_items(category):
     if request.method=='GET':
         if category.lower() == "all":
             print("xxxx")
-            sql = "SELECT * FROM products"
+            sql = "SELECT * FROM products WHERE product_status = 'ACTIVE'"
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
         else:
             print("yyyy")
-            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category)
+            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category) + " AND product_status = 'ACTIVE'"
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
     if request.method=='POST':
         product_fields = ["product_name", "product_category", "product_author", "product_description"]
         search_query = request.get_json()
-        results = []
+        sql = "SELECT DISTINCT * FROM products WHERE {category}(".format(category="" if (category.lower() == "all") else "product_category = '{0}' AND ".format(category))
         for fields in product_fields:
-            sql = "SELECT * FROM products WHERE {category}" \
-                    .format(category="" if (category.lower() == "all") else "product_category = '{0}' AND ".format(category)) + \
-                    "{0} LIKE '%%".format(fields) + search_query['product_name'] +"%%'"
-            print("Executing: " + sql)
-            cur.execute(sql)
-            results += cur.fetchall()
+            sql += "{0} LIKE '%".format(fields) + search_query['product_name'] + "%'"
+            if product_fields.index(fields)+1 != len(product_fields):
+                sql += " OR "
+            else:
+                sql += ") AND product_status = 'ACTIVE'"
+        print("Executing: " + sql)
+        cur.execute(sql)
+        results = cur.fetchall()
         return jsonify(results)
 
 
