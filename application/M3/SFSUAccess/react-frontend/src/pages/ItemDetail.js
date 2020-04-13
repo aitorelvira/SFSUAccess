@@ -2,32 +2,40 @@ import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
+// import Footer from '../components/Footer';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
 
 const ItemDetail = () => {
     
     const [text, setText] = useState('');
-    const [cookies, setCookies] = useCookies(['username']);
+    const [cookies, setCookies] = useCookies(['first_name']);
     const [username, setUsername] = useState('');
-    const [item_detail, setItemDetail] = useState([]);
     const [id, setId] = useState('')
-  
 
+    const[product_name, setName] = useState('');
+    const[product_author, setAuthor] = useState('');
+    const[product_description, setDescription] = useState('');
+    const[product_license, setLicense] = useState('');
+    const[product_category, setCategory] = useState('');
+    
+  
     
     useEffect (()=>{
-        if(typeof cookies.username !== 'undefined')
-        setUsername(cookies.username);
+        if(typeof cookies.first_name !== 'undefined')
+        setUsername(cookies.first_name);
         setId(window.location.search.substr(8));
 
         if(id){
         axios.get('/api/product/' + id)
             .then(response => {   
-                setItemDetail(response.data);    
-                console.log(response.data);   
+                setName(response.data[0].product_name); 
+                setAuthor(response.data[0].product_author);  
+                setDescription(response.data[0].product_description); 
+                setCategory(response.data[0].product_category); 
+                setLicense(response.data[0].product_license);     
          });}
-       },[cookies.username, id, username]);
+       },[cookies.first_name, id, username]);
 
 
     const sendMessage = () =>{
@@ -50,31 +58,15 @@ const ItemDetail = () => {
                 </Figure>
             </Col>
             <Col>
-            {item_detail.map((detail, index) => {
-                return(
-                    <div key = {index}>
-                <div>
-                    <b>{detail.product_name}</b>
-                </div>
-                <div>
-                    by: &nbsp;&nbsp;{detail.product_author}
-                </div>
-                <div>
-                    Price: null
-                </div>
-                <div>
-                    product_description: &nbsp;&nbsp;{detail.product_description}
-                </div>
-                <div>
-                    license: &nbsp;&nbsp;{detail.product_license}
-                </div>
-                </div>
-                )
-            })}
+                <div><b>{product_name}</b></div>
+                <div>by: &nbsp;&nbsp;{product_author}</div>
+                <div>{product_category}</div>
+                <div>{product_license}</div>
             </Col>
             </Row>
+            <Row><Col md={{ span: 8, offset: 1 }}><div>Description: &nbsp;&nbsp;{product_description}</div></Col></Row><br/>
            
-            <Row><Col md={{ span: 8, offset: 1 }}><hr/><b>Leave a message.</b>
+            <Row><Col md={{ span: 8, offset: 1 }}>
             <div contentEditable ="true" className="textarea" onInput = {e=> setText(e.target.innerText)} id ="textarea"></div>
             </Col></Row>
             <br/>
@@ -97,8 +89,8 @@ const ItemDetail = () => {
             </Row>
             
             <br/><br/><br/><br/><br/>
-            <Footer/>
     </Container>
+    {/* <Footer/> */}
     </div>
   );
 };

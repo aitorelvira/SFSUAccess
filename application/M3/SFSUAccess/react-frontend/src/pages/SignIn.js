@@ -6,21 +6,27 @@ import { Link } from "react-router-dom";
 import '../css/Sign.css';
 
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 var md5 = require('md5');
 
 const SignIn = () => {
-  const [message, setMessage] = useState('');               //Error message
-  const [cookies, setCookies] = useCookies(['username']);  
+  const [message, setMessage] = useState('');               //Error message 
   const [isLoading, setLoading] = useState(false);          //Loading state for the login button
   const [email, setEmail] = useState('');               
   const [password, setPassword] = useState('');
 
+  //cookies
+  const [cookies, setCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
+
 
   axios.interceptors.response.use((response) =>{
     if(response.status === 202){
-      setCookies('username', response.data[0].first_name);
+      let res = response.data[0];
+      setCookies('id', res.id);
+      setCookies('email', res.email);
+      setCookies('first_name', res.first_name);
+      setCookies('last_name', res.last_name);
+      setCookies('privelege_type', res.privelege_type);
       setLoading(true);
       setTimeout(function(){ window.location.href = '/'},1000);
     }
@@ -83,7 +89,6 @@ const SignIn = () => {
           </Row>
         </Form>
     </Container>
-    <Footer/>
     </div>
   );
 }

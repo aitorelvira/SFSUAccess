@@ -4,18 +4,16 @@ import { Form, Button, Container, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import {setUsername} from '../redux/actions/userActions.js';
 import '../css/Dashboard.css';
-
-import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 
-const Postitem = ({ dispatch, username }) => {
-  const [cookies, setCookies] = useCookies(['username']);
+const Postitem = ({ dispatch }) => {
+  const [cookies, setCookies] = useCookies(['first_name']);
   
    useEffect (()=>{
-      if(typeof cookies.username !== 'undefined')
-      dispatch(setUsername(cookies.username));
-   },[dispatch, cookies.username]);
+      if(typeof cookies.first_name !== 'undefined')
+      dispatch(setUsername(cookies.first_name));
+   },[dispatch, cookies.first_name]);
 
 
 
@@ -98,7 +96,6 @@ const Postitem = ({ dispatch, username }) => {
         </Col>
     </Container>
     <br/><br/><br/><br/><br/>
-    <Footer/>
     </div>
   );
 }

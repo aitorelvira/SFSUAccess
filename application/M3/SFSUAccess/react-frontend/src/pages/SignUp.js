@@ -4,7 +4,6 @@ import { Form,Button, Container} from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../css/Sign.css';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 var md5 = require('md5');
 
 const SignUp = () => {
@@ -110,8 +109,6 @@ const SignUp = () => {
           </Form.Group>
       </Form>
     </Container>
-    <br/><br/><br/><br/><br/>
-    <Footer/>
     </div>
   );
 }

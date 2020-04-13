@@ -6,13 +6,13 @@ import '../css/Home.css';
 
 
 const Header = () => {
-    const[cookies, setCookies] = useCookies(['username']);
+    const[cookies, setCookies] = useCookies(['first_name']);
     const[username, setUsername] = useState('');
    
     useEffect (()=>{
         if(typeof cookies.username !="undefined")
-        setUsername(cookies.username)
-      },[cookies.username]);
+        setUsername(cookies.first_name)
+      },[cookies.first_name]);
     
         return (
             <div>

@@ -1,9 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import {
-  Card, CardBody,
-  CardTitle, CardSubtitle
-} from 'reactstrap';
+import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { connect } from 'react-redux';
 import Pagination from './Pagination';
 import '../css/Content.css';
@@ -19,13 +16,13 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const searchResult =  notes_perpage.map((x,item_number) => {  
     if(item_number < 8){ // initialized how many items per page. 
     return(
-      <Col  sm="3" key={item_number} className = "carddiv">
-      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
+      <Col  sm="3" key={item_number} className = "card_div">
+      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" >
         <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
           <CardBody>
-          <CardTitle className="title">{x.product_name}</CardTitle>
-          <CardSubtitle>{x.product_author}</CardSubtitle><br/>
-            {/* <CardText >Description: {x.product_description}</CardText> */}
+          <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
+          <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
+          <CardText className="card_date">04/14/20</CardText>
           </CardBody>
      </Card>
      </Col> 
@@ -45,8 +42,6 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
            4/10 Added itemDetail page.<br/>
            4/11 Added api to itemDetail page. New UI.<br/>
            4/12 Added default home page.<br/><br/>
-           Need to do.<br/>
-           A default home content page?<br/>
            </p>
       
           </div>

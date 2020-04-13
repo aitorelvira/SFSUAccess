@@ -2,7 +2,6 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import { Nav, Container} from 'reactstrap';
 import { Navbar, Button} from 'react-bootstrap';
-import Footer from '../components/Footer';
 import JunMinLi from './JunMinLi';
 import KevinLuong from './KevinLuong';
 import Aitor from './Aitor';
@@ -49,7 +48,6 @@ const About = () => {
                 <Route path = "/About" component = {Ourteam}/>
              </Switch>
           </Container>
-         <Footer/>
        </div>
     );
     }

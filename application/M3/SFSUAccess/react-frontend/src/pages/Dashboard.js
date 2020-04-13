@@ -7,14 +7,28 @@ import {setUsername} from '../redux/actions/userActions.js';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import '../css/Dashboard.css';
-
-import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 
 const Dashboard = ({dispatch, username}) => {
-  const [cookies, setCookies] = useCookies(['username']);
+  const [cookies, setCookies] = useCookies(['first_name']);
   
+
+  useEffect (()=>{
+    const fetchData = async() =>{
+      // const category = await axios.get('/api/search');
+      // const video = await axios.get('/api/search/video');
+      // const music = await axios.get('/api/search/music');
+      // const note  = await axios.get('/api/search/notes');
+           
+      // set_notes_list(note.data);
+      // set_video_list(video.data);
+      // set_music_list(music.data);
+      // setList(category.data);  
+    }
+    dispatch(setUsername(cookies.first_name));
+    //fetchData();
+  },[dispatch, cookies.first_name]);  
 
 
 
@@ -166,7 +180,6 @@ const Dashboard = ({dispatch, username}) => {
 
      
     </Container>
-    <Footer/>
     </div>
   );
 }

@@ -4,11 +4,30 @@
     overflow: hidden;
 }
 
-.carddiv{
+.card_div{
     padding-bottom:20px;
     cursor:pointer;
 }
+.card_text{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display:-webkit-box; 
+    -webkit-box-orient:vertical; 
+    -webkit-line-clamp:2;
+}
 
+.card_user{
+    color: grey;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display:-webkit-box; 
+    -webkit-box-orient:vertical; 
+    -webkit-line-clamp:1;
+}
+.card_date{
+    text-align: right;
+    color: grey;
+}
 
 .pagination{
     display: flex;
