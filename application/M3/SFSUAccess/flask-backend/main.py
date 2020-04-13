@@ -7,7 +7,7 @@ import pymysql
 connection = pymysql.connect(host='csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com',
                              user='admin',
                              password='rdsmysql',
-                             db='testdb',
+                             db='testdb2',
                              cursorclass=pymysql.cursors.DictCursor)
 cur = connection.cursor()
 app = Flask(__name__)
@@ -157,7 +157,7 @@ def post_product():
     product_description = request.form['product_description']
     product_user_id = request.form['user_id']
     product_license = request.form['product_license']
-    sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license) VALUES (%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license,date_time_added,product_status) VALUES (%s,%s,%s,%s,%s,%s,NOW(),'PENDING')"
     cur.execute(sql,(product_name,product_category,product_author,product_description,product_user_id,product_license))
     connection.commit()
     status_code = Response(status=201)
@@ -198,7 +198,7 @@ def get_products():
 @app.route('/api/product/<id>', methods=['GET','PUT','DELETE'])
 def manage_product(id):
     if request.method=='GET':
-        sql = "SELECT * FROM products WHERE id = %s"
+        sql = "select products.*, registered_users.`email` FROM products inner join `registered_users` ON registered_users.id=products.`registered_user_id` WHERE products.id=%s"
         cur.execute(sql,(id))
         product_detail = cur.fetchall()
         return jsonify(product_detail)
