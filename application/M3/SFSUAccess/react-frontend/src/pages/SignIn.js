@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
+import ReactGA from "react-ga";
 import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { Link } from "react-router-dom";
@@ -28,6 +29,14 @@ const SignIn = () => {
       setCookies('last_name', res.last_name, { expires: 0});
       setCookies('privelege_type', res.privelege_type, { expires: 0});
       setLoading(true);
+      ReactGA.initialize('UA-163580713-1', { // set new tracking id for logged in user
+            debug: true,
+            titleCase: false,
+            gaOptions: {
+                userId: res.id,
+                clientId: res.id
+            }
+        });
       setTimeout(function(){ window.location.href = '/'},1000);
     }
     return response;
