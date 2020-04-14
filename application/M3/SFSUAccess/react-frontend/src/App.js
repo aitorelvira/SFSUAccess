@@ -1,5 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import ReactGA from "react-ga";
+// import './App.css';
 import Home from "./pages/Home";
 import About from "./pages/About";
 import SignUp from "./pages/SignUp";
@@ -11,6 +13,7 @@ import Error from "./components/ErrorPage"
 import './css/Home.css';
 
 function App() {
+    ReactGA.pageview(window.location.pathname + window.location.search);
     return (
         <BrowserRouter>
             <div>
