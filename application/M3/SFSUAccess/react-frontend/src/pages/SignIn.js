@@ -16,17 +16,17 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
 
   //cookies
-  const [cookies, setCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
 
 
   axios.interceptors.response.use((response) =>{
     if(response.status === 202){
       let res = response.data[0];
-      setCookies('id', res.id);
-      setCookies('email', res.email);
-      setCookies('first_name', res.first_name);
-      setCookies('last_name', res.last_name);
-      setCookies('privelege_type', res.privelege_type);
+      setCookies('id', res.id, { expires: 0});
+      setCookies('email', res.email, { expires: 0});
+      setCookies('first_name', res.first_name, { expires: 0});
+      setCookies('last_name', res.last_name, { expires: 0});
+      setCookies('privelege_type', res.privelege_type, { expires: 0});
       setLoading(true);
       setTimeout(function(){ window.location.href = '/'},1000);
     }

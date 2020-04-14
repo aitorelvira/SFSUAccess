@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import { Switch, Route } from "react-router-dom";
 import { Nav, Container} from 'reactstrap';
 import { Navbar, Button} from 'react-bootstrap';
@@ -14,6 +15,13 @@ import '../css/About.css'
 
 
 const About = () => {
+   const[cookies, setCookies] = useCookies(['first_name']);
+   const[username, setUsername] = useState('');
+  
+   useEffect (()=>{
+       if(typeof cookies.username !== 'undefined')
+       setUsername(cookies.first_name)
+     },[]);
 
     return (
       <div>
@@ -24,14 +32,14 @@ const About = () => {
                 <Button href = "/About" className ="navButton">Ouer-Team</Button>&nbsp;&nbsp;
                 <Button href = "/About/KevinLuong" className ="navButton">Kevin Luong</Button>&nbsp;&nbsp;
                 <Button href = "/About/JunMinLi" className ="navButton">JunMinLi</Button>&nbsp;&nbsp;
-                <Button href ="/About/Aitor" className ="navButton">Aitor</Button>&nbsp;&nbsp;
-                <Button href="/About/CodyXu" className ="navButton">CodyXu</Button>&nbsp;&nbsp;
-                <Button href ="/About/DavidLin" className ="navButton">DavidLin</Button>&nbsp;&nbsp;
-                <Button href ="/About/YanruiXu" className ="navButton">YanruiXu</Button>&nbsp;&nbsp;
+                <Button href = "/About/Aitor" className ="navButton">Aitor</Button>&nbsp;&nbsp;
+                <Button href = "/About/CodyXu" className ="navButton">CodyXu</Button>&nbsp;&nbsp;
+                <Button href = "/About/DavidLin" className ="navButton">DavidLin</Button>&nbsp;&nbsp;
+                <Button href = "/About/YanruiXu" className ="navButton">YanruiXu</Button>&nbsp;&nbsp;
             </Nav>
                          
              <Navbar.Collapse className="justify-content-end"> 
-             {/* {'Welcome, '+ cookies.username + '   '}&nbsp;&nbsp; */}
+             {'Welcome  '+ username + '   '}&nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
             </Navbar><br/>

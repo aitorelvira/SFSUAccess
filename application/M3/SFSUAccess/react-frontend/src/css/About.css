@@ -12,10 +12,18 @@
     font-size: calc(12px);
   }
 
-  .greeting{
-    /* text-align: center; */
-    font: 30px arial, sans-serif;
+.errorgreeting{
+    text-align: center;  
+    padding-top: 5%;
 }
+
+.error_greeting.not_second{
+  font: 15px arial, sans-serif; 
+}
+.error_greeting.not_second.not_third{
+  font: 10px; 
+}
+
 
 .navLogo{
   display:block;

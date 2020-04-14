@@ -2,18 +2,17 @@ import React, {useEffect} from 'react';
 import { Form, Button, Container, Col } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import { Table } from 'reactstrap';
-import { connect } from 'react-redux';
-import {setUsername} from '../redux/actions/userActions.js';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
 
-const Dashboard = ({dispatch, username}) => {
-  const [cookies, setCookies] = useCookies(['first_name']);
-  
+const Dashboard = () => {
+  const [cookies, setCookies] = useCookies([]);
+  const user_privelege_type = cookies.privelege_type;
 
+  //only example from home page.
   useEffect (()=>{
     const fetchData = async() =>{
       // const category = await axios.get('/api/search');
@@ -26,9 +25,8 @@ const Dashboard = ({dispatch, username}) => {
       // set_music_list(music.data);
       // setList(category.data);  
     }
-    dispatch(setUsername(cookies.first_name));
     //fetchData();
-  },[dispatch, cookies.first_name]);  
+  },[]);  
 
 
 
@@ -40,14 +38,14 @@ const Dashboard = ({dispatch, username}) => {
       <h3>Dashboard</h3><br/>
     
       <Tabs defaultActiveKey="postedItem" id="uncontrolled-tab-example">
-        <Tab eventKey="postedItem" title="Items"> 
+        <Tab eventKey="postedItem" title="My Items"> 
           <Table responsive>
               <thead>
                 <tr>
                   <th>Number</th>
                   <th>Name</th>
                   <th>Description</th>
-                  <th>Approve/Deny item</th>
+                  <th>Remove item</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,7 +54,7 @@ const Dashboard = ({dispatch, username}) => {
                   <td>1</td>
                   <td>Table cell</td>
                   <td>Table cell</td>
-                  <td> <Button variant="warning">Remove item</Button>  &nbsp; &nbsp;
+                  <td> <Button variant="warning">Remove</Button>  &nbsp; &nbsp;
                   </td>
                 </tr>
               </tbody>
@@ -132,12 +130,38 @@ const Dashboard = ({dispatch, username}) => {
           </Form>
         <br/><br/><br/><br/><br/>
         </Tab>
-        <Tab eventKey="unapproved" title="Unapproved items">
+      {user_privelege_type !== '1' && 
+        <Tab eventKey="pending" title="Pending items">
         <Table responsive>
               <thead>
                 <tr>
                   <th>Number</th>
                   <th>Name</th>
+                  <th>Description</th>
+                  <th>Remove item</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr>
+                  <td>1</td>
+                  <td>Table cell</td>
+                  <td>Table cell</td>
+                  <td> <Button variant="warning">Remove</Button>  &nbsp; &nbsp;
+                  </td>
+                </tr>
+              </tbody>
+          </Table>
+        </Tab>
+      }
+
+      {user_privelege_type === '1' && 
+        <Tab eventKey="admin_pending" title="Pending items">
+        <Table responsive>
+              <thead>
+                <tr>
+                  <th>Item Number</th>
+                  <th>Item Name</th>
                   <th>Description</th>
                   <th>Approve/Deny item</th>
                 </tr>
@@ -148,12 +172,15 @@ const Dashboard = ({dispatch, username}) => {
                   <td>1</td>
                   <td>Table cell</td>
                   <td>Table cell</td>
-                  <td> <Button variant="warning">Remove item</Button>  &nbsp; &nbsp;
+                  <td> 
+                    <Button variant="warning">Approve</Button>  &nbsp; &nbsp;
+                    <Button variant="warning">Deny</Button>  &nbsp; &nbsp;
                   </td>
                 </tr>
               </tbody>
           </Table>
         </Tab>
+        }
         
         <Tab eventKey="message" title="My Message">
         <Table responsive>
@@ -161,7 +188,7 @@ const Dashboard = ({dispatch, username}) => {
                 <tr>
                   <th>From</th>
                   <th>Message content</th>
-                  <th>Approve/Deny item</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -185,11 +212,4 @@ const Dashboard = ({dispatch, username}) => {
 }
 
 
-const mapStateToProps = state => ({
-  username: state.userReducer.username,
-})
-  export default connect(mapStateToProps)(Dashboard);
-
-
-
-
+  export default Dashboard;

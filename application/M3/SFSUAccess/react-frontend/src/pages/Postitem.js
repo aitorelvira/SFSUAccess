@@ -1,26 +1,16 @@
 import React , {useEffect} from 'react';
 import { useCookies } from 'react-cookie';
 import { Form, Button, Container, Col } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import {setUsername} from '../redux/actions/userActions.js';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
 
-const Postitem = ({ dispatch }) => {
+const Postitem = () => {
   const [cookies, setCookies] = useCookies(['first_name']);
-  
-   useEffect (()=>{
-      if(typeof cookies.first_name !== 'undefined')
-      dispatch(setUsername(cookies.first_name));
-   },[dispatch, cookies.first_name]);
-
-
+  const username = cookies.first_name;
 
   return (
     <div>
-
-
     <Header/>
     {/* Dash content   */}
     <Container>
@@ -89,8 +79,6 @@ const Postitem = ({ dispatch }) => {
               <Col>
               <Button variant="warning" type="submit" block>Post Item</Button>
               </Col>
-                      
-           
             </Form.Row>           
         </Form>
         </Col>
@@ -100,17 +88,7 @@ const Postitem = ({ dispatch }) => {
   );
 }
 
-
-const mapStateToProps = state => ({
-
-  isLoggedIn: state.userReducer.isLoggedIn,
-  username: state.userReducer.username,
-  list: state.userReducer.list,
-  notes: state.notesReducer.notes,
-  searchinfo: state.notesReducer.searchinfo,
-  
-  })
-  export default connect(mapStateToProps)(Postitem);
+  export default Postitem;
 
 
 

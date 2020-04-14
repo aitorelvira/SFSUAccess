@@ -12,7 +12,7 @@ const Header = () => {
     useEffect (()=>{
         if(typeof cookies.username !="undefined")
         setUsername(cookies.first_name)
-      },[cookies.first_name]);
+      },[]);
     
         return (
             <div>

@@ -16,13 +16,12 @@ import '../css/Home.css';
 const Home = ({ dispatch, username, searchinfo}) => {
   const[lists, setList] = useState([]);                   // The list of categroies.
   const[product_name, setProduct_name] = useState('');    // user input for searching.
-  const[cookies, setCookies] = useCookies(['first_name']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
   const [music_list, set_music_list] = useState([]);
   
-
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
@@ -104,11 +103,19 @@ const submitSearch = ()=> {
     return last;
   }
 
+  // Use to log out. Clear the cookies and redux value.
   const logOut =()=>{
-    setCookies('first_name', '');
-    dispatch(setUsername(cookies.first_name)); 
+    removeCookies('first_name');
+    removeCookies('last_name');
+    removeCookies('id');
+    removeCookies('email');
+    removeCookies('privelege_type');
+    dispatch(setUsername('')); 
   }
 
+
+
+  //Use to redirecting to item detail page with an item id.
   const goItemDetail =(id) => {
     window.open("/ItemDetail?itemId=" + id);
   };
@@ -143,7 +150,7 @@ const submitSearch = ()=> {
         {username &&(
           <div>             
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-            <Button variant="warning" href="/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
+            <Button variant="warning" href = "/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
             <Button variant="warning" onClick ={logOut}>Log out</Button>
           </div>
         )}
@@ -180,7 +187,7 @@ const submitSearch = ()=> {
     {/* Here is the default content page */}
     {!searchinfo && (
     <Container>
-      <div>Hi, there. Here are some lastest posted items</div><br/>
+      <div>Lastest items</div><br/>
       <div>Notes category</div><hr/>
       <Row>{
         notes_list.map((x,item_number) => {  

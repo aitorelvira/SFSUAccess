@@ -71,7 +71,6 @@ const Pagination = ({ dispatch, notes }) => {
 
 
 const mapStateToProps = state => ({
-  username: state.userReducer.username,
   notes: state.notesReducer.notes,
   searchinfo: state.notesReducer.searchinfo,
   notes_perpage: state.notesReducer.notes_perpage,
