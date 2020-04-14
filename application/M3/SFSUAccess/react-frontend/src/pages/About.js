@@ -39,7 +39,7 @@ const About = () => {
             </Nav>
                          
              <Navbar.Collapse className="justify-content-end"> 
-             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
+             {'Welcome  '+ username + '   '}&nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
             </Navbar><br/>

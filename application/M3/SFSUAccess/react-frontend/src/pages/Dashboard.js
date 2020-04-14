@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Form, Button, Container, Col, Navbar } from 'react-bootstrap';
+import { Form, Button, Container, Col } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import { Table } from 'reactstrap';
 import Tabs from 'react-bootstrap/Tabs';
