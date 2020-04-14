@@ -19,7 +19,7 @@ const About = () => {
    const[username, setUsername] = useState('');
   
    useEffect (()=>{
-       if(typeof cookies.username !== 'undefined')
+       if(typeof cookies.first_name !== 'undefined')
        setUsername(cookies.first_name)
      },[]);
 
@@ -39,7 +39,7 @@ const About = () => {
             </Nav>
                          
              <Navbar.Collapse className="justify-content-end"> 
-             {'Welcome  '+ username + '   '}&nbsp;&nbsp;
+             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
             </Navbar><br/>

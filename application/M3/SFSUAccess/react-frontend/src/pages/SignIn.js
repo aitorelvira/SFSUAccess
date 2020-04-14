@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Navbar } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../css/Sign.css';
-
-import Header from '../components/Header';
+import Notice from '../components/Notice';
 
 var md5 = require('md5');
 
@@ -62,7 +61,10 @@ const SignIn = () => {
 
   return (
     <div>
-     <Header/>
+     <Navbar bg="dark" variant="dark" className="navbar">
+      <Navbar.Brand>SFSUAccess</Navbar.Brand>          
+      </Navbar><br/>
+     <Notice/>
      <Container className="overAll">
         
         <div className="greeting">Sign in</div><br/>

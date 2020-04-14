@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import axios from 'axios';
-import { Form,Button, Container} from 'react-bootstrap';
+import { Form,Button, Container, Navbar} from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../css/Sign.css';
-import Header from '../components/Header';
+import Notice from '../components/Notice';
 var md5 = require('md5');
 
 const SignUp = () => {
@@ -66,7 +66,10 @@ const SignUp = () => {
 
   return (
     <div>
-     <Header/>
+      <Navbar bg="dark" variant="dark" className="navbar">
+        <Navbar.Brand>SFSUAccess</Navbar.Brand>
+      </Navbar><br/>
+      <Notice/>
      <Container className="overAll">
         <div className="greeting">Sign up</div><br/>
         <div className="message">{message}</div><br/>

@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
-import { Form, Button, Container, Col } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+import { Form, Button, Container, Col, Navbar } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import { Table } from 'reactstrap';
 import Tabs from 'react-bootstrap/Tabs';
@@ -10,33 +11,53 @@ import Header from '../components/Header';
 
 const Dashboard = () => {
   const [cookies, setCookies] = useCookies([]);
+  const [active_item, set_active_item] = useState([]);
+  const [pending_item, set_pending_item] = useState([]);
   const user_privelege_type = cookies.privelege_type;
+  const user_id = cookies.id;
 
-  //only example from home page.
+
   useEffect (()=>{
+    
+    //Based on the user_id, load the following to the Tab
+    //Load all active items -> active_item
+    //Load all pending items -> pending_item
     const fetchData = async() =>{
-      // const category = await axios.get('/api/search');
-      // const video = await axios.get('/api/search/video');
-      // const music = await axios.get('/api/search/music');
-      // const note  = await axios.get('/api/search/notes');
-           
-      // set_notes_list(note.data);
-      // set_video_list(video.data);
-      // set_music_list(music.data);
-      // setList(category.data);  
+      await axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
+                               .then(response =>{
+                                 set_active_item(response.data);
+                               })
+                                .catch(error => console.log(error))
+       await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
+                               .then(response =>{
+                                 set_pending_item(response.data);
+                               })
+                                .catch(error => console.log(error))
     }
-    //fetchData();
+    fetchData();
   },[]);  
 
+
+  
+  // axios.interceptors.response.use((response) =>{
+  //   if(response.status === 200)
+  //     setItem(response.data[0]);
+    
+  //   return response;
+  // },error =>{
+  //   if(error.response.status === 401){
+  //    console.log("error")
+  //   }
+  //   return error;
+  // })
 
 
   return (
     <div>
-     <Header/>
+      <Header/>
     {/* Dash content   */}
     <Container className="dashboard">
-      <h3>Dashboard</h3><br/>
-    
+      <h3>Dashboard</h3> -- The My item, and pending item section are implemented.<br/>
       <Tabs defaultActiveKey="postedItem" id="uncontrolled-tab-example">
         <Tab eventKey="postedItem" title="My Items"> 
           <Table responsive>
@@ -45,18 +66,23 @@ const Dashboard = () => {
                   <th>Number</th>
                   <th>Name</th>
                   <th>Description</th>
+                  <th>Post time</th>
                   <th>Remove item</th>
                 </tr>
               </thead>
               <tbody>
-                
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td> <Button variant="warning">Remove</Button>  &nbsp; &nbsp;
-                  </td>
-                </tr>
+              {active_item.map((item,y) => {             
+                return (
+                  <tr key = {y+1}>
+                    <td> {y+1} </td>
+                    <td> {item.product_name} </td>
+                    <td> {item.product_description} </td> 
+                    <td> {item.date_time_added}</td>
+                    <td> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
+                  </tr>
+                )})      
+              }  
+               
               </tbody>
           </Table>
         </Tab>
@@ -134,22 +160,25 @@ const Dashboard = () => {
         <Tab eventKey="pending" title="Pending items">
         <Table responsive>
               <thead>
-                <tr>
-                  <th>Number</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Remove item</th>
-                </tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Post time</th>
+                <th>Remove item</th>
               </thead>
               <tbody>
-                
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td> <Button variant="warning">Remove</Button>  &nbsp; &nbsp;
-                  </td>
-                </tr>
+                {pending_item.map((item,y) => {
+                  return (
+                    <tr key = {y+1}>
+                    <td> {y+1} </td>
+                    <td> {item.product_name} </td>
+                    <td> {item.product_description} </td> 
+                    <td> {item.date_time_added}</td>
+                    <td> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
+                  </tr>
+                              
+                  )})      
+                }
               </tbody>
           </Table>
         </Tab>

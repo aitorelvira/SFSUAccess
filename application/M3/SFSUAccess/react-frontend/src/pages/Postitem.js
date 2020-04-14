@@ -1,6 +1,6 @@
 import React , {useEffect} from 'react';
 import { useCookies } from 'react-cookie';
-import { Form, Button, Container, Col } from 'react-bootstrap';
+import { Form, Button, Container, Col, Navbar } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -11,7 +11,7 @@ const Postitem = () => {
 
   return (
     <div>
-    <Header/>
+       <Header/>
     {/* Dash content   */}
     <Container>
       <h3>Post an item</h3><hr/><Col md={{ offset: 2 }}>

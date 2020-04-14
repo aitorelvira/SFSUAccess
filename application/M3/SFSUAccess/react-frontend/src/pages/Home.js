@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Navbar, Button, Col, Row } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
+import Image from 'react-bootstrap/Image';
 import { connect } from 'react-redux';
 import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from '../redux/actions/notesActions.js';
 import {setUsername} from '../redux/actions/userActions.js';
@@ -25,15 +26,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
-      const category = await axios.get('/api/search');
-      const video = await axios.get('/api/search/video');
-      const music = await axios.get('/api/search/music');
-      const note  = await axios.get('/api/search/notes');
-           
-      set_notes_list(note.data);
-      set_video_list(video.data);
-      set_music_list(music.data);
-      setList(category.data);  
+      await axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search/video').then(response =>{set_video_list(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search/music').then(response =>{set_music_list(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search/notes').then(response =>{set_notes_list(response.data)}).catch(error=>console.log(error));
     }
     dispatch(setUsername(cookies.first_name));
     fetchData();
@@ -68,7 +64,7 @@ const submitSearch = ()=> {
            dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\' ' + product_name + '\'. '));
         }
       })
-      .catch(error => console.log("error: " + error))
+      .catch(error => console.log(error))
     }
     else{ // search by category + '' as searchKey, return items in that category.
       console.log("Category: " + category +". SearchKey: Null" )
@@ -195,7 +191,7 @@ const submitSearch = ()=> {
             return(
               <Col  sm="3" key={item_number} className = "card_div">
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/>
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -216,7 +212,7 @@ const submitSearch = ()=> {
             return(
               <Col  sm="3" key={item_number} className = "card_div">
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                <Image src="http://www.wallpaperback.net/wp-content/uploads/2018/06/Stock%20Images%20love%20image,%20heart,%20HD,%20island,%20ocean,%20Stock%20Images%20706144221-1024x576.jpg" thumbnail/>
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -236,7 +232,7 @@ const submitSearch = ()=> {
             return(
               <Col  sm="3" key={item_number} className = "card_div">
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <img  src="https://www.w3schools.com/html/img_chania.jpg" alt ="img" className="thumbnails"/>
+                <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" thumbnail/>  
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>

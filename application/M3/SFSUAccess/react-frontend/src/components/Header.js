@@ -7,21 +7,13 @@ import '../css/Home.css';
 
 const Header = () => {
     const[cookies, setCookies] = useCookies(['first_name']);
-    const[username, setUsername] = useState('');
-   
-    useEffect (()=>{
-        if(typeof cookies.username !="undefined")
-        setUsername(cookies.first_name)
-      },[]);
-    
         return (
             <div>
-             <Navbar bg="dark" variant="dark" className="navbar">
+            <Navbar bg="dark" variant="dark" className="navbar">
             <Navbar.Brand>SFSUAccess</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-             
+            <Navbar.Toggle aria-controls="basic-navbar-nav" /> 
              <Navbar.Collapse className="justify-content-end"> 
-             {'Welcome  '+ username + '   '}&nbsp;&nbsp;
+             Welcome{typeof cookies.first_name === 'undefined'? '': ', ' + cookies.first_name }  &nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
             </Navbar><br/>

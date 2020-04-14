@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Button, Col, Row } from 'react-bootstrap';
+import { Navbar, Button } from 'react-bootstrap';
 import Notice from './Notice';
 
 const ErrorPage =()=>{

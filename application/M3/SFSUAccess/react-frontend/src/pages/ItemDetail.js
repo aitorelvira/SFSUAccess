@@ -1,8 +1,8 @@
 import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import Header from '../components/Header';
 // import Footer from '../components/Footer';
+import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
 
