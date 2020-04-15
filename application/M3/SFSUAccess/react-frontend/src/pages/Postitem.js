@@ -1,13 +1,12 @@
-import React , {useEffect} from 'react';
+import React from 'react';
 import { useCookies } from 'react-cookie';
-import { Form, Button, Container, Col, Navbar } from 'react-bootstrap';
+import { Form, Button, Container, Col } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
 
 const Postitem = () => {
   const [cookies, setCookies] = useCookies(['first_name']);
-  const username = cookies.first_name;
 
   return (
     <div>

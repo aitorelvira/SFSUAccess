@@ -183,15 +183,15 @@ const submitSearch = ()=> {
     {/* Here is the default content page */}
     {!searchinfo && (
     <Container>
-      <div>Lastest items</div><br/>
-      <div>Notes category</div><hr/>
+      <div>Lastest items in each category</div><hr/>
+      <div>Notes category</div><br/>
       <Row>{
         notes_list.map((x,item_number) => {  
           if(item_number < 4){ // initialized how many items per page. 
             return(
-              <Col  sm="3" key={item_number} className = "card_div">
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/>
+              <Col  sm="3" key={item_number} >
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" className="thumbnails"/>
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -203,16 +203,16 @@ const submitSearch = ()=> {
           else
             return('');
       })} 
-      </Row>
+      </Row><hr/>
       
-      <div>Video category</div><hr/>
+      <div>Video category</div><br/>
       <Row>{
         video_list.map((x,item_number) => {  
           if(item_number < 4){ // initialized how many items per page. 
             return(
-              <Col  sm="3" key={item_number} className = "card_div">
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <Image src="http://www.wallpaperback.net/wp-content/uploads/2018/06/Stock%20Images%20love%20image,%20heart,%20HD,%20island,%20ocean,%20Stock%20Images%20706144221-1024x576.jpg" thumbnail/>
+              <Col  sm="3" key={item_number} >
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -224,15 +224,15 @@ const submitSearch = ()=> {
           else
             return('');
         })} 
-      </Row>
-      <div>Music category</div><hr/>
+      </Row><hr/>
+      <div>Music category</div><br/>
       <Row>{
         music_list.map((x,item_number) => {  
           if(item_number < 4){ // initialized how many items per page. 
             return(
-              <Col  sm="3" key={item_number} className = "card_div">
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light">
-                <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" thumbnail/>  
+              <Col  sm="3" key={item_number} >
+              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>  
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>

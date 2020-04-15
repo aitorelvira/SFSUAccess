@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Col } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
+import Image from 'react-bootstrap/Image';
 import { Table } from 'reactstrap';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
@@ -57,16 +58,15 @@ const Dashboard = () => {
       <Header/>
     {/* Dash content   */}
     <Container className="dashboard">
-      <h3>Dashboard</h3> -- The My item, and pending item section are implemented.<br/>
+      <h3>My Dashboard</h3><br/>
       <Tabs defaultActiveKey="postedItem" id="uncontrolled-tab-example">
         <Tab eventKey="postedItem" title="My Items"> 
-          <Table responsive>
+          <Table>
               <thead>
                 <tr>
-                  <th>Number</th>
-                  <th>Name</th>
+                  <th>Item#</th>
+                  <th>Thumbnails</th>
                   <th>Description</th>
-                  <th>Post time</th>
                   <th>Remove item</th>
                 </tr>
               </thead>
@@ -74,11 +74,10 @@ const Dashboard = () => {
               {active_item.map((item,y) => {             
                 return (
                   <tr key = {y+1}>
-                    <td> {y+1} </td>
-                    <td> {item.product_name} </td>
-                    <td> {item.product_description} </td> 
-                    <td> {item.date_time_added}</td>
-                    <td> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
+                    <td width ="5%"> {y+1} </td>
+                    <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
+                    <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td> 
+                    <td width ="15%"> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                 )})      
               }  
