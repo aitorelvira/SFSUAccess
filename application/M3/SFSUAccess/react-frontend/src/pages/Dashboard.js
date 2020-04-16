@@ -11,34 +11,67 @@ import Header from '../components/Header';
 
 
 const Dashboard = () => {
+  const [list, setLists] = useState([]);
   const [cookies, setCookies] = useCookies([]);
   const [active_item, set_active_item] = useState([]);
   const [pending_item, set_pending_item] = useState([]);
   const user_privelege_type = cookies.privelege_type;
   const user_id = cookies.id;
+  const [validated, setValidated] = useState(false);
+  const [itemName, setItemName] = useState("");
+  const [category, setCategory] = useState("");
+  const [file, setFile] = useState({});
+  const [fileName, setFileName] = useState("Choose File")
+  const [price, setPrice] = useState(0);
+  const [license, setLicense] = useState("");
+  const [description, setDescription] = useState("");
 
 
   useEffect (()=>{
-    
-    //Based on the user_id, load the following to the Tab
-    //Load all active items -> active_item
-    //Load all pending items -> pending_item
-    const fetchData = async() =>{
-      await axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
-                               .then(response =>{
-                                 set_active_item(response.data);
-                               })
-                                .catch(error => console.log(error))
-       await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
-                               .then(response =>{
-                                 set_pending_item(response.data);
-                               })
-                                .catch(error => console.log(error))
-    }
+//    Based on the user_id, load the following to the Tab
+//    Load all active items -> active_item const fetchData = async() =>{
+//    Load all pending items -> pending_item
+      const fetchData = async() => {
+        await axios.get('/api/search').then(response =>{setLists(response.data)}).catch(error=>console.log(error));
+//        await axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
+//                               .then(response =>{
+//                                 set_active_item(response.data);
+//                               })
+//                                .catch(error => console.log(error))
+//        await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
+//                               .then(response =>{
+//                                 set_pending_item(response.data);
+//                               })
+//                                .catch(error => console.log(error))
+      }
     fetchData();
   },[]);  
 
+  //Invoked after form submission
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if(form.checkValidity() == false) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    setValidated(true);
 
+    //Testing
+    event.preventDefault();
+    console.log(itemName);
+    console.log(category);
+    console.log(file);
+    console.log(price);
+    console.log(license);
+    console.log(description);
+    console.log(list)
+  }
+
+  //Retrieve files object and name in post item form
+  const onChangeFile = (event) => {
+    setFile(event.target.files[0]);
+    setFileName(event.target.files[0].name);
+  }
   
   // axios.interceptors.response.use((response) =>{
   //   if(response.status === 200)
@@ -51,7 +84,6 @@ const Dashboard = () => {
   //   }
   //   return error;
   // })
-
 
   return (
     <div>
@@ -87,20 +119,31 @@ const Dashboard = () => {
         </Tab>
 
         <Tab eventKey="post" title="Post an item">
-          <Form className="postItem">
+          <Form className="postItem" noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Row>
               <Form.Group as={Col} controlId="">
                 <Form.Label>Item Name</Form.Label>
-                <Form.Control placeholder="Enter item name" />
+                <Form.Control
+                    required
+                    type="text"
+                    onChange = {e => setItemName(e.target.value)}
+                    placeholder="Enter item name"
+                />
               </Form.Group>
             </Form.Row>
 
             <Form.Row>            
             <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>Category</Form.Label>
-                <Form.Control as="select" value="Choose...">
-                  <option>Choose...</option>
-                  <option>...</option>
+                <Form.Control
+                    required
+                    onChange = {e => setCategory(e.target.value)}
+                    as="select"
+                >
+                    {list.map((x) => {
+                        return (
+                            <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                    }).reverse()}
                 </Form.Control>
               </Form.Group>
             </Form.Row>
@@ -111,13 +154,15 @@ const Dashboard = () => {
             <div className="input-group">
               <div className="custom-file">
                 <input
+                  required
+                  onChange = {onChangeFile}
                   type="file"
                   className="custom-file-input"
                   id="inputGroupFile01"
                   aria-describedby="inputGroupFileAddon01"
                 />
                 <label className="custom-file-label" htmlFor="inputGroupFile01">
-                  Choose file
+                  {fileName}
                 </label>
               </div>
             </div>
@@ -128,20 +173,39 @@ const Dashboard = () => {
               
             <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>Price</Form.Label>
-                <Form.Control placeholder="Enter item price" />
+                <Form.Control
+                    required
+                    type="text"
+                    onChange = {e => setPrice(e.target.value)}
+                    placeholder="Enter item price"
+                />
               </Form.Group>
             </Form.Row>
 
             <Form.Row>
             <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>License</Form.Label>
-                <Form.Control placeholder="Enter item price" />
+                <Form.Control
+                    required
+                    onChange={e => setLicense(e.target.value)}
+                    as="select"
+                 >
+                      <option value="Choose...">Choose...</option>
+                      <option value="Free use & modification">Free use & modification</option>
+                      <option value="Free to SFSU related projects">Free to SFSU related projects</option>
+                      <option value="For sale">For sale</option>
+                  </Form.Control>
               </Form.Group>
             </Form.Row>
 
             <Form.Group controlId="exampleForm.ControlTextarea1">
               <Form.Label>Item Description</Form.Label>
-              <Form.Control as="textarea" rows="3" />
+              <Form.Control
+                required
+                onChange = {e => setDescription(e.target.value)}
+                as="textarea"
+                rows="3"
+              />
             </Form.Group>
 
             <Form.Row >
