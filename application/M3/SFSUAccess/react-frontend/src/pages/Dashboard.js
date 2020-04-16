@@ -17,14 +17,15 @@ const Dashboard = () => {
   const [pending_item, set_pending_item] = useState([]);
   const user_privelege_type = cookies.privelege_type;
   const user_id = cookies.id;
+  
   const [validated, setValidated] = useState(false);
-  const [itemName, setItemName] = useState("");
-  const [category, setCategory] = useState("");
-  const [file, setFile] = useState({});
-  const [fileName, setFileName] = useState("Choose File")
-  const [price, setPrice] = useState(0);
-  const [license, setLicense] = useState("");
-  const [description, setDescription] = useState("");
+  const [product_name, setItemName] = useState('');
+  const [product_category, setCategory] = useState('');
+  const [product_file, setFile] = useState({});
+  const [product_fileName, setFileName] = useState('')
+  const [product_price, setPrice] = useState(0);
+  const [product_license, setLicense] = useState('');
+  const [product_description, setDescription] = useState('');
 
 
   useEffect (()=>{
@@ -33,19 +34,35 @@ const Dashboard = () => {
 //    Load all pending items -> pending_item
       const fetchData = async() => {
         await axios.get('/api/search').then(response =>{setLists(response.data)}).catch(error=>console.log(error));
-//        await axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
-//                               .then(response =>{
-//                                 set_active_item(response.data);
-//                               })
-//                                .catch(error => console.log(error))
-//        await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
-//                               .then(response =>{
-//                                 set_pending_item(response.data);
-//                               })
-//                                .catch(error => console.log(error))
+        await axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
+                                .then(response =>{
+                                  set_active_item(response.data);
+                                })
+                                .catch(error => console.log(error))
+        await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
+                                .then(response =>{
+                                  set_pending_item(response.data);
+                                })
+                                .catch(error => console.log(error))
       }
     fetchData();
   },[]);  
+
+  const get_activeItem = () =>{
+    axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
+    .then(response =>{
+      set_active_item(response.data);
+    })
+    .catch(error => console.log(error))
+  }
+
+  const get_pendingItem = () =>{
+    axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
+    .then(response =>{
+      set_pending_item(response.data);
+    })
+    .catch(error => console.log(error))
+  }
 
   //Invoked after form submission
   const handleSubmit = (event) => {
@@ -56,15 +73,27 @@ const Dashboard = () => {
     }
     setValidated(true);
 
-    //Testing
-    event.preventDefault();
-    console.log(itemName);
-    console.log(category);
-    console.log(file);
-    console.log(price);
-    console.log(license);
-    console.log(description);
-    console.log(list)
+    event.preventDefault();    
+    let product_author = cookies.first_name;
+    let selected_category = document.getElementById("category");
+    let category_index = selected_category.selectedIndex;
+    let product_category = selected_category.options[category_index].value;
+
+    let select_license = document.getElementById("license");
+    let license_index = select_license.selectedIndex;
+    let product_license = select_license.options[license_index].value;
+    
+    var formData = new FormData();
+    formData.append('product_name', product_name);
+    formData.append('product_author', cookies.first_name);
+    formData.append('product_category', product_category);
+    formData.append('product_description', product_description);
+    formData.append('product_license', product_license);
+    formData.append('user_id', user_id);
+    
+    axios.post('/api/product',formData)
+      .then((response) =>{"Item posted successfully"})
+      .catch((error) => console.log(error))
   }
 
   //Retrieve files object and name in post item form
@@ -72,18 +101,20 @@ const Dashboard = () => {
     setFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
   }
-  
-  // axios.interceptors.response.use((response) =>{
-  //   if(response.status === 200)
-  //     setItem(response.data[0]);
-    
-  //   return response;
-  // },error =>{
-  //   if(error.response.status === 401){
-  //    console.log("error")
-  //   }
-  //   return error;
-  // })
+
+  //Remove active/pending items 
+  const removeItem = (id) =>{
+    axios.delete('/api/product/' + id, {id : id})
+  .then ((response) => { console.log("Item deleted");
+    get_activeItem();
+    get_pendingItem();  
+  })
+  .catch((error) => console.log("Delete error..."))
+  }
+
+  const resetForm = ()=>{
+    document.getElementById("itemForm").reset();
+  }
 
   return (
     <div>
@@ -109,7 +140,7 @@ const Dashboard = () => {
                     <td width ="5%"> {y+1} </td>
                     <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
                     <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td> 
-                    <td width ="15%"> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
+                    <td width ="15%"> <Button variant="warning" id = {item.id} onClick={()=>removeItem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                 )})      
               }  
@@ -119,9 +150,9 @@ const Dashboard = () => {
         </Tab>
 
         <Tab eventKey="post" title="Post an item">
-          <Form className="postItem" noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form className="postItem" noValidate validated={validated} onSubmit={handleSubmit} id = "itemForm">
             <Form.Row>
-              <Form.Group as={Col} controlId="">
+              <Form.Group as={Col} controlId="itemName">
                 <Form.Label>Item Name</Form.Label>
                 <Form.Control
                     required
@@ -133,14 +164,15 @@ const Dashboard = () => {
             </Form.Row>
 
             <Form.Row>            
-            <Form.Group as={Col} controlId="formGridState">
+            <Form.Group as={Col} controlId="category">
                 <Form.Label>Category</Form.Label>
                 <Form.Control
                     required
-                    onChange = {e => setCategory(e.target.value)}
+                    // onChange = {e => setCategory(e.target.value)}
                     as="select"
                 >
                     {list.map((x) => {
+                      if(x.product_category_name != 'All')
                         return (
                             <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                     }).reverse()}
@@ -149,7 +181,7 @@ const Dashboard = () => {
             </Form.Row>
 
             <Form.Row>
-            <Form.Group  as={Col} controlId="formGridAddress1">
+            <Form.Group  as={Col} controlId="image">
             <Form.Label>Upload item image</Form.Label>
             <div className="input-group">
               <div className="custom-file">
@@ -162,7 +194,7 @@ const Dashboard = () => {
                   aria-describedby="inputGroupFileAddon01"
                 />
                 <label className="custom-file-label" htmlFor="inputGroupFile01">
-                  {fileName}
+                  {product_fileName}
                 </label>
               </div>
             </div>
@@ -171,7 +203,7 @@ const Dashboard = () => {
 
             <Form.Row>
               
-            <Form.Group as={Col} controlId="formGridState">
+            <Form.Group as={Col} controlId="price">
                 <Form.Label>Price</Form.Label>
                 <Form.Control
                     required
@@ -183,14 +215,12 @@ const Dashboard = () => {
             </Form.Row>
 
             <Form.Row>
-            <Form.Group as={Col} controlId="formGridState">
+            <Form.Group as={Col} controlId="license">
                 <Form.Label>License</Form.Label>
                 <Form.Control
                     required
-                    onChange={e => setLicense(e.target.value)}
                     as="select"
                  >
-                      <option value="Choose...">Choose...</option>
                       <option value="Free use & modification">Free use & modification</option>
                       <option value="Free to SFSU related projects">Free to SFSU related projects</option>
                       <option value="For sale">For sale</option>
@@ -198,7 +228,7 @@ const Dashboard = () => {
               </Form.Group>
             </Form.Row>
 
-            <Form.Group controlId="exampleForm.ControlTextarea1">
+            <Form.Group controlId="itemDescription">
               <Form.Label>Item Description</Form.Label>
               <Form.Control
                 required
@@ -210,7 +240,7 @@ const Dashboard = () => {
 
             <Form.Row >
               <Col>
-              <Button variant="warning" type="submit" block>Cancel</Button> 
+              <Button variant="warning" onClick = {resetForm} block>Cancel</Button> 
               </Col>
               <Col>
               <Button variant="warning" type="submit" block>Post Item</Button>
@@ -237,7 +267,7 @@ const Dashboard = () => {
                     <td> {item.product_name} </td>
                     <td> {item.product_description} </td> 
                     <td> {item.date_time_added}</td>
-                    <td> <Button variant="warning" id = {item.id}>Remove</Button>  &nbsp; &nbsp;</td>
+                    <td> <Button variant="warning" id = {item.id} onClick = {()=>removeItem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                               
                   )})      
