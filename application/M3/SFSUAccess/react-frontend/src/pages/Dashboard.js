@@ -15,8 +15,10 @@ const Dashboard = () => {
   const [cookies, setCookies] = useCookies([]);
   const [active_item, set_active_item] = useState([]);
   const [pending_item, set_pending_item] = useState([]);
+  const [admin_pending_item, set_admin_pending_item] = useState([]);
   const user_privelege_type = cookies.privelege_type;
   const user_id = cookies.id;
+
   
   const [validated, setValidated] = useState(false);
   const [product_name, setItemName] = useState('');
@@ -30,7 +32,7 @@ const Dashboard = () => {
 
   useEffect (()=>{
 //    Based on the user_id, load the following to the Tab
-//    Load all active items -> active_item const fetchData = async() =>{
+//    Load all active items -> active_item 
 //    Load all pending items -> pending_item
       const fetchData = async() => {
         await axios.get('/api/search').then(response =>{setLists(response.data)}).catch(error=>console.log(error));
@@ -64,7 +66,8 @@ const Dashboard = () => {
     .catch(error => console.log(error))
   }
 
-  //Invoked after form submission
+
+  //Post item function. Invoked after form submission
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if(form.checkValidity() == false) {
@@ -73,8 +76,8 @@ const Dashboard = () => {
     }
     setValidated(true);
 
-    event.preventDefault();    
-    let product_author = cookies.first_name;
+    event.preventDefault();
+    
     let selected_category = document.getElementById("category");
     let category_index = selected_category.selectedIndex;
     let product_category = selected_category.options[category_index].value;
@@ -83,6 +86,8 @@ const Dashboard = () => {
     let license_index = select_license.selectedIndex;
     let product_license = select_license.options[license_index].value;
     
+
+    //Put all information in formData for api call.
     var formData = new FormData();
     formData.append('product_name', product_name);
     formData.append('product_author', cookies.first_name);
@@ -92,7 +97,10 @@ const Dashboard = () => {
     formData.append('user_id', user_id);
     
     axios.post('/api/product',formData)
-      .then((response) =>{"Item posted successfully"})
+      .then((response) =>{
+        console.log("Item posted successfully");
+        get_pendingItem();
+      })
       .catch((error) => console.log(error))
   }
 
@@ -105,13 +113,26 @@ const Dashboard = () => {
   //Remove active/pending items 
   const removeItem = (id) =>{
     axios.delete('/api/product/' + id, {id : id})
-  .then ((response) => { console.log("Item deleted");
-    get_activeItem();
-    get_pendingItem();  
-  })
-  .catch((error) => console.log("Delete error..."))
+    .then ((response) => { console.log("Item deleted");
+      get_activeItem();
+      get_pendingItem();  
+    })
+    .catch((error) => console.log("Delete error..."))
   }
 
+  //Aprove, deny item function for Admin
+  const decision =(product_id, decision)=>{
+    console.log(product_id + " " + decision)
+    var formData = new FormData();
+    formData.append('product_id', product_id);
+    formData.append('decision', decision);
+    axios.post('/api/admin/review', formData)
+      .then ((response) => { console.log("Item decision: " + decision); 
+      })
+      .catch((error) => console.log("Decision error..."))
+  }
+  
+  //Reset user input on post item form.
   const resetForm = ()=>{
     document.getElementById("itemForm").reset();
   }
@@ -121,9 +142,9 @@ const Dashboard = () => {
       <Header/>
     {/* Dash content   */}
     <Container className="dashboard">
-      <h3>My Dashboard</h3><br/>
-      <Tabs defaultActiveKey="postedItem" id="uncontrolled-tab-example">
-        <Tab eventKey="postedItem" title="My Items"> 
+      <h3>{user_privelege_type ==='1'? "Administrator Dashboard" : "My Dashboard"}</h3><br/>
+      <Tabs defaultActiveKey="listItem" id="dashboard">
+        <Tab eventKey="listItem" title="My Items"> 
           <Table>
               <thead>
                 <tr>
@@ -143,13 +164,12 @@ const Dashboard = () => {
                     <td width ="15%"> <Button variant="warning" id = {item.id} onClick={()=>removeItem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                 )})      
-              }  
-               
+              }            
               </tbody>
           </Table>
         </Tab>
 
-        <Tab eventKey="post" title="Post an item">
+        <Tab eventKey="postItem" title="Post an item">
           <Form className="postItem" noValidate validated={validated} onSubmit={handleSubmit} id = "itemForm">
             <Form.Row>
               <Form.Group as={Col} controlId="itemName">
@@ -295,8 +315,8 @@ const Dashboard = () => {
                   <td>Table cell</td>
                   <td>Table cell</td>
                   <td> 
-                    <Button variant="warning">Approve</Button>  &nbsp; &nbsp;
-                    <Button variant="warning">Deny</Button>  &nbsp; &nbsp;
+                    <Button variant="warning" onClick = {()=>decision('24','Approve')}>Approve</Button>  &nbsp; &nbsp;
+                    <Button variant="warning" onClick = {()=>decision('25','Deny')}>Deny</Button>  &nbsp; &nbsp;
                   </td>
                 </tr>
               </tbody>

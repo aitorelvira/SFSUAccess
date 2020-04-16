@@ -1,7 +1,7 @@
 import React , {useEffect, useState} from 'react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
-import { Form, Button, Container, Col, Navbar } from 'react-bootstrap';
+import { Form, Button, Container, Col } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -28,7 +28,7 @@ const Postitem = () => {
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
-    if(form.checkValidity() == false) {
+    if(form.checkValidity() === false) {
         event.preventDefault();
         event.stopPropagation();
     }
