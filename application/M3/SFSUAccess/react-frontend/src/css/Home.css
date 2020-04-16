@@ -63,17 +63,11 @@
     height:180px;
     overflow: hidden;
 }
-.thumbnails img {
-  min-width:286px;
-  min-height:180px;
-  width:286px
-  }
 
-
-  .card_div{
-    padding-bottom:20px;
+.card_div{
     cursor:pointer;
 }
+
 .card_text{
     overflow: hidden;
     text-overflow: ellipsis;

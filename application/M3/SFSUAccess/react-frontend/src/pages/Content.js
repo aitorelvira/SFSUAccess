@@ -17,15 +17,15 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const searchResult =  notes_perpage.map((x,item_number) => {  
     if(item_number < 8){ // initialized how many items per page. 
     return(
-      <Col  sm="3" key={item_number} className = "card_div">
-      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" >
+      <Col  sm="3" key={item_number} >
+      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
         <Image src="https://www.w3schools.com/html/img_chania.jpg" thumbnail/>
           <CardBody>
           <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
           <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
           <CardText className="card_date">04/14/20</CardText>
           </CardBody>
-     </Card>
+     </Card><br/>
      </Col> 
     )}
     else
