@@ -55,7 +55,7 @@ const SignUp = () => {
       setMessage("Passwords don't match, please confirm your password again.");
     }
     else{
-      if(email.endsWith("@mail.sfsu.edu")){
+      if(email.includes("@") && email.endsWith("sfsu.edu")){
         event.preventDefault();
         axios.post('/api/register',{
           email,
