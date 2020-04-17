@@ -1,5 +1,6 @@
 import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
+import ReactGA from "react-ga";
 import axios from 'axios';
 import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText } from 'reactstrap';
 import { Navbar, Button, Col, Row } from 'react-bootstrap';
@@ -106,6 +107,7 @@ const submitSearch = ()=> {
     removeCookies('id');
     removeCookies('email');
     removeCookies('privelege_type');
+    ReactGA.initialize('UA-163580713-1'); // reinitialize GA on log out to reset clientId
     dispatch(setUsername('')); 
   }
 
