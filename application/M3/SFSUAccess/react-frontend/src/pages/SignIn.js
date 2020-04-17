@@ -14,10 +14,10 @@ const SignIn = () => {
   const [isLoading, setLoading] = useState(false);          //Loading state for the login button
   const [email, setEmail] = useState('');               
   const [password, setPassword] = useState('');
+  const [validated, setValidated] = useState(false);
 
   //cookies
   const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
-
 
   axios.interceptors.response.use((response) =>{
     if(response.status === 202){
@@ -45,28 +45,35 @@ const SignIn = () => {
     }
     return error;
   })
-  
 
- // user login function..
- const login = () =>{
+ const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if(form.checkValidity() == false) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    setValidated(true);
+
+    // user login function..
     setEmail(email.trim().toLowerCase());
     setPassword(password.trim().toLowerCase());
 
-  if(!email || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
-    setMessage("Oops ! Email and password are required.")
-  }
-  else{
-    if(email.endsWith("@mail.sfsu.edu")){
-      axios.post('/api/login',{
-        email, password
-      })
-      .catch(err => console.log(err));
-    }
-    else
-      setMessage('Invalid email format. Please enter a SFSU email.');
-  }
-}
+    if(!email || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
+        setMessage("Oops ! Email and password are required.")
+    }else{
+        if(email.endsWith("@mail.sfsu.edu")){
+            axios.post('/api/login',{
+                email, password
+            })
+            .catch(err => console.log(err));
 
+            //prevents browser from reload after submission
+            event.preventDefault();
+        }else{
+            setMessage('Invalid email format. Please enter a SFSU email.');
+        }
+    }
+ }
 
   return (
     <div>
@@ -78,15 +85,15 @@ const SignIn = () => {
         
         <div className="greeting">Sign in</div><br/>
         <div className="message">{message}</div><br/>
-        <Form>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Form.Group controlId="email">
-            <Form.Control type="text" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
+            <Form.Control required type="text" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
           </Form.Group>
 
           <Form.Group controlId="password">
-            <Form.Control type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
+            <Form.Control required type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
           </Form.Group>
-              <Button variant="warning" block onClick={login} disabled = {isLoading? true : false}>{isLoading ? 'logged in successfully...': 'SIGN IN'}</Button>    
+              <Button variant="warning" block type="submit">{isLoading ? 'logged in successfully...': 'SIGN IN'}</Button>
           {!isLoading &&(    
               <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button> 
           )}        
