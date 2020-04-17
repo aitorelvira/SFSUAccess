@@ -102,7 +102,7 @@ def register_user():
     sql = "SELECT email FROM registered_users WHERE email = %s"
     if not cur.execute(sql,email):
         #user is not registered yet, may proceed with registration, TODO 2 as the final value sets privelege_type to Student by default
-        sql = "INSERT INTO registered_users(email,password,first_name,last_name,privelege_type) VALUES (%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO registered_users(email,password,first_name,last_name,privelege_type) VALUES (%s,%s,%s,%s,2)"
         cur.execute(sql,(email,password,first_name,last_name,privelege_type))
         connection.commit()
         status_code = Response(status=201)
