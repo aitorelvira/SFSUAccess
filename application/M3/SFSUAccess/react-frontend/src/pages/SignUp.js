@@ -14,7 +14,7 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
-
+  const [validated, setValidated] = useState(false);
 
   axios.interceptors.response.use((response) =>{
       if(response.status === 201){
@@ -28,9 +28,16 @@ const SignUp = () => {
     }
     return error;
   })
-  // User regiter function
-  const register = ()=>{
-    // get user inputs 
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if(form.checkValidity() == false) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    setValidated(true);
+
+    //submit user registration
     setFirst_name(first_name.trim().toLowerCase());
     setLast_name(last_name.trim().toLowerCase());
     setEmail(email.trim().toLowerCase());
@@ -40,8 +47,7 @@ const SignUp = () => {
     let index = select.selectedIndex;
     let privelege_type = select.options[index].value;
 
-
-    if(!first_name || !last_name || !email || !password || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0 || 
+    if(!first_name || !last_name || !email || !password || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0 ||
     confirm_password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
       setMessage("Oops ! Missing information, all fields are required.")
     }
@@ -50,6 +56,7 @@ const SignUp = () => {
     }
     else{
       if(email.endsWith("@mail.sfsu.edu")){
+        event.preventDefault();
         axios.post('/api/register',{
           email,
           first_name,
@@ -58,6 +65,9 @@ const SignUp = () => {
           privelege_type
         })
         .catch(err => console.log(err));
+
+        //prevents browser from reload after submission
+        event.preventDefault();
       }
       else
         setMessage('Invalid email format. Please enter a SFSU email.');
@@ -73,25 +83,25 @@ const SignUp = () => {
      <Container className="overAll">
         <div className="greeting">Sign up</div><br/>
         <div className="message">{message}</div><br/>
-        <Form>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Form.Group controlId="first_name">
-            <Form.Control type="text" placeholder="First Name *" onChange = {e=> setFirst_name(e.target.value)}/>
+            <Form.Control required type="text" placeholder="First Name *" onChange = {e=> setFirst_name(e.target.value)}/>
           </Form.Group>
 
           <Form.Group controlId="last_name">
-            <Form.Control type="text" placeholder="Last Name *" onChange = {e=> setLast_name(e.target.value)}/>
+            <Form.Control required type="text" placeholder="Last Name *" onChange = {e=> setLast_name(e.target.value)}/>
           </Form.Group>
 
           <Form.Group controlId="email">
-            <Form.Control type="email" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
+            <Form.Control required type="email" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
           </Form.Group>
 
           <Form.Group controlId="password">
-            <Form.Control type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
+            <Form.Control required type="password" placeholder="Password *" onChange = {e=> setPassword(md5(e.target.value))}/>
           </Form.Group>
 
           <Form.Group controlId="confirm_password">
-            <Form.Control type="password" placeholder="Confirm Password *" onChange = {e=> setConfirm_password(md5(e.target.value))}/>
+            <Form.Control required type="password" placeholder="Confirm Password *" onChange = {e=> setConfirm_password(md5(e.target.value))}/>
           </Form.Group>
 
           <Form.Group>Please choose your account type&nbsp;&nbsp;&nbsp;&nbsp;
@@ -102,13 +112,13 @@ const SignUp = () => {
           </select>
           </Form.Group><br/>
           <Form.Group>
-            <Button variant="warning" block onClick={register} disabled = {isLoading? true : false}>{isLoading ? 'Registered successfully...': 'SIGN UP'}</Button>
-          {!isLoading &&(     
+            <Button variant="warning" block type="submit">{isLoading ? 'Registered successfully...': 'SIGN UP'}</Button>
+          {!isLoading &&(
             <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>
           )}
           <div className="rightlinks">
-            <Link  to = "/SignIn" >Already have an account? Sign in</Link> 
-          </div>     
+            <Link  to = "/SignIn" >Already have an account? Sign in</Link>
+          </div>
           </Form.Group>
       </Form>
     </Container>
