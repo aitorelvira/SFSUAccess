@@ -7,7 +7,7 @@ import pymysql
 connection = pymysql.connect(host='csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com',
                              user='admin',
                              password='rdsmysql',
-                             db='testdb2',
+                             db='testdb',
                              cursorclass=pymysql.cursors.DictCursor)
 cur = connection.cursor()
 app = Flask(__name__)
