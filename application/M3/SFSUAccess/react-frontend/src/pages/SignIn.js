@@ -53,7 +53,7 @@ const SignIn = () => {
         event.stopPropagation();
     }
     setValidated(true);
-
+    event.preventDefault();
     // user login function..
     setEmail(email.trim().toLowerCase());
     setPassword(password.trim().toLowerCase());

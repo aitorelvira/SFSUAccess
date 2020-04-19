@@ -36,7 +36,7 @@ const SignUp = () => {
         event.stopPropagation();
     }
     setValidated(true);
-
+    event.preventDefault();
     //submit user registration
     setFirst_name(first_name.trim().toLowerCase());
     setLast_name(last_name.trim().toLowerCase());
