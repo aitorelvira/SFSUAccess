@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import ReactGA from "react-ga";
+import { createBrowserHistory } from 'history';
 // import './App.css';
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -12,8 +13,16 @@ import ItemDetail from "./pages/ItemDetail";
 import Error from "./components/ErrorPage"
 import './css/Home.css';
 
+const history = createBrowserHistory();
+
+// page view tracking
+history.listen(location => {
+  ReactGA.set({ page: location.pathname }); // Update current page
+  ReactGA.pageview(window.location.pathname + window.location.search); // Record page view
+});
+
 function App() {
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    //ReactGA.pageview(window.location.pathname + window.location.search);
     return (
         <BrowserRouter>
             <div>

@@ -7,7 +7,7 @@ import pymysql
 connection = pymysql.connect(host='csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.com',
                              user='admin',
                              password='rdsmysql',
-                             db='testdb',
+                             db='t3',
                              cursorclass=pymysql.cursors.DictCursor)
 cur = connection.cursor()
 app = Flask(__name__)
@@ -96,14 +96,13 @@ def register_user():
     password = form['password']
     first_name = form['first_name']
     last_name = form['last_name']
-    privelege_type = form['privelege_type']
     # TODO Add functionality to discern from Student to Faculty, need React team to update form to reflect that
     #check if unregistered first
     sql = "SELECT email FROM registered_users WHERE email = %s"
     if not cur.execute(sql,email):
         #user is not registered yet, may proceed with registration, TODO 2 as the final value sets privelege_type to Student by default
-        sql = "INSERT INTO registered_users(email,password,first_name,last_name,privelege_type) VALUES (%s,%s,%s,%s,%s)"
-        cur.execute(sql,(email,password,first_name,last_name,privelege_type))
+        sql = "INSERT INTO registered_users(email,password,first_name,last_name,privelege_type) VALUES (%s,%s,%s,%s,2)"
+        cur.execute(sql,(email,password,first_name,last_name))
         connection.commit()
         status_code = Response(status=201)
         return status_code
@@ -284,6 +283,7 @@ def read_chatroom_messages_by_id(chatroom_id):
     connection.commit()
     status_code = Response(status=200)
     return status_code
-  
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -61,7 +61,7 @@ const SignIn = () => {
     if(!email || password.localeCompare('d41d8cd98f00b204e9800998ecf8427e') === 0){
         setMessage("Oops ! Email and password are required.")
     }else{
-        if(email.endsWith("@mail.sfsu.edu")){
+        if(email.includes("@") && email.endsWith("sfsu.edu")){
             axios.post('/api/login',{
                 email, password
             })
