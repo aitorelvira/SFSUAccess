@@ -20,34 +20,6 @@ const SignIn = () => {
   //cookies
   const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
 
-//  axios.interceptors.response.use((response) =>{
-//    if(response.status === 202){
-//      let res = response.data[0];
-//      setCookies('id', res.id, { expires: 0});
-//      setCookies('email', res.email, { expires: 0});
-//      setCookies('first_name', res.first_name, { expires: 0});
-//      setCookies('last_name', res.last_name, { expires: 0});
-//      setCookies('privelege_type', res.privelege_type, { expires: 0});
-//      setLoading(true);
-//      ReactGA.initialize('UA-163580713-1', { // set new tracking id for logged in user
-//            debug: true,
-//            titleCase: false,
-//            gaOptions: {
-//                userId: res.id,
-//                clientId: res.id
-//            }
-//        });
-//      setTimeout(function(){ window.location.href = '/'},1000);
-//    }
-//    return response;
-//  },error =>{
-//    if(error.response.status === 401){
-//      setMessage('User name not found, or incorrect password.');
-//    }
-//    return error;
-//  })
-
-
   return (
     <Formik
         initialValues={{email: '', password: ''}}
