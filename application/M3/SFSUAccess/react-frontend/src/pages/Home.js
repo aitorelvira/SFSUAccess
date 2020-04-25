@@ -117,6 +117,11 @@ const submitSearch = ()=> {
   const goItemDetail =(id) => {
     window.open("/ItemDetail?itemId=" + id);
   };
+
+  //Formatting the MySQL date on the card
+  const formatDate =(dateString)=>{
+    return dateString.replace('GMT','')
+  }
       
   return (  
     <div>
@@ -197,7 +202,7 @@ const submitSearch = ()=> {
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">04/14/20</CardText>
+                <CardText className="card_date">{ formatDate(x.date_time_added)}</CardText>
                 </CardBody>
             </Card>
             </Col> 
@@ -218,7 +223,7 @@ const submitSearch = ()=> {
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">04/14/20</CardText>
+                <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
                 </CardBody>
             </Card>
             </Col> 
@@ -238,7 +243,7 @@ const submitSearch = ()=> {
                 <CardBody>
                 <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">04/14/20</CardText>
+                <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
                 </CardBody>
             </Card>
             </Col>  

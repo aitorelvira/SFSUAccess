@@ -31,7 +31,7 @@ const SignUp = () => {
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
-    if(form.checkValidity() == false) {
+    if(form.checkValidity() === false) {
         event.preventDefault();
         event.stopPropagation();
     }

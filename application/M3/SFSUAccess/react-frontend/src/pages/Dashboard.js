@@ -70,7 +70,7 @@ const Dashboard = () => {
   //Post item function. Invoked after form submission
   const handleSubmit = (event) => {
     const form = event.currentTarget;
-    if(form.checkValidity() == false) {
+    if(form.checkValidity() === false) {
         event.preventDefault();
         event.stopPropagation();
     }
@@ -192,7 +192,7 @@ const Dashboard = () => {
                     as="select"
                 >
                     {list.map((x) => {
-                      if(x.product_category_name != 'All')
+                      if(x.product_category_name !== 'All')
                         return (
                             <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                     }).reverse()}
@@ -337,68 +337,11 @@ const Dashboard = () => {
                 
                 <tr>
                   <td width="10%">User one</td>
-                  <td width="65%">Hello CoSE Students,
-
-Hope all is well with you and your family,
-
-How are your remotely-taught classes?
-
-CoSE is offering many different scholarships for the upcoming academic year 2020-2021.
-
-You can search for scholarships at sfsu.academicworks.com and put in the scholarship name.
-
-ARCS Scholarships ($10,000)
-Awarded to ten graduate students in the Departments of Biology, Chemistry & Biochemistry, Computer Science, Earth & Climate Sciences, Geography & Environment, Mathematics, Physics & Astronomy
- 
-
-Robert W. Maxwell Memorial Scholarships ($4,000)
-Awarded to three to five graduate students in the Departments of Biology, Chemistry & Biochemistry, Computer Science, Earth & Climate Sciences, Engineering, Geography & Environment, Mathematics, Physics & Astronomy, Psychology
-
-College of Science & Engineering Advisory Board Scholarship ($2,500)
-Awarded to one graduate student in the College of Science & Engineering
-
- 
-
-Bruce A. Rosenblatt Community Service Scholarships ($1,250)
-Awarded to four undergraduate or graduate students with 100 hours of Community Service
- 
-
-James C. Kelley Scholarship ($1,000)
-Awarded to one undergraduate or graduate student in the field of Marine or Environmental science
- 
-
-David & Cary Cassa Memorial Scholarships ($1,000)
-Awarded to two College of Science & Engineering undergraduate students who live in San Francisco
- 
-
-Kenneth Fong Biology Scholarship ($1,250)
-Awarded to one undergraduate student in the Department of Biology
- 
-
-C.Y. Chow Memorial Scholarships ($1,000)
-Awarded to two undergraduate students in the Department of Computer Science or Mathematics
- 
-
-Pamela Fong Mathematics Scholarship ($1,250)
-Awarded to one undergraduate student in the Department of Mathematics
-
-Stay healthy and be safe.
-
-Best,
-
-Lannie
-
-Lannie Nguyen
-
-Manager, Special Events and Alumni Relations
-
-College of Science & Engineering
-
-San Francisco State University
-
-1600 Holloway Avenue
-
-San Francisco, CA 94132</td>
+                  <td width="65%">abcdefghijklmnopqrstuvwxyz
+                  abcdefghijklmnopqrstuvwxyz
+                  abcdefghijklmnopqrstuvwxyz
+                  abcdefghijklmnopqrstuvwxyz
+                  abcdefghijklmnopqrstuvwxyz</td>
                   <td> <Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
                        <Button variant="warning">Remove</Button>
                   </td>

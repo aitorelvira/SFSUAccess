@@ -169,13 +169,13 @@ def post_product():
     return status_code
 
 #rudimentary file upload. no metadata or preview logic yet. TODO: add preview library, link to post_product, save to database DL link
-@app.route('/api/upload', methods = ['POST'])
-def upload_file():
-    if request.method == 'POST':
-        f = request.files['file']
-        f.save('/var/www/reactsite/'+f.filename)
-	status_code = Response(status=201)
-    return status_code
+# @app.route('/api/upload', methods = ['POST'])
+# def upload_file():
+#     if request.method == 'POST':
+#         f = request.files['file']
+#         f.save('/var/www/reactsite/'+f.filename)
+# 	status_code = Response(status=201)
+#     return status_code
   
 #admin approval on pending posts
 #POST REQUEST USING FORM-DATA

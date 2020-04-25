@@ -48,7 +48,7 @@ const SignIn = () => {
 
  const handleSubmit = (event) => {
     const form = event.currentTarget;
-    if(form.checkValidity() == false) {
+    if(form.checkValidity() === false) {
         event.preventDefault();
         event.stopPropagation();
     }
@@ -86,6 +86,7 @@ const SignIn = () => {
         <div className="greeting">Sign in</div><br/>
         <div className="message">{message}</div><br/>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        
           <Form.Group controlId="email">
             <Form.Control required type="text" placeholder="Email Address *" onChange = {e=> setEmail(e.target.value)}/>
           </Form.Group>
