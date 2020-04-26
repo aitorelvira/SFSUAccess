@@ -12,6 +12,12 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const goItemDetail =(id) => {
     window.open("/ItemDetail?itemId=" + id);
   };
+
+  
+  //Formatting the MySQL date on the card
+  const formatDate =(dateString)=>{
+    return dateString.replace('GMT','')
+  }
  
 
   const searchResult =  notes_perpage.map((x,item_number) => {  
@@ -23,7 +29,7 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
           <CardBody>
           <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
           <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-          <CardText className="card_date">04/14/20</CardText>
+          <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
           </CardBody>
      </Card><br/>
      </Col> 

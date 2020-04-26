@@ -1,169 +1,289 @@
 import React , {useEffect, useState} from 'react';
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
-import { Form, Button, Container, Col } from 'react-bootstrap';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { Form, Button, Container, Col, Alert } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
-
 const Postitem = () => {
-  const [cookies, setCookies] = useCookies(['first_name']);
-  const username = cookies.first_name;
-  const [list, setList] = useState([]);
-  const [validated, setValidated] = useState(false);
-  const [itemName, setItemName] = useState("");
-  const [category, setCategory] = useState("");
-  const [file, setFile] = useState({});
-  const [fileName, setFileName] = useState("Choose File")
-  const [price, setPrice] = useState(0);
-  const [license, setLicense] = useState("");
-  const [description, setDescription] = useState("");
+    const [cookies, setCookies, removeCookies] = useCookies(['first_name', 'post_item']);
+    const username = cookies.first_name;
+    const [list, setList] = useState([]);
+    const [show, setShow] = useState(false);
+    const [product_name, setItemName] = useState('');
+    const [product_category, setCategory] = useState('');
+    const [product_file, setFile] = useState({});
+    const [product_fileName, setFileName] = useState('Upload File here...')
+    const [product_price, setPrice] = useState(0);
+    const [product_license, setLicense] = useState('');
+    const [product_description, setDescription] = useState('');
 
-  useEffect (() => {
-     const fetchData = async() =>{
-      await axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+
+
+
+    const history = useHistory();
+    const user_id = cookies.id;
+    const user_isloggedin = cookies.isLoggedin;
+
+    useEffect (() => {
+        axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+        console.log("isLoggedin? "+ user_isloggedin);
+
+        if(typeof cookies.post_item !== 'undefined'){
+            setItemName(cookies.post_item.product_name);
+            setCategory(cookies.post_item.product_category);
+            setLicense(cookies.post_item.product_license);
+            setDescription(cookies.post_item.product_description);
+        }
+    },[]);
+
+  //Reset user input on post item form.
+  const resetForm = ()=>{
+    document.getElementById("itemForm").reset();
+    setFileName("Upload File here...");
+  }
+
+  const postItem =()=>{
+    var form_data = new FormData();
+     for ( var key in cookies.post_item ) {
+     form_data.append(key, cookies.post_item[key]);
      }
-    fetchData();
-  },[]);
+     form_data.append("user_id", user_id);
+     form_data.append("product_author", cookies.first_name);
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if(form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    setValidated(true);
-
-    //testing
-    event.preventDefault();
-    console.log(itemName);
-    console.log(category);
-    console.log(file);
-    console.log(price);
-    console.log(license);
-    console.log(description);
-    console.log(list)
+    axios.post('/api/product',form_data)
+        .then((response) =>{
+            console.log("Item posted successfully");
+        })
+        .catch((error) => console.log(error))  
+   
+     // display message when an item posted.
+     alert(JSON.stringify(product_name) + "has been posted successfully.");
+     removeCookies('post_item');
+     setShow(false);
   }
 
-  const onChangeFile = (event) => {
-    setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name);
+
+  const cancelItem = () =>{
+    removeCookies('post_item');
+    setCategory('');
+    setDescription('');
+    setLicense('');
+    setItemName('')
+    setShow(false);
   }
 
-  return (
-    <div>
-       <Header/>
-    {/* Dash content   */}
-    <Container>
-      <h3>Post an item</h3><hr/><Col md={{ offset: 2 }}>
-        <Form className="postItem" noValidate validated={validated} onSubmit={handleSubmit}>
-            <Form.Row>
-              <Form.Group as={Col} controlId="">
-                <Form.Label>Item Name</Form.Label>
-                <Form.Control
-                    required
-                    type="text"
-                    onChange = {e => setItemName(e.target.value)}
-                    placeholder="Enter item name"
-                />
-              </Form.Group>
-            </Form.Row>
 
-            <Form.Row>
-            <Form.Group as={Col} controlId="formGridState">
-                <Form.Label>Category</Form.Label>
-                 <Form.Control
-                    required
-                    onChange = {e => setCategory(e.target.value)}
-                    as="select"
-                >
-                {list.map((x) => {
-                    return (
-                        <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
-                }).reverse()}
+    return (
+        <Formik
+        initialValues={{product_name: product_name, product_category: product_category, 
+        // file: null, item_price: '', 
+        product_license: product_license, product_description: product_description }}
+        validationSchema={Yup.object({
+            product_name: Yup.string()
+                .max(15, 'Must be 15 characters or less')
+                .required('Required'),
+            product_category: Yup.string()
+                .oneOf(['Notes', 'Video', 'Music'])
+                .required('Please indicate your category preference'),
+            // file: Yup.mixed()
+            //     .required('A file is required'),
+            // price: Yup.number()
+            //     .required("Please enter a price")
+            //     .positive("Must be a position number"),
+            product_license: Yup.string()
+                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
+                .required("Please indicate your license preference"),
+            product_description: Yup.string()
+                .max(500, 'Must be 500 characters or less')
+                .required('Please enter description'),
+        })}
+        
+        onSubmit={(values, {setSubmitting}) => {
+        if(user_isloggedin){
+           values.user_id = user_id;
+           values.product_author = cookies.first_name;
+           //convert json obj to formdata.
+           var form_data = new FormData();
+            for ( var key in values ) {
+            form_data.append(key, values[key]);
+            }
+           axios.post('/api/product',form_data)
+               .then((response) =>{
+                   console.log("Item posted successfully");
+               })
+               .catch((error) => console.log(error))  
+          
+            // display message when an item posted.
+            alert(JSON.stringify(values.product_name) + "has been posted successfully.");
+            removeCookies('post_item');
+            resetForm();      
+            setSubmitting(false);
+        }
+        else{
+            setCookies('post_item', values, { expires: 0});
+            // setItemName(cookies.post_item.product_name);
+            // setCategory(cookies.post_item.product_category);
+            // setLicense(cookies.post_item.product_license);
+            // setDescription(cookies.post_item.product_description);
+            setShow(true);
+        }}}
+    >
+    {formik => (
+        <div>
+            <Header/>
+            <Container className="dashboard">
+                <h3>Post item page.</h3><br/>
+                <Alert show={show} variant="dark">
+                    <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
+                        <b>Name : </b>{product_name}<br/>
+                        <b>Category : </b>{product_category}<br/>
+                        <b>License : </b>{product_license}<br/>
+                        <b>Description : </b>{product_description}
+                    <hr />
+                    <p>Please create and log into your account.</p>
+                    <div>
+                    <Button onClick={()=>{history.push("/SignUp")}} variant="warning">
+                        Sign up
+                    </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button onClick={()=>{history.push("/SignIn")}} variant="warning">
+                        Sign in
+                    </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button onClick={cancelItem} variant="warning">
+                        Not now
+                    </Button>
+                    </div>                   
+                </Alert>
 
-                </Form.Control>
-              </Form.Group>
-            </Form.Row>
+                {(cookies.post_item && user_isloggedin) &&
+                    <Alert variant="dark">
+                    <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
+                        <b>Name : </b>{product_name}<br/>
+                        <b>Category : </b>{product_category}<br/>
+                        <b>License : </b>{product_license}<br/>
+                        <b>Description : </b>{product_description}
+                    <hr />
+                    <div>
+                    <Button onClick={postItem} variant="warning">
+                        Post item
+                    </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button onClick={cancelItem} variant="warning">
+                        Cancel
+                    </Button>
+                    </div>                   
+                </Alert>
+                }
+                        <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
+                            <Form.Row>
+                                <Form.Group as={Col} id="product_name">
+                                    <Form.Label>Item Name</Form.Label>
+                                    <Form.Control
+                                        name="product_name"
+                                        type="text"
+                                        placeholder="Enter item name"
+                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value); setItemName(e.currentTarget.value)}}
+                                    />
+                                    {formik.touched.product_name && formik.errors.product_name ? (<div className="error_message">{formik.errors.product_name}</div>) : null}
+                                </Form.Group>
+                            </Form.Row>
 
-            <Form.Row>
-            <Form.Group  as={Col} controlId="formGridAddress1">
-            <Form.Label>Upload item image</Form.Label>
-            <div className="input-group">
-              <div className="custom-file">
-                <input
-                  required
-                  onChange = {onChangeFile}
-                  type="file"
-                  className="custom-file-input"
-                  id="inputGroupFile01"
-                  aria-describedby="inputGroupFileAddon01"
-                />
-                <label className="custom-file-label" htmlFor="inputGroupFile01">
-                  {fileName}
-                </label>
+                            <Form.Row>
+                                <Form.Group as={Col} id="product_category">
+                                    <Form.Label>Category</Form.Label>
+                                        <Form.Control
+                                            name="product_category"
+                                            as="select"
+                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); setCategory(e.currentTarget.value)}}
+                                        >
+                                            {list.map((x) => {
+                                                return (
+                                                    <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                                                }).reverse()}
+                                        </Form.Control>
+                                        {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
+                                </Form.Group>
+                            </Form.Row>
+
+                            {/* <Form.Row>
+                                <Form.Group  as={Col} controlId="formGridAddress1">
+                                    <Form.Label>Upload item image</Form.Label>
+                                        <div className="input-group">
+                                            <div className="custom-file">
+                                                <input
+                                                    name="file"
+                                                     type="file"
+                                                     className="custom-file-input"
+                                                     id="file"
+                                                     aria-describedby="inputGroupFileAddon01"
+                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); setFileName(e.currentTarget.files[0].name)}}
+                                                />
+                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
+                                                    {product_fileName}
+                                                </label>
+                                             </div>
+                                         </div>
+                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
+                                </Form.Group>
+                            </Form.Row>
+
+                            <Form.Row>
+                                <Form.Group as={Col} controlId="formGridState">
+                                    <Form.Label>Price</Form.Label>
+                                        <Form.Control
+                                            name="price"
+                                            type="text"
+                                            placeholder="$"
+                                            onChange={(e) => {formik.setFieldValue("price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
+                                        />
+                                        {formik.touched.price && formik.errors.price ? (<div className="error_message">{formik.errors.price}</div>) : null}
+                                </Form.Group>
+                            </Form.Row> */}
+
+                            <Form.Row>
+                                <Form.Group as={Col} id="product_license">
+                                    <Form.Label>License</Form.Label>
+                                        <Form.Control
+                                            name="product_license"
+                                            as="select"
+                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value); setLicense(e.currentTarget.value)}}
+                                        >
+                                            <option value="Choose...">Choose...</option>
+                                            <option value="Free use & modification">Free use & modification</option>
+                                            <option value="Free to SFSU related projects">Free to SFSU related projects</option>
+                                            <option value="For sale">For sale</option>
+                                         </Form.Control>
+                                        {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
+                                </Form.Group>
+                            </Form.Row>
+
+                            <Form.Group id="product_description">
+                                <Form.Label>Item Description</Form.Label>
+                                    <Form.Control
+                                        name="product_description"
+                                        as="textarea"
+                                        rows="3"
+                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); setDescription(e.currentTarget.value)}}
+                                    />
+                                    {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
+                            </Form.Group>
+
+                            <Form.Row >
+                                <Col>
+                                    <Button variant="warning" onClick = {resetForm} block>Cancel</Button>
+                                </Col>
+                                <Col>
+                                    <Button variant="warning" type="submit" block>Post Item</Button>
+                                </Col>
+                            </Form.Row>
+                        </form>   
+                  </Container>
+                  <br/><br/><br/><br/><br/>
               </div>
-            </div>
-            </Form.Group>
-            </Form.Row>
-
-            <Form.Row>
-
-            <Form.Group as={Col} controlId="formGridState">
-                <Form.Label>Price</Form.Label>
-                <Form.Control
-                    required
-                    type="text"
-                    onChange = {e => setPrice(e.target.value)}
-                    placeholder="Enter item price"
-                />
-              </Form.Group>
-            </Form.Row>
-
-            <Form.Row>
-            <Form.Group as={Col} controlId="formGridState">
-                <Form.Label>License</Form.Label>
-                <Form.Control
-                    required
-                    onChange={e => setLicense(e.target.value)}
-                    as="select"
-                 >
-                      <option value="Choose...">Choose...</option>
-                      <option value="Free use & modification">Free use & modification</option>
-                      <option value="Free to SFSU related projects">Free to SFSU related projects</option>
-                      <option value="For sale">For sale</option>
-                  </Form.Control>
-              </Form.Group>
-            </Form.Row>
-
-            <Form.Group controlId="exampleForm.ControlTextarea1">
-              <Form.Label>Item Description</Form.Label>
-              <Form.Control
-                required
-                onChange = {e => setDescription(e.target.value)}
-                as="textarea"
-                rows="3"
-              />
-            </Form.Group>
-
-            <Form.Row >
-              <Col>
-              <Button variant="warning" type="submit" block>Cancel</Button>
-              </Col>
-              <Col>
-              <Button variant="warning" type="submit" block>Post Item</Button>
-              </Col>
-            </Form.Row>
-        </Form>
-        </Col>
-    </Container>
-    <br/><br/><br/><br/><br/>
-    </div>
-  );
-}
-
-  export default Postitem;
-
-
-
-
+          )}
+      </Formik>
+      );
+ };
+export default Postitem;
