@@ -20,7 +20,7 @@ const Dashboard = () => {
   const user_privelege_type = cookies.privelege_type;
   const user_id = cookies.id;
 
-  const [validated, setValidated] = useState(false);
+
   const [product_name, setItemName] = useState('');
   const [product_category, setCategory] = useState('');
   const [product_file, setFile] = useState({});
@@ -65,62 +65,25 @@ const Dashboard = () => {
     .catch(error => console.log(error))
   }
 
-
-  //Post item function. Invoked after form submission
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if(form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    setValidated(true);
-
-    event.preventDefault();
-    
-    let selected_category = document.getElementById("category");
-    let category_index = selected_category.selectedIndex;
-    let product_category = selected_category.options[category_index].value;
-
-    let select_license = document.getElementById("license");
-    let license_index = select_license.selectedIndex;
-    let product_license = select_license.options[license_index].value;
-    
-
-    //Put all information in formData for api call.
-    var formData = new FormData();
-    formData.append('product_name', product_name);
-    formData.append('product_author', cookies.first_name);
-    formData.append('product_category', product_category);
-    formData.append('product_description', product_description);
-    formData.append('product_license', product_license);
-    formData.append('user_id', user_id);
-    
-    axios.post('/api/product',formData)
-      .then((response) =>{
-        console.log("Item posted successfully");
-        get_pendingItem();
-      })
-      .catch((error) => console.log(error))
-  }
-
-  //Retrieve files object and name in post item form
-  const onChangeFile = (event) => {
-    setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name);
-  }
-
-  //Remove active/pending items 
-  const removeItem = (id) =>{
-    axios.delete('/api/product/' + id, {id : id})
+ 
+  const remove_pendingitem = (id) =>{
+    axios.delete('/api/product/' + id)
     .then ((response) => { console.log("Item deleted");
-      get_activeItem();
-      get_pendingItem();
-    })
-    .catch((error) => console.log("Delete error..."))
+    get_pendingItem();
+  })
+    .catch((error) => console.log("Delete error..."));
+  }
+ 
+  const remove_activeitem = (id) =>{
+    axios.delete('/api/product/' + id)
+    .then ((response) => { console.log("Item deleted");
+    get_activeItem();  
+  })
+    .catch((error) => console.log("Delete error..."));
   }
 
   //Aprove, deny item function for Admin
-  const decision =(product_id, decision)=>{
+  const admin_approve_deny =(product_id, decision)=>{
     console.log(product_id + " " + decision)
     var formData = new FormData();
     formData.append('product_id', product_id);
@@ -139,59 +102,47 @@ const Dashboard = () => {
 
   return (
     <Formik
-        initialValues={{itemName: '', category: '', file: null, price: '', license: '', description: '' }}
+        initialValues={{product_name: '', product_category: '', 
+        // file: null, item_price: '', 
+        product_license: '', product_description: '' }}
         validationSchema={Yup.object({
-            itemName: Yup.string()
+            product_name: Yup.string()
                 .max(15, 'Must be 15 characters or less')
                 .required('Required'),
-            category: Yup.string()
+            product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
-            file: Yup.mixed()
-                .required('A file is required'),
-            price: Yup.number()
-                .required("Please enter a price")
-                .positive("Must be a position number"),
-            license: Yup.string()
+            // file: Yup.mixed()
+            //     .required('A file is required'),
+            // price: Yup.number()
+            //     .required("Please enter a price")
+            //     .positive("Must be a position number"),
+            product_license: Yup.string()
                 .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
                 .required("Please indicate your license preference"),
-            description: Yup.string()
+            product_description: Yup.string()
                 .max(500, 'Must be 500 characters or less')
                 .required('Please enter description'),
         })}
+        
         onSubmit={(values, {setSubmitting}) => {
-
-             console.log(product_name);
-             console.log(cookies.first_name);
-             console.log(product_category);
-             console.log(product_description);
-             console.log(product_license);
-             console.log(user_id);
-
-//			//Put all information in formData for api call.
-//            var formData = new FormData();
-//            formData.append('product_name', product_name);
-//            formData.append('product_author', cookies.first_name);
-//            formData.append('product_category', product_category);
-//            formData.append('product_description', product_description);
-//            formData.append('product_license', product_license);
-//            formData.append('user_id', user_id);
-//
-//            let selected_category = document.getElementById("category");
-//            let category_index = selected_category.selectedIndex;
-//            let product_category = selected_category.options[category_index].value;
-//
-//            let select_license = document.getElementById("license");
-//            let license_index = select_license.selectedIndex;
-//            let product_license = select_license.options[license_index].value;
-//
-//            axios.post('/api/product',formData)
-//                .then((response) =>{
-//                    console.log("Item posted successfully");
-//                    get_pendingItem();
-//                })
-//                .catch((error) => console.log(error))
-
+           values.user_id = user_id;
+           values.product_author = cookies.first_name;
+           //convert json obj to formdata.
+           var form_data = new FormData();
+            for ( var key in values ) {
+            form_data.append(key, values[key]);
+            }
+           axios.post('/api/product',form_data)
+               .then((response) =>{
+                   console.log("Item posted successfully");
+                   get_pendingItem();
+               })
+               .catch((error) => console.log(error))  
+          
+            // display message when an item posted.
+            alert(JSON.stringify(values.product_name) + "has been posted successfully.");
+            resetForm();      
             setSubmitting(false);
         }}
     >
@@ -219,7 +170,7 @@ const Dashboard = () => {
                                             <td width ="5%"> {y+1} </td>
                                             <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
                                             <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
-                                            <td width ="15%"> <Button variant="warning" id = {item.id} onClick={()=>removeItem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                                            <td width ="15%"> <Button variant="warning" id = {item.id} onClick={()=>remove_activeitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                                         </tr>
                                     )})
                                 }
@@ -230,36 +181,36 @@ const Dashboard = () => {
                     <Tab eventKey="postItem" title="Post an item">
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
-                                <Form.Group as={Col} controlId="">
+                                <Form.Group as={Col} id="product_name">
                                     <Form.Label>Item Name</Form.Label>
                                     <Form.Control
-                                        name="itemName"
+                                        name="product_name"
                                         type="text"
                                         placeholder="Enter item name"
-                                        onChange={(e) => {formik.setFieldValue("itemName", e.currentTarget.value); setItemName(e.currentTarget.value)}}
+                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value)}}
                                     />
-                                    {formik.touched.itemName && formik.errors.itemName ? (<div className="error_message">{formik.errors.itemName}</div>) : null}
+                                    {formik.touched.product_name && formik.errors.product_name ? (<div className="error_message">{formik.errors.product_name}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
                             <Form.Row>
-                                <Form.Group as={Col} controlId="formGridState">
+                                <Form.Group as={Col} id="product_category">
                                     <Form.Label>Category</Form.Label>
                                         <Form.Control
-                                            name="category"
+                                            name="product_category"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("category", e.currentTarget.value); setCategory(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value)}}
                                         >
                                             {list.map((x) => {
                                                 return (
                                                     <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                                                 }).reverse()}
                                         </Form.Control>
-                                        {formik.touched.category && formik.errors.category ? (<div className="error_message">{formik.errors.category}</div>) : null}
+                                        {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
-                            <Form.Row>
+                            {/* <Form.Row>
                                 <Form.Group  as={Col} controlId="formGridAddress1">
                                     <Form.Label>Upload item image</Form.Label>
                                         <div className="input-group">
@@ -292,34 +243,34 @@ const Dashboard = () => {
                                         />
                                         {formik.touched.price && formik.errors.price ? (<div className="error_message">{formik.errors.price}</div>) : null}
                                 </Form.Group>
-                            </Form.Row>
+                            </Form.Row> */}
 
                             <Form.Row>
-                                <Form.Group as={Col} controlId="formGridState">
+                                <Form.Group as={Col} id="product_license">
                                     <Form.Label>License</Form.Label>
                                         <Form.Control
-                                            name="license"
+                                            name="product_license"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("license", e.currentTarget.value); setLicense(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value)}}
                                         >
                                             <option value="Choose...">Choose...</option>
                                             <option value="Free use & modification">Free use & modification</option>
                                             <option value="Free to SFSU related projects">Free to SFSU related projects</option>
                                             <option value="For sale">For sale</option>
                                          </Form.Control>
-                                        {formik.touched.license && formik.errors.license ? (<div className="error_message">{formik.errors.license}</div>) : null}
+                                        {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
-                            <Form.Group controlId="exampleForm.ControlTextarea1">
+                            <Form.Group id="product_description">
                                 <Form.Label>Item Description</Form.Label>
                                     <Form.Control
-                                        name="description"
+                                        name="product_description"
                                         as="textarea"
                                         rows="3"
-                                        onChange={(e) => {formik.setFieldValue("description", e.currentTarget.value); setDescription(e.currentTarget.value)}}
+                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value)}}
                                     />
-                                    {formik.touched.description && formik.errors.description ? (<div className="error_message">{formik.errors.description}</div>) : null}
+                                    {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
                             </Form.Group>
 
                             <Form.Row >
@@ -352,7 +303,7 @@ const Dashboard = () => {
                                     <td> {item.product_name} </td>
                                     <td> {item.product_description} </td>
                                     <td> {item.date_time_added}</td>
-                                    <td> <Button variant="warning" id = {item.id} onClick = {()=>removeItem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                                    <td> <Button variant="warning" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                                   </tr>
 
                                   )})
@@ -380,8 +331,8 @@ const Dashboard = () => {
                               <td>Table cell</td>
                               <td>Table cell</td>
                               <td>
-                                <Button variant="warning" onClick = {()=>decision('24','Approve')}>Approve</Button>  &nbsp; &nbsp;
-                                <Button variant="warning" onClick = {()=>decision('25','Deny')}>Deny</Button>  &nbsp; &nbsp;
+                                <Button variant="warning" onClick = {()=>admin_approve_deny('24','Approve')}>Approve</Button>  &nbsp; &nbsp;
+                                <Button variant="warning" onClick = {()=>admin_approve_deny('25','Deny')}>Deny</Button>  &nbsp; &nbsp;
                               </td>
                             </tr>
                           </tbody>
@@ -402,67 +353,6 @@ const Dashboard = () => {
                                 <tr>
                                     <td width="10%">User one</td>
                                     <td width="65%">Hello CoSE Students,
-
-                                        Hope all is well with you and your family,
-
-                                        How are your remotely-taught classes?
-
-                                        CoSE is offering many different scholarships for the upcoming academic year 2020-2021.
-
-                                        You can search for scholarships at sfsu.academicworks.com and put in the scholarship name.
-
-                                        ARCS Scholarships ($10,000)
-                                        Awarded to ten graduate students in the Departments of Biology, Chemistry & Biochemistry, Computer Science, Earth & Climate Sciences, Geography & Environment, Mathematics, Physics & Astronomy
-
-
-                                        Robert W. Maxwell Memorial Scholarships ($4,000)
-                                        Awarded to three to five graduate students in the Departments of Biology, Chemistry & Biochemistry, Computer Science, Earth & Climate Sciences, Engineering, Geography & Environment, Mathematics, Physics & Astronomy, Psychology
-
-                                        College of Science & Engineering Advisory Board Scholarship ($2,500)
-                                        Awarded to one graduate student in the College of Science & Engineering
-
-
-
-                                        Bruce A. Rosenblatt Community Service Scholarships ($1,250)
-                                        Awarded to four undergraduate or graduate students with 100 hours of Community Service
-
-
-                                        James C. Kelley Scholarship ($1,000)
-                                        Awarded to one undergraduate or graduate student in the field of Marine or Environmental science
-
-
-                                        David & Cary Cassa Memorial Scholarships ($1,000)
-                                        Awarded to two College of Science & Engineering undergraduate students who live in San Francisco
-
-
-                                        Kenneth Fong Biology Scholarship ($1,250)
-                                        Awarded to one undergraduate student in the Department of Biology
-
-
-                                        C.Y. Chow Memorial Scholarships ($1,000)
-                                        Awarded to two undergraduate students in the Department of Computer Science or Mathematics
-
-
-                                        Pamela Fong Mathematics Scholarship ($1,250)
-                                        Awarded to one undergraduate student in the Department of Mathematics
-
-                                        Stay healthy and be safe.
-
-                                        Best,
-
-                                        Lannie
-
-                                        Lannie Nguyen
-
-                                        Manager, Special Events and Alumni Relations
-
-                                        College of Science & Engineering
-
-                                        San Francisco State University
-
-                                        1600 Holloway Avenue
-
-                                        San Francisco, CA 94132
                                     </td>
                                     <td><Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
                                         <Button variant="warning">Remove</Button>

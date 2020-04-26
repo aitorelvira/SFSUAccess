@@ -15,10 +15,9 @@ const SignIn = () => {
   const [isLoading, setLoading] = useState(false);          //Loading state for the login button
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [validated, setValidated] = useState(false);
 
   //cookies
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin','post_item']);
 
   return (
     <Formik
@@ -41,11 +40,13 @@ const SignIn = () => {
             })
             .then(response => {
                 let res = response.data[0];
+                console.log(response.data[0])
                 setCookies('id', res.id, { expires: 0});
                 setCookies('email', res.email, { expires: 0});
                 setCookies('first_name', res.first_name, { expires: 0});
                 setCookies('last_name', res.last_name, { expires: 0});
                 setCookies('privelege_type', res.privelege_type, { expires: 0});
+                setCookies('isLoggedin', true, { expires: 0 });
                 setLoading(true);
                 ReactGA.initialize('UA-163580713-1', { // set new tracking id for logged in user
                     debug: true,
@@ -95,7 +96,7 @@ const SignIn = () => {
                             {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
                         </Form.Group>
 
-                        <Button variant="warning" block type="submit">{isLoading ? 'logged in successfully...': 'SIGN IN'}</Button>
+                        <Button variant="warning" block type="submit">{isLoading ? 'Logging in, please wait...': 'SIGN IN'}</Button>
                         {!isLoading &&(
                             <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>
                         )}

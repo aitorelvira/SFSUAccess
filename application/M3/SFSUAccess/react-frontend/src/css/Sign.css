@@ -22,9 +22,8 @@
     font-size: 12px;
  }
 
- .message{
+ .error_message{
      color: red;
-     text-align: center;
  }
 
  footer{

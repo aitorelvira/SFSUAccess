@@ -107,6 +107,8 @@ const submitSearch = ()=> {
     removeCookies('id');
     removeCookies('email');
     removeCookies('privelege_type');
+    removeCookies('isLoggedin');
+    removeCookies('post_item');
     ReactGA.initialize('UA-163580713-1'); // reinitialize GA on log out to reset clientId
     dispatch(setUsername('')); 
   }

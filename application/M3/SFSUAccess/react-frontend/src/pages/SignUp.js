@@ -36,8 +36,10 @@ const SignUp = () => {
                 .matches(/^[a-zA-Z0-9]+@+[mail]+.+[sfsu]+.+[edu]/, 'Must use SFSU email: student@mail.sfsu.edu')
                 .required('Email is required'),
             password: Yup.string()
+                .min(8, 'Must be more than 8 characters')
                 .required('Password is required'),
             confirmPassword: Yup.string()
+                .min(8, 'Must be more than 8 characters')
                 .required('Confirm Password is required')
                 .oneOf([Yup.ref('password'), null], 'Passwords must match'),
             privelegeType: Yup.string()
@@ -137,7 +139,7 @@ const SignUp = () => {
                         {formik.touched.privelegeType && formik.errors.privelegeType ? (<div className="error_message">{formik.errors.privelegeType}</div>) : null}
                     </Form.Group><br/>
                     <Form.Group>
-                        <Button variant="warning" block type="submit">{isLoading ? 'Registered successfully...': 'SIGN UP'}</Button>
+                        <Button variant="warning" block type="submit">{isLoading ? 'Registered successfully, redirecting to sign in page...': 'SIGN UP'}</Button>
                         {!isLoading &&(
                             <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>
                         )}
