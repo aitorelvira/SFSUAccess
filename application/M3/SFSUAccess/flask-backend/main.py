@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, send_file, Response
 import pymysql
-
+import os.path
+import glob
 #TODO for back end team, check all to dos in file... add response status codes to any that are missing
 
 # Connect to the database
@@ -11,7 +12,11 @@ connection = pymysql.connect(host='csc648.cxyapjc8a04v.us-west-1.rds.amazonaws.c
                              cursorclass=pymysql.cursors.DictCursor)
 cur = connection.cursor()
 app = Flask(__name__)
-
+test_mode = True
+if test_mode:
+    uri_append = 'file-testing/uploads/'
+else:
+    uri_append = 'uploads/'
 #products / categories / searches
 @app.route('/api/search',methods=['GET','POST'])
 def get_categories():
@@ -160,23 +165,31 @@ def post_product():
     product_category = request.form['product_category']
     product_author = request.form['product_author']
     product_description = request.form['product_description']
-    product_user_id = request.form['user_id']
+    registered_user_id = request.form['user_id']
     product_license = request.form['product_license']
+    file = request.files['file']
     sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license,date_time_added,product_status) VALUES (%s,%s,%s,%s,%s,%s,NOW(),'PENDING')"
-    cur.execute(sql,(product_name,product_category,product_author,product_description,product_user_id,product_license))
+    cur.execute(sql,(product_name,product_category,product_author,product_description,registered_user_id,product_license))
     connection.commit()
+    cur.fetchall()
+    sql = "SELECT LAST_INSERT_ID()"
+    cur.execute(sql)
+    new_product_row = cur.fetchall()
+    product_id = new_product_row[0]['LAST_INSERT_ID()']
+    extension = os.path.splitext(file.filename)[1]
+    file.filename = str(product_id) + extension  #some custom file name that you want
+    file.save(uri_append+file.filename)
     status_code = Response(status=201)
     return status_code
 
-#rudimentary file upload. no metadata or preview logic yet. TODO: add preview library, link to post_product, save to database DL link
-@app.route('/api/upload', methods = ['POST'])
-def upload_file():
-    if request.method == 'POST':
-        f = request.files['file']
-        f.save('/var/www/reactsite/'+f.filename)
-	status_code = Response(status=201)
-    return status_code
-  
+@app.route('/api/download', methods = ['GET'])
+def download_file():
+    # TODO check if file exists, and if user is allowed to download
+    product_id = request.args['product_id']
+    uri = uri_append+str(product_id)+'.*'
+    for file in glob.glob(uri):
+        return send_file(file,as_attachment=True), 302
+
 #admin approval on pending posts
 #POST REQUEST USING FORM-DATA
 @app.route('/api/admin/review',methods=['POST'])
@@ -191,6 +204,12 @@ def review_product():
     connection.commit()
     status_code = Response(status=200)
     return status_code
+
+@app.route('/api/admin/pending',methods=['GET'])
+def review_pending():
+    sql = "SELECT * from products WHERE product_status = 'PENDING'"
+    cur.execute(sql)
+    return jsonify(cur.fetchall())
 
 # /api/product?user_id=13&status=active
 #GET REQUEST USING HEADERS
