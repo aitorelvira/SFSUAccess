@@ -76,7 +76,6 @@ const Postitem = () => {
         setErrormessage('A file is required');
   }
 
-
   const cancelItem = () =>{
     removeCookies('post_item');
     window.location.reload();
@@ -91,14 +90,17 @@ const Postitem = () => {
         validationSchema={Yup.object({
             product_name: Yup.string()
                 .max(15, 'Must be 15 characters or less')
+                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Required'),
             product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
+                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Please indicate your category preference'),
             file: Yup.mixed()
                 .required('A file is required'),
-            product_price: Yup.number()
+            product_price: Yup.string()
                 .required("Please enter a price")
+                .matches(/^[0-9]*$/, 'Must be a positive number')
                 .min(0, "Must be '0' or a positive number"),
             product_license: Yup.string()
                 .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
