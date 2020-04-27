@@ -67,7 +67,7 @@ const SignUp = () => {
              });
             })
             .catch(err => {
-                setErrors({email: 'reaped'})
+                setErrors({email: 'This email has been registered.'})
             });
             setSubmitting(false);
         }}
@@ -137,6 +137,7 @@ const SignUp = () => {
                             name="privelegeType"
                             onChange={(e) => {formik.setFieldValue("privelegeType", e.currentTarget.value); setPrivelege_type(e.currentTarget.value)}}
                         >
+                            <option value="Choose...">Choose...</option>
                             <option value="Student">Student</option>
                             <option value="Faculty">Faculty</option>
                             <option value="Admin">Admin</option>
