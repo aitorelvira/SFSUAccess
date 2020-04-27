@@ -3,6 +3,7 @@ import pymysql
 from wand.image import Image
 import os.path
 import glob
+from mutagen import File
 #TODO for back end team, check all to dos in file... add response status codes to any that are missing
 
 # Connect to the database
@@ -25,6 +26,16 @@ def prepare_pdf_thumbnail(prefilename):
     img = Image(filename=uri_append+prefilename, resolution=300, width=600)
     img.save(filename= 'thumbnails/'+prefilename+'.png')
 
+def prepare_audio_artwork(filename):
+    file = File(uri_append+filename)
+    artwork = file.tags['APIC:'].data # access APIC frame and grab the image
+    with open('thumbnails/'+filename+'.png', 'wb') as img:
+        img.write(artwork) # write artwork to new image
+
+@app.route('/api/albumart', methods =['GET'])
+def get_albumart():
+    img = prepare_audio_artwork('96.mp3')
+    return 'it worked!'
 
 @app.route('/api/search',methods=['GET','POST'])
 def get_categories():
@@ -168,6 +179,7 @@ def user_listings():
 @app.route('/api/product',methods=['POST'])
 def post_product():
     # create product post TODO FOR KEVIN still need to figure out file system
+    #TODO create if statements per category to do metadata retrieval
     product_name = request.form['product_name']
     product_category = request.form['product_category']
     product_author = request.form['product_author']
@@ -186,7 +198,10 @@ def post_product():
     extension = os.path.splitext(file.filename)[1]
     file.filename = str(product_id) + extension  #some custom file name that you want
     file.save(uri_append+file.filename)
-    prepare_pdf_thumbnail(file.filename)
+    if str(extension)=='.pdf':
+        prepare_pdf_thumbnail(file.filename)
+    if str(extension)=='.mp3':
+        prepare_audio_artwork(file.filename)
     status_code = Response(status=201)
     return status_code
 
