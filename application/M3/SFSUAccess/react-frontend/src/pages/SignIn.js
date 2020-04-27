@@ -26,7 +26,7 @@ const SignIn = () => {
             email: Yup.string()
                 .email('Invalid email address')
                 .required('Email is required')
-                .matches(/^[a-zA-Z0-9]+@+[mail]+.+[sfsu]+.+[edu]/, 'Must use SFSU email: student@mail.sfsu.edu'),
+                .matches(/^[a-zA-Z0-9]+@(mail.)?sfsu.edu/ig, 'Must use SFSU email: student@mail.sfsu.edu'),
             password: Yup.string()
                 .required('Password is required'),
         })}
@@ -55,6 +55,11 @@ const SignIn = () => {
                         userId: res.id,
                         clientId: res.id
                     }
+                });
+                ReactGA.event({
+                 category: 'SignIn',
+                 action: 'User Signed In',
+                 transport: 'beacon'
                 });
                 setTimeout(function(){ window.location.href = '/'},1000);
 

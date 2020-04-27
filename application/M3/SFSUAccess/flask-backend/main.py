@@ -21,7 +21,9 @@ else:
 @app.route('/api/search',methods=['GET','POST'])
 def get_categories():
     if request.method=='GET':
-        cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
+        sql = "SELECT product_category_name FROM product_categories LIMIT 50"
+        print("Executing: " + sql)
+        cur.execute(sql)
         results = cur.fetchall()
         return jsonify(results)
     if request.method=='POST':
@@ -33,7 +35,7 @@ def get_categories():
             if product_fields.index(fields) + 1 != len(product_fields):
                 sql += " OR "
             else:
-                sql += ") AND product_status = 'ACTIVE'"
+                sql += ") AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
         print("Executing: " + sql)
         cur.execute(sql)
         results = cur.fetchall()
@@ -45,14 +47,14 @@ def get_categories():
 def get_category_items(category):
     if request.method=='GET':
         if category.lower() == "all":
-            print("xxxx")
-            sql = "SELECT * FROM products WHERE product_status = 'ACTIVE'"
+            sql = "SELECT * FROM products WHERE product_status = 'ACTIVE' ORDER BY date_time_added DESC"
+            print("Executing: " + sql)
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
         else:
-            print("yyyy")
-            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category) + " AND product_status = 'ACTIVE'"
+            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category) + " AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
+            print("Executing: " + sql)
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
@@ -65,7 +67,7 @@ def get_category_items(category):
             if product_fields.index(fields)+1 != len(product_fields):
                 sql += " OR "
             else:
-                sql += ") AND product_status = 'ACTIVE'"
+                sql += ") AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
         print("Executing: " + sql)
         cur.execute(sql)
         results = cur.fetchall()
