@@ -127,13 +127,15 @@ const Dashboard = () => {
         validationSchema={Yup.object({
             product_name: Yup.string()
                 .max(50, 'Must be 50 characters or less')
+                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Required'),
             product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
             file: Yup.mixed()
                 .required('A file is required'),
-            product_price: Yup.number()
+            product_price: Yup.string()
+                .matches(/^[0-9]*$/, 'Must be a positive number')
                 .required("Please enter a price")
                 .min(0, "Must be '0' or a positive number"),
             product_license: Yup.string()
