@@ -197,7 +197,18 @@ def download_file():
     product_id = request.args['product_id']
     uri = uri_append+str(product_id)+'.*'
     for file in glob.glob(uri):
-        return send_file(file,as_attachment=True), 302
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
+@app.route('/api/thumbnails', methods = ['GET'])
+def download_thumbnail():
+    # TODO check if file exists, and if user is allowed to download
+    product_id = request.args['product_id']
+    uri = 'thumbnails/'+str(product_id)+'.*'
+    for file in glob.glob(uri):
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
 
 #admin approval on pending posts
 #POST REQUEST USING FORM-DATA
