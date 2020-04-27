@@ -157,7 +157,7 @@ const Dashboard = () => {
                .then((response) =>{
                    console.log("Item posted successfully");    
                     get_pendingItem();
-                    alert("Item " + JSON.stringify(values.product_name) + "has been posted successfully.");
+                    alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                })
                .catch((error) => console.log(error))
                 resetForm();   

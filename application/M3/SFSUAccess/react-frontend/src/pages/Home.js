@@ -16,8 +16,8 @@ import '../css/Home.css';
 
 
 const Home = ({ dispatch, username, searchinfo}) => {
-  const[lists, setList] = useState([]);                   // The list of categroies.
-  const[product_name, setProduct_name] = useState('');    // user input for searching.
+  const [lists, setList] = useState([]);                   // The list of categroies.
+  const [product_name, setProduct_name] = useState('');    // user input for searching.
   const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.

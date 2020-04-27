@@ -56,7 +56,10 @@ const SignIn = () => {
                         clientId: res.id
                     }
                 });
-                setTimeout(function(){ window.location.href = '/'},1000);
+                if(cookies.post_item)
+                    setTimeout(function(){ window.location.href = '/Postitem'},1000);
+                else
+                    setTimeout(function(){ window.location.href = '/'},1000);
 
             })
             .catch(err => {

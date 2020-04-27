@@ -15,12 +15,12 @@ const Postitem = () => {
     const [show, setShow] = useState(false);
     const [product_name, setItemName] = useState('');
     const [product_category, setCategory] = useState('');
-    const [product_file, setFile] = useState([]);
+    const [product_file, setFile] = useState({});
     const [product_fileName, setFileName] = useState('Upload File here...')
     const [product_price, setPrice] = useState();
     const [product_license, setLicense] = useState('');
     const [product_description, setDescription] = useState('');
-
+    const [error_message, setErrormessage] = useState('');
 
 
 
@@ -35,7 +35,6 @@ const Postitem = () => {
         if(typeof cookies.post_item !== 'undefined'){
             setItemName(cookies.post_item.product_name);
             setCategory(cookies.post_item.product_category);
-            //setFileName(cookies.post_item.file[0].name);
             setPrice(cookies.post_item.product_price);
             setLicense(cookies.post_item.product_license);
             setDescription(cookies.post_item.product_description);
@@ -49,24 +48,32 @@ const Postitem = () => {
   }
 
   const postItem =()=>{
-      console.log(cookies.post_item.file);
-    var form_data = new FormData();
-     for ( var key in cookies.post_item ) {
-     form_data.append(key, cookies.post_item[key]);
-     }
-     form_data.append("user_id", user_id);
-     form_data.append("product_author", cookies.first_name);
-
-    axios.post('/api/product',form_data)
-        .then((response) =>{
-            console.log("Item posted successfully");
-        })
-        .catch((error) => console.log(error))  
    
-     // display message when an item posted.
-     alert(JSON.stringify(product_name) + "has been posted successfully.");
-     removeCookies('post_item');
-     setShow(false);
+    if(document.getElementById("file").files.length !== 0 ){
+        console.log("postItem is called...")
+        var form_data = new FormData();
+        for ( var key in cookies.post_item ) {
+            if(key !== "file")
+                form_data.append(key, cookies.post_item[key]);
+        }
+        form_data.append("user_id", user_id);
+        form_data.append("product_author", cookies.first_name);
+        form_data.append("file", product_file);
+
+        axios.post('/api/product',form_data)
+            .then((response) =>{
+                console.log("Item posted successfully");
+            })
+            .catch((error) => console.log(error))  
+    
+        // display message when an item posted.
+        alert(product_name + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+        setFileName('Upload File here...');
+        removeCookies('post_item');
+        setShow(false);
+    }
+     else
+        setErrormessage('A file is required');
   }
 
 
@@ -113,20 +120,19 @@ const Postitem = () => {
            axios.post('/api/product',form_data)
                .then((response) =>{
                    console.log("Item posted successfully");
-                   alert(JSON.stringify(values.product_name) + "has been posted successfully.");
+                   alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                    removeCookies('post_item');
                })
                .catch((error) => console.log(error))  
-            resetForm();      
-            setSubmitting(false);
+            resetForm();
+            setSubmitting(false);          
         }
         else{
-            console.log(values); 
-            setCookies('post_item', 
-            JSON.stringify(values), { expires: 0});
-            console.log(cookies.post_item);
+            setCookies('post_item', values, { expires: 0});
             setShow(true);
-        }}}
+        }
+     
+    }}
     >
     {formik => (
         <div>
@@ -160,22 +166,43 @@ const Postitem = () => {
                     <Alert variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
-                        <b>File : </b>{cookies.post_item.file[0]}<br/>
                         <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
                         <b>License : </b>{product_license}<br/>
                         <b>Description : </b>{product_description}<br/>
                     <hr />
-                    <div>
-                    <Button onClick={postItem} variant="warning">
-                        Post item
-                    </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <form id = "itemForm">
+                    <Form.Row>
+                                <Form.Group  as={Col} controlId="file">
+                                    <Form.Label>Upload your file here again, then you good to go.</Form.Label>
+                                        <div className="input-group">
+                                            <div className="custom-file">
+                                                <input
+                                                     name="file"
+                                                     type="file"
+                                                     className="custom-file-input"
+                                                     id="file"
+                                                     onChange={(e) => {  
+                                                     setFileName(e.currentTarget.files[0].name); setFile(e.currentTarget.files[0])
+                                                    }}
+                                                />
+                                                <label className="custom-file-label">
+                                                    {product_fileName}
+                                                </label>
+                                             </div>
+                                         </div>
+                                         <div className="error_message">{ product_fileName === 'Upload File here...' ? error_message: null}</div>
+                                </Form.Group>
+                            </Form.Row>
+                    </form>
+                    <Button variant="warning" onClick={postItem}>Post Item</Button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <Button onClick={cancelItem} variant="warning">
                         Cancel
-                    </Button>
-                    </div>                   
+                    </Button>                
                 </Alert>
                 }
+                        
+                {!cookies.post_item &&         
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
                                 <Form.Group as={Col} id="product_name">
@@ -209,7 +236,7 @@ const Postitem = () => {
 
                             <Form.Row>
                                 <Form.Group  as={Col} controlId="file">
-                                    <Form.Label>Upload a file.</Form.Label>
+                                    <Form.Label>Upload your file.</Form.Label>
                                         <div className="input-group">
                                             <div className="custom-file">
                                                 <input
@@ -218,9 +245,8 @@ const Postitem = () => {
                                                      className="custom-file-input"
                                                      id="file"
                                                      aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); 
-                                                     setFileName(e.currentTarget.files[0].name);
-                                                     setFile(e.currentTarget.files[0])}}
+                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);  
+                                                     setFileName(e.currentTarget.files[0].name);}}
                                                 />
                                                 <label className="custom-file-label" htmlFor="inputGroupFile01">
                                                     {product_fileName}
@@ -280,7 +306,8 @@ const Postitem = () => {
                                     <Button variant="warning" type="submit" block>Post Item</Button>
                                 </Col>
                             </Form.Row>
-                        </form>   
+                        </form>
+                    }   
                   </Container>
                   <br/><br/><br/><br/><br/>
               </div>
@@ -288,4 +315,5 @@ const Postitem = () => {
       </Formik>
       );
  };
-export default Postitem;
+
+  export default Postitem;
