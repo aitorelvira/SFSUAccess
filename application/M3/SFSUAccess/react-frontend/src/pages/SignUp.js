@@ -140,6 +140,7 @@ const SignUp = () => {
                             name="privilegeType"
                             onChange={(e) => {formik.setFieldValue("privilegeType", e.currentTarget.value); setPrivilege_type(e.currentTarget.value)}}
                         >
+                            <option value="Choose...">Choose...</option>
                             <option value="Student">Student</option>
                             <option value="Faculty">Faculty</option>
                             <option value="Admin">Admin</option>
