@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, send_file, Response
 import pymysql
+from wand.image import Image
 import os.path
 import glob
 #TODO for back end team, check all to dos in file... add response status codes to any that are missing
@@ -18,6 +19,13 @@ if test_mode:
 else:
     uri_append = 'uploads/'
 #products / categories / searches
+
+def prepare_pdf_thumbnail(prefilename):
+    #todo accepted fileformats, right now it works for PDF
+    img = Image(filename=uri_append+prefilename, resolution=300, width=600)
+    img.save(filename= 'thumbnails/'+prefilename+'.png')
+
+
 @app.route('/api/search',methods=['GET','POST'])
 def get_categories():
     if request.method=='GET':
@@ -72,9 +80,6 @@ def get_category_items(category):
         cur.execute(sql)
         results = cur.fetchall()
         return jsonify(results)
-
-
-
 
 @app.route('/api/user_types')
 def get_user_types():
@@ -181,8 +186,10 @@ def post_product():
     extension = os.path.splitext(file.filename)[1]
     file.filename = str(product_id) + extension  #some custom file name that you want
     file.save(uri_append+file.filename)
+    prepare_pdf_thumbnail(file.filename)
     status_code = Response(status=201)
     return status_code
+
 
 @app.route('/api/download', methods = ['GET'])
 def download_file():
