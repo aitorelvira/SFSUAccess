@@ -18,18 +18,20 @@ const SignUp = () => {
   const [email_validation, setEmail_validation] = useState('');
   const [password, setPassword] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
-  const [privelege_type, setPrivelege_type] = useState('');
+  const [privilege_type, setPrivilege_type] = useState('');
   const [validated, setValidated] = useState(false);
 
   return (
     <Formik
-        initialValues={{firstName: '', lastName: '', email: '', password: '', confirmPassword: '', privelegeType: ''}}
+        initialValues={{firstName: '', lastName: '', email: '', password: '', confirmPassword: '', privilegeType: ''}}
         validationSchema={Yup.object({
             firstName: Yup.string()
                 .max(15, 'Must be 15 characters or less')
+                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('First name is required'),
             lastName: Yup.string()
                 .max(15, 'Must be 15 characters or less')
+                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Last name is required'),
             email: Yup.string()
                 .email('Invalid email address')
@@ -43,8 +45,9 @@ const SignUp = () => {
                 .min(8, 'Must be more than 8 characters')
                 .required('Confirm Password is required')
                 .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-            privelegeType: Yup.string()
+            privilegeType: Yup.string()
                 .oneOf(['Student', 'Faculty', 'Admin'])
+                .default('Student')
                 .required('Please indicate your account type'),
         })}
         onSubmit={(values, {setSubmitting, setErrors }) => {
@@ -53,7 +56,7 @@ const SignUp = () => {
                 first_name,
                 last_name,
                 password,
-                privelege_type
+                privilege_type
             })
             .then(res => {
                 if(res.status === 201){
@@ -134,8 +137,8 @@ const SignUp = () => {
 
                     <Form.Group>Please choose your account type&nbsp;&nbsp;&nbsp;&nbsp;
                         <select
-                            name="privelegeType"
-                            onChange={(e) => {formik.setFieldValue("privelegeType", e.currentTarget.value); setPrivelege_type(e.currentTarget.value)}}
+                            name="privilegeType"
+                            onChange={(e) => {formik.setFieldValue("privilegeType", e.currentTarget.value); setPrivilege_type(e.currentTarget.value)}}
                         >
                             <option value="Student">Student</option>
                             <option value="Faculty">Faculty</option>
