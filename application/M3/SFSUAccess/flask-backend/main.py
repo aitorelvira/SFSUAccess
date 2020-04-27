@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, send_file, Response
 import pymysql
-#from wand.image import Image
+from wand.image import Image
 import os.path
 import glob
 from mutagen import File
