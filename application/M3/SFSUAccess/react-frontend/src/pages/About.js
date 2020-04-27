@@ -29,7 +29,7 @@ const About = () => {
             <Navbar.Brand>SFSUAccess</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Nav className="page">
-                <Button href = "/About" className ="navButton">Ouer-Team</Button>&nbsp;&nbsp;
+                <Button href = "/About" className ="navButton">Our Team</Button>&nbsp;&nbsp;
                 <Button href = "/About/KevinLuong" className ="navButton">Kevin Luong</Button>&nbsp;&nbsp;
                 <Button href = "/About/JunMinLi" className ="navButton">JunMinLi</Button>&nbsp;&nbsp;
                 <Button href = "/About/Aitor" className ="navButton">Aitor</Button>&nbsp;&nbsp;
