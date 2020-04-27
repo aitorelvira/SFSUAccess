@@ -9,6 +9,7 @@ from AccountAPI import account_api
 app = Flask(name)
 app.register_blueprint(admin_api)
 app.register_blueprint(products_api)
+app.register_blueprint(messages_api)
 app.register_blueprint(browse_api)
 app.register_blueprint(userfiles_api)
 app.register_blueprint(account_api)
