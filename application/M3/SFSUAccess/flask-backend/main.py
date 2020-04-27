@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, send_file, Response
 import pymysql
+from wand.image import Image
 import os.path
 import glob
 #TODO for back end team, check all to dos in file... add response status codes to any that are missing
@@ -18,10 +19,19 @@ if test_mode:
 else:
     uri_append = 'uploads/'
 #products / categories / searches
+
+def prepare_pdf_thumbnail(prefilename):
+    #todo accepted fileformats, right now it works for PDF
+    img = Image(filename=uri_append+prefilename, resolution=300, width=600)
+    img.save(filename= 'thumbnails/'+prefilename+'.png')
+
+
 @app.route('/api/search',methods=['GET','POST'])
 def get_categories():
     if request.method=='GET':
-        cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
+        sql = "SELECT product_category_name FROM product_categories LIMIT 50"
+        print("Executing: " + sql)
+        cur.execute(sql)
         results = cur.fetchall()
         return jsonify(results)
     if request.method=='POST':
@@ -33,7 +43,7 @@ def get_categories():
             if product_fields.index(fields) + 1 != len(product_fields):
                 sql += " OR "
             else:
-                sql += ") AND product_status = 'ACTIVE'"
+                sql += ") AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
         print("Executing: " + sql)
         cur.execute(sql)
         results = cur.fetchall()
@@ -45,14 +55,14 @@ def get_categories():
 def get_category_items(category):
     if request.method=='GET':
         if category.lower() == "all":
-            print("xxxx")
-            sql = "SELECT * FROM products WHERE product_status = 'ACTIVE'"
+            sql = "SELECT * FROM products WHERE product_status = 'ACTIVE' ORDER BY date_time_added DESC"
+            print("Executing: " + sql)
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
         else:
-            print("yyyy")
-            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category) + " AND product_status = 'ACTIVE'"
+            sql = "SELECT * FROM products WHERE product_category = '{0}'".format(category) + " AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
+            print("Executing: " + sql)
             cur.execute(sql)
             results = cur.fetchall()
             return jsonify(results)
@@ -65,14 +75,11 @@ def get_category_items(category):
             if product_fields.index(fields)+1 != len(product_fields):
                 sql += " OR "
             else:
-                sql += ") AND product_status = 'ACTIVE'"
+                sql += ") AND product_status = 'ACTIVE' ORDER BY date_time_added DESC"
         print("Executing: " + sql)
         cur.execute(sql)
         results = cur.fetchall()
         return jsonify(results)
-
-
-
 
 @app.route('/api/user_types')
 def get_user_types():
@@ -179,8 +186,10 @@ def post_product():
     extension = os.path.splitext(file.filename)[1]
     file.filename = str(product_id) + extension  #some custom file name that you want
     file.save(uri_append+file.filename)
+    prepare_pdf_thumbnail(file.filename)
     status_code = Response(status=201)
     return status_code
+
 
 @app.route('/api/download', methods = ['GET'])
 def download_file():
@@ -188,7 +197,18 @@ def download_file():
     product_id = request.args['product_id']
     uri = uri_append+str(product_id)+'.*'
     for file in glob.glob(uri):
-        return send_file(file,as_attachment=True), 302
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
+@app.route('/api/thumbnails', methods = ['GET'])
+def download_thumbnail():
+    # TODO check if file exists, and if user is allowed to download
+    product_id = request.args['product_id']
+    uri = 'thumbnails/'+str(product_id)+'.*'
+    for file in glob.glob(uri):
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
 
 #admin approval on pending posts
 #POST REQUEST USING FORM-DATA

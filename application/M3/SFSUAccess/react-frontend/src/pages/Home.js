@@ -47,6 +47,12 @@ const submitSearch = ()=> {
       const body = {
         product_name : product_name.toLowerCase()
     }
+    ReactGA.event({
+     category: 'Search',
+     action: 'Search Submit',
+     label: 'Category: ' + category + '. SearchKey: ' + product_name,
+     transport: 'beacon'
+    });
       axios.post('/api/search/' + category,body)
       .then((response) => {
         
@@ -56,7 +62,11 @@ const submitSearch = ()=> {
           axios.get('/api/search/'+ category)
             .then(response => {
                getRange_last(response.data);
-               dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are items in the same cateory. '));
+               if(category === "All"){
+                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are all items listed. '));
+               } else {
+                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are items in the same category. '));
+               }
             })
         }     
         else{ // If something was found, return items.
@@ -92,10 +102,10 @@ const submitSearch = ()=> {
     let last;
     dispatch(setNotes(data));           // All the items
     dispatch(setNotes_perpage(data));   // Itmes shown per page.
-    if(4 > data.length)
+    if(8 > data.length)
       last = data.length;
     else
-      last =4;
+      last = 8;
     dispatch(setShow_number_of_items('Showing ' + 1 + '-' + last + ' out of ' + data.length + '.')); // Showing 1-4 out of 5..
     return last;
   }
@@ -109,11 +119,14 @@ const submitSearch = ()=> {
     removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
+    ReactGA.event({
+     category: 'LogOut',
+     action: 'User Logged Out',
+     transport: 'beacon'
+    });
     ReactGA.initialize('UA-163580713-1'); // reinitialize GA on log out to reset clientId
     dispatch(setUsername('')); 
   }
-
-
 
   //Use to redirecting to item detail page with an item id.
   const goItemDetail =(id) => {
@@ -139,7 +152,7 @@ const submitSearch = ()=> {
                 <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                 }).reverse()}
           </select>&nbsp;
-          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." onChange={(e)=>setProduct_name(e.target.value)} />&nbsp;&nbsp;
+          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." maxLength="40" onChange={e=>setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))} />&nbsp;&nbsp;
           <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;
           <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
         
@@ -192,7 +205,7 @@ const submitSearch = ()=> {
     {/* Here is the default content page */}
     {!searchinfo && (
     <Container>
-      <div>Lastest items in each category</div><hr/>
+      <div>Latest items in each category</div><hr/>
       <div>Notes category</div><br/>
       <Row>{
         notes_list.map((x,item_number) => {  
