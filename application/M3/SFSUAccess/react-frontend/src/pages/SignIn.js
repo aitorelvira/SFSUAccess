@@ -17,7 +17,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
 
   //cookies
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin','post_item']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin']);
 
   return (
     <Formik

@@ -15,9 +15,9 @@ const Postitem = () => {
     const [show, setShow] = useState(false);
     const [product_name, setItemName] = useState('');
     const [product_category, setCategory] = useState('');
-    const [product_file, setFile] = useState({});
+    const [product_file, setFile] = useState([]);
     const [product_fileName, setFileName] = useState('Upload File here...')
-    const [product_price, setPrice] = useState(0);
+    const [product_price, setPrice] = useState();
     const [product_license, setLicense] = useState('');
     const [product_description, setDescription] = useState('');
 
@@ -35,6 +35,8 @@ const Postitem = () => {
         if(typeof cookies.post_item !== 'undefined'){
             setItemName(cookies.post_item.product_name);
             setCategory(cookies.post_item.product_category);
+            //setFileName(cookies.post_item.file[0].name);
+            setPrice(cookies.post_item.product_price);
             setLicense(cookies.post_item.product_license);
             setDescription(cookies.post_item.product_description);
         }
@@ -47,6 +49,7 @@ const Postitem = () => {
   }
 
   const postItem =()=>{
+      console.log(cookies.post_item.file);
     var form_data = new FormData();
      for ( var key in cookies.post_item ) {
      form_data.append(key, cookies.post_item[key]);
@@ -69,18 +72,14 @@ const Postitem = () => {
 
   const cancelItem = () =>{
     removeCookies('post_item');
-    setCategory('');
-    setDescription('');
-    setLicense('');
-    setItemName('')
-    setShow(false);
+    window.location.reload();
   }
 
 
     return (
         <Formik
         initialValues={{product_name: product_name, product_category: product_category, 
-        // file: null, item_price: '', 
+        file: null, product_price: '', 
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
             product_name: Yup.string()
@@ -89,11 +88,11 @@ const Postitem = () => {
             product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
-            // file: Yup.mixed()
-            //     .required('A file is required'),
-            // price: Yup.number()
-            //     .required("Please enter a price")
-            //     .positive("Must be a position number"),
+            file: Yup.mixed()
+                .required('A file is required'),
+            product_price: Yup.number()
+                .required("Please enter a price")
+                .min(0, "Must be '0' or a positive number"),
             product_license: Yup.string()
                 .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
                 .required("Please indicate your license preference"),
@@ -114,21 +113,18 @@ const Postitem = () => {
            axios.post('/api/product',form_data)
                .then((response) =>{
                    console.log("Item posted successfully");
+                   alert(JSON.stringify(values.product_name) + "has been posted successfully.");
+                   removeCookies('post_item');
                })
                .catch((error) => console.log(error))  
-          
-            // display message when an item posted.
-            alert(JSON.stringify(values.product_name) + "has been posted successfully.");
-            removeCookies('post_item');
             resetForm();      
             setSubmitting(false);
         }
         else{
-            setCookies('post_item', values, { expires: 0});
-            // setItemName(cookies.post_item.product_name);
-            // setCategory(cookies.post_item.product_category);
-            // setLicense(cookies.post_item.product_license);
-            // setDescription(cookies.post_item.product_description);
+            console.log(values); 
+            setCookies('post_item', 
+            JSON.stringify(values), { expires: 0});
+            console.log(cookies.post_item);
             setShow(true);
         }}}
     >
@@ -140,11 +136,13 @@ const Postitem = () => {
                 <Alert show={show} variant="dark">
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
+                        <b>File : </b>{product_fileName}<br/>
+                        <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
                         <b>License : </b>{product_license}<br/>
-                        <b>Description : </b>{product_description}
+                        <b>Description : </b>{product_description}<br/>
                     <hr />
-                    <p>Please create and log into your account.</p>
+                    <p>Please create and log into your account to continue.</p>
                     <div>
                     <Button onClick={()=>{history.push("/SignUp")}} variant="warning">
                         Sign up
@@ -162,9 +160,11 @@ const Postitem = () => {
                     <Alert variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
+                        <b>File : </b>{cookies.post_item.file[0]}<br/>
+                        <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
                         <b>License : </b>{product_license}<br/>
-                        <b>Description : </b>{product_description}
+                        <b>Description : </b>{product_description}<br/>
                     <hr />
                     <div>
                     <Button onClick={postItem} variant="warning">
@@ -207,9 +207,9 @@ const Postitem = () => {
                                 </Form.Group>
                             </Form.Row>
 
-                            {/* <Form.Row>
-                                <Form.Group  as={Col} controlId="formGridAddress1">
-                                    <Form.Label>Upload item image</Form.Label>
+                            <Form.Row>
+                                <Form.Group  as={Col} controlId="file">
+                                    <Form.Label>Upload a file.</Form.Label>
                                         <div className="input-group">
                                             <div className="custom-file">
                                                 <input
@@ -218,7 +218,9 @@ const Postitem = () => {
                                                      className="custom-file-input"
                                                      id="file"
                                                      aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); setFileName(e.currentTarget.files[0].name)}}
+                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); 
+                                                     setFileName(e.currentTarget.files[0].name);
+                                                     setFile(e.currentTarget.files[0])}}
                                                 />
                                                 <label className="custom-file-label" htmlFor="inputGroupFile01">
                                                     {product_fileName}
@@ -230,17 +232,17 @@ const Postitem = () => {
                             </Form.Row>
 
                             <Form.Row>
-                                <Form.Group as={Col} controlId="formGridState">
+                                <Form.Group as={Col} controlId="product_price">
                                     <Form.Label>Price</Form.Label>
                                         <Form.Control
-                                            name="price"
+                                            name="product_price"
                                             type="text"
                                             placeholder="$"
-                                            onChange={(e) => {formik.setFieldValue("price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
                                         />
-                                        {formik.touched.price && formik.errors.price ? (<div className="error_message">{formik.errors.price}</div>) : null}
+                                        {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
                                 </Form.Group>
-                            </Form.Row> */}
+                            </Form.Row>
 
                             <Form.Row>
                                 <Form.Group as={Col} id="product_license">

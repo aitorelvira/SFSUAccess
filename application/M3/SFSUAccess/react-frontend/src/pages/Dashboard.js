@@ -40,29 +40,46 @@ const Dashboard = () => {
                                   set_active_item(response.data);
                                 })
                                 .catch(error => console.log(error))
-        await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
-                                .then(response =>{
-                                  set_pending_item(response.data);
-                                })
-                                .catch(error => console.log(error))
+        if(user_privelege_type !== '1' ){
+          await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
+                                  .then(response =>{
+                                    set_pending_item(response.data);
+                                  })
+                                  .catch(error => console.log(error))
+        }
+        else{
+          await axios.get('/api/admin/pending')
+                                  .then(response =>{
+                                    set_admin_pending_item(response.data);
+                                  })
+                                  .catch(error => console.log(error))
+        }
       }
     fetchData();
   },[]);
 
   const get_activeItem = () =>{
     axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
-    .then(response =>{
-      set_active_item(response.data);
-    })
-    .catch(error => console.log(error))
+      .then(response =>{
+        set_active_item(response.data);
+      })
+      .catch(error => console.log(error))
   }
 
   const get_pendingItem = () =>{
     axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
-    .then(response =>{
-      set_pending_item(response.data);
-    })
-    .catch(error => console.log(error))
+      .then(response =>{
+        set_pending_item(response.data);
+      })
+      .catch(error => console.log(error))
+  }
+
+  const get_admin_pendingItem = ()=>{
+    axios.get('/api/admin/pending')
+      .then(response =>{
+        set_admin_pending_item(response.data);
+      })
+      .catch(error => console.log(error))
   }
 
  
@@ -90,6 +107,7 @@ const Dashboard = () => {
     formData.append('decision', decision);
     axios.post('/api/admin/review', formData)
       .then ((response) => { console.log("Item decision: " + decision);
+        get_admin_pendingItem();
       })
       .catch((error) => console.log("Decision error..."))
   }
@@ -103,20 +121,21 @@ const Dashboard = () => {
   return (
     <Formik
         initialValues={{product_name: '', product_category: '', 
-        // file: null, item_price: '', 
+        file: null, 
+        product_price: '', 
         product_license: '', product_description: '' }}
         validationSchema={Yup.object({
             product_name: Yup.string()
-                .max(15, 'Must be 15 characters or less')
+                .max(50, 'Must be 50 characters or less')
                 .required('Required'),
             product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
-            // file: Yup.mixed()
-            //     .required('A file is required'),
-            // price: Yup.number()
-            //     .required("Please enter a price")
-            //     .positive("Must be a position number"),
+            file: Yup.mixed()
+                .required('A file is required'),
+            product_price: Yup.number()
+                .required("Please enter a price")
+                .min(0, "Must be '0' or a positive number"),
             product_license: Yup.string()
                 .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
                 .required("Please indicate your license preference"),
@@ -133,16 +152,15 @@ const Dashboard = () => {
             for ( var key in values ) {
             form_data.append(key, values[key]);
             }
+            console.log(form_data);
            axios.post('/api/product',form_data)
                .then((response) =>{
-                   console.log("Item posted successfully");
-                   get_pendingItem();
+                   console.log("Item posted successfully");    
+                    get_pendingItem();
+                    alert("Item " + JSON.stringify(values.product_name) + "has been posted successfully.");
                })
-               .catch((error) => console.log(error))  
-          
-            // display message when an item posted.
-            alert(JSON.stringify(values.product_name) + "has been posted successfully.");
-            resetForm();      
+               .catch((error) => console.log(error))
+                resetForm();   
             setSubmitting(false);
         }}
     >
@@ -210,9 +228,9 @@ const Dashboard = () => {
                                 </Form.Group>
                             </Form.Row>
 
-                            {/* <Form.Row>
-                                <Form.Group  as={Col} controlId="formGridAddress1">
-                                    <Form.Label>Upload item image</Form.Label>
+                            <Form.Row>
+                                <Form.Group  as={Col} controlId="img">
+                                    <Form.Label>Upload a file.</Form.Label>
                                         <div className="input-group">
                                             <div className="custom-file">
                                                 <input
@@ -233,17 +251,17 @@ const Dashboard = () => {
                             </Form.Row>
 
                             <Form.Row>
-                                <Form.Group as={Col} controlId="formGridState">
+                                <Form.Group as={Col} controlId="product_price">
                                     <Form.Label>Price</Form.Label>
                                         <Form.Control
-                                            name="price"
+                                            name="product_price"
                                             type="text"
                                             placeholder="$"
-                                            onChange={(e) => {formik.setFieldValue("price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
                                         />
-                                        {formik.touched.price && formik.errors.price ? (<div className="error_message">{formik.errors.price}</div>) : null}
+                                        {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
                                 </Form.Group>
-                            </Form.Row> */}
+                            </Form.Row>
 
                             <Form.Row>
                                 <Form.Group as={Col} id="product_license">
@@ -298,8 +316,8 @@ const Dashboard = () => {
                               <tbody>
                                 {pending_item.map((item,y) => {
                                   return (
-                                    <tr key = {y+1}>
-                                    <td> {y+1} </td>
+                                    <tr key = {y + 1}>
+                                    <td> {y + 1} </td>
                                     <td> {item.product_name} </td>
                                     <td> {item.product_description} </td>
                                     <td> {item.date_time_added}</td>
@@ -318,23 +336,26 @@ const Dashboard = () => {
                     <Table responsive>
                           <thead>
                             <tr>
-                              <th>Item Number</th>
-                              <th>Item Name</th>
-                              <th>Description</th>
-                              <th>Approve/Deny item</th>
+                            <th>Number</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Post time</th>
+                            <th>Approve/Deny item</th>
                             </tr>
                           </thead>
                           <tbody>
-
-                            <tr>
-                              <td>1</td>
-                              <td>Table cell</td>
-                              <td>Table cell</td>
-                              <td>
-                                <Button variant="warning" onClick = {()=>admin_approve_deny('24','Approve')}>Approve</Button>  &nbsp; &nbsp;
-                                <Button variant="warning" onClick = {()=>admin_approve_deny('25','Deny')}>Deny</Button>  &nbsp; &nbsp;
-                              </td>
-                            </tr>
+                            {admin_pending_item.map((item,y) => {
+                                  return (
+                                    <tr key = {y + 1}>
+                                    <td> {y + 1} </td>
+                                    <td> {item.product_name} </td>
+                                    <td> {item.product_description} </td>
+                                    <td> {item.date_time_added}</td>
+                                    <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
+                                         <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
+                                  </tr>
+                                  )})
+                            }
                           </tbody>
                       </Table>
                     </Tab>
