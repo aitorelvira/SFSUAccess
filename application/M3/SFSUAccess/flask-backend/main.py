@@ -18,7 +18,28 @@ if test_mode:
 else:
     uri_append = 'uploads/'
 #products / categories / searches
+<<<<<<< Updated upstream
 @app.route('/api/search',methods=['GET','POST'])
+=======
+
+def prepare_pdf_thumbnail(prefilename):
+    #todo accepted fileformats, right now it works for PDF
+    img = Image(filename=uri_append+prefilename, resolution=300, width=600)
+    img.save(filename= 'thumbnails/'+prefilename+'.png')
+
+def prepare_audio_artwork(filename):
+    file = File(uri_append+filename)
+    artwork = file.tags['APIC:'].data # access APIC frame and grab the image
+    with open('thumbnails/'+filename+'.png', 'wb') as img:
+        img.write(artwork) # write artwork to new image
+
+@app.route('/api/albumart', methods =['GET'])
+def get_albumart():
+    img = prepare_audio_artwork('96.mp3')
+    return 'it worked!'
+
+@browse_api.route('/api/search',methods=['GET','POST'])
+>>>>>>> Stashed changes
 def get_categories():
     if request.method=='GET':
         cur.execute("SELECT product_category_name FROM product_categories LIMIT 50")
@@ -41,7 +62,7 @@ def get_categories():
 
 #TODO front end needs to adapt for GET and POST
 #POST REQUEST USING JSON DATA
-@app.route('/api/search/<category>',methods=['GET','POST'])
+@browse_api.route('/api/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
     if request.method=='GET':
         if category.lower() == "all":
@@ -71,24 +92,28 @@ def get_category_items(category):
         results = cur.fetchall()
         return jsonify(results)
 
+<<<<<<< Updated upstream
 
 
 
 @app.route('/api/user_types')
+=======
+@user_api.route('/api/user_types')
+>>>>>>> Stashed changes
 def get_user_types():
     sql = "SELECT privelege_type FROM user_priveleges"
     cur.execute(sql)
     results = cur.fetchall()
     return jsonify(results)
 
-@app.route('/api/product_license')
+@products_api.route('/api/product_license')
 def get_product_licenses():
     sql = "SELECT license_type FROM licenses"
     cur.execute(sql)
     results = cur.fetchall()
     return jsonify(results)
 
-@app.route('/api/register', methods=['POST'])
+@account_api.route('/api/register', methods=['POST'])
 #POST REQUEST USING JSON DATA, THE COMMENT BLOCK IS FORM-DATA
 def register_user():
 #     this block of comment is if we get around to fixing React to post a FORM instead of JSON
@@ -117,7 +142,7 @@ def register_user():
         return status_code
 
 #POST REQUEST USING JSON DATA
-@app.route('/api/login', methods=['POST'])
+@account_api.route('/api/login', methods=['POST'])
 def login():
     form = request.get_json()
     email = form['email']
@@ -134,7 +159,7 @@ def login():
 
 #all user listings, active or pending
 #POST REQUEST USING JSON DATA
-@app.route('/api/user_listings', methods=['POST'])
+@userfiles_api.route('/api/user_listings', methods=['POST'])
 def user_listings():
     form = request.get_json()
     email = form['email']
@@ -158,7 +183,7 @@ def user_listings():
 
 #this endpoint is for students/faculty, NOT admin
 #POST REQUEST USING FORM-DATA
-@app.route('/api/product',methods=['POST'])
+@products_api.route('/api/product',methods=['POST'])
 def post_product():
     # create product post TODO FOR KEVIN still need to figure out file system
     product_name = request.form['product_name']
@@ -182,17 +207,37 @@ def post_product():
     status_code = Response(status=201)
     return status_code
 
+<<<<<<< Updated upstream
 @app.route('/api/download', methods = ['GET'])
+=======
+
+@admin_api.route('/api/download', methods = ['GET'])
+>>>>>>> Stashed changes
 def download_file():
     # TODO check if file exists, and if user is allowed to download
     product_id = request.args['product_id']
     uri = uri_append+str(product_id)+'.*'
     for file in glob.glob(uri):
+<<<<<<< Updated upstream
         return send_file(file,as_attachment=True), 302
+=======
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
+@admin_api.route('/api/thumbnails', methods = ['GET'])
+def download_thumbnail():
+    # TODO check if file exists, and if user is allowed to download
+    product_id = request.args['product_id']
+    uri = 'thumbnails/'+str(product_id)+'.*'
+    for file in glob.glob(uri):
+        #return send_file(file,as_attachment=True), 302
+        return send_file(file), 302
+
+>>>>>>> Stashed changes
 
 #admin approval on pending posts
 #POST REQUEST USING FORM-DATA
-@app.route('/api/admin/review',methods=['POST'])
+@admin_api.route('/api/admin/review',methods=['POST'])
 def review_product():
     product_id = request.form['product_id']
     decision = request.form['decision']
@@ -205,7 +250,7 @@ def review_product():
     status_code = Response(status=200)
     return status_code
 
-@app.route('/api/admin/pending',methods=['GET'])
+@admin_api.route('/api/admin/pending',methods=['GET'])
 def review_pending():
     sql = "SELECT * from products WHERE product_status = 'PENDING'"
     cur.execute(sql)
@@ -213,7 +258,7 @@ def review_pending():
 
 # /api/product?user_id=13&status=active
 #GET REQUEST USING HEADERS
-@app.route('/api/product',methods=['GET'])
+@products_api.route('/api/product',methods=['GET'])
 def get_products():
     user_id = request.args["user_id"]
     product_status = request.args["status"]
@@ -228,7 +273,7 @@ def get_products():
     return jsonify(results)
 
 #PUT REQUEST USING FORM-DATA
-@app.route('/api/product/<id>', methods=['GET','PUT','DELETE'])
+@products_api.route('/api/product/<id>', methods=['GET','PUT','DELETE'])
 def manage_product(id):
     if request.method=='GET':
         sql = "select products.*, registered_users.`email` FROM products inner join `registered_users` ON registered_users.id=products.`registered_user_id` WHERE products.id=%s"
@@ -263,7 +308,7 @@ def manage_product(id):
 # MESSAGES
 # Initiate a new conversation with another user. Needs FROM USER ID, TO USER ID, MESSAGE CONTENT, PRODUCT ID
 #POST WITH FORM DATA
-@app.route('/api/messages/new',methods=['POST'])
+@messages_api.route('/api/messages/new',methods=['POST'])
 def new_chatroom():
     from_user = request.form['from_user_id']
     to_user = request.form['to_user_id']
@@ -285,7 +330,7 @@ def new_chatroom():
     return status_code
 
 #GET USER CONVERSATIONS
-@app.route('/api/messages',methods=['GET'])
+@messages_api.route('/api/messages',methods=['GET'])
 def get_chatrooms():
     user_id = request.args["user_id"]
     sql = "SELECT * from chat_rooms WHERE user_1=%s OR user_2=%s"
@@ -294,7 +339,7 @@ def get_chatrooms():
     return jsonify(data),200
 
 #TODO, add code for checking if request is from authorized user
-@app.route('/api/messages/<chatroom_id>',methods =['GET'])
+@messages_api.route('/api/messages/<chatroom_id>',methods =['GET'])
 def get_chatroom_messages_by_id(chatroom_id):
     sql = "SELECT * from messages WHERE chat_room_id=%s"
     cur.execute(sql,chatroom_id)
@@ -303,7 +348,7 @@ def get_chatroom_messages_by_id(chatroom_id):
 
 
 #call this when a conversation is opened. this one doesn't return conversation contents, only marks conversation as read.
-@app.route('/api/messages/read/<chatroom_id>',methods =['POST'])
+@messages_api.route('/api/messages/read/<chatroom_id>',methods =['POST'])
 def read_chatroom_messages_by_id(chatroom_id):
     user_id = request.form['user_id']
     sql = "UPDATE messages SET read_at=NOW() WHERE to_user_id=%s AND chat_room_id=%s"
