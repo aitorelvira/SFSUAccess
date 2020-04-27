@@ -67,7 +67,7 @@ const SignUp = () => {
              });
             })
             .catch(err => {
-                setErrors({email: 'reaped'})
+                setErrors({email: 'This email already exist. Please use a different email.'})
             });
             setSubmitting(false);
         }}
