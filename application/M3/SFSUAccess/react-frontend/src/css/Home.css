@@ -18,13 +18,17 @@
     top:0px;
 }
 
+.navLogo{
+    min-width:170px;
+}
+
 .navbar{
     color: white;
 }
 
 
 .searchBar{
-   width:300px;
+   width:400px;
    height: 35px;
 }
 

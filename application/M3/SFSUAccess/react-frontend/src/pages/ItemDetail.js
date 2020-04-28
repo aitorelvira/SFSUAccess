@@ -1,7 +1,9 @@
+//PURPOSE: This page is used to show an selected item detail information, after
+//         user clicked its thumbnail.
+//AUTHOR: JunMin Li
 import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-// import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
@@ -64,7 +66,7 @@ const ItemDetail = () => {
                 <div>{product_license}</div>
             </Col>
             </Row>
-            <Row><Col md={{ span: 8, offset: 1 }}><div>Description: &nbsp;&nbsp;{product_description}</div></Col></Row><br/>
+            <Row><Col md={{ span: 8, offset: 1 }}><div>Description: &nbsp;&nbsp;{product_description}</div></Col></Row><hr/>
            
             <Row><Col md={{ span: 8, offset: 1 }}>
             <div contentEditable ="true" className="textarea" onInput = {e=> setText(e.target.innerText)} id ="textarea"></div>
@@ -83,7 +85,7 @@ const ItemDetail = () => {
                 <Form.Control  placeholder="email*"/>
             </Form.Group>
             </Col>
-            <Col md={{ span: 3 , offset: 2 }}>
+            <Col>
                 <Button variant="warning" onClick = {sendMessage}>  &nbsp;&nbsp;Send a message&nbsp;&nbsp;</Button>
             </Col>
             </Row>

@@ -1,10 +1,12 @@
+//PURPOSE: This page is used for posting items.
+//AUTHOR: JunMin Li
 import React , {useEffect, useState} from 'react';
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form, Button, Container, Col, Alert } from 'react-bootstrap';
+import { Form, Button, Container, Col, Alert,Row } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -78,8 +80,8 @@ const Postitem = () => {
 
 
   const cancelItem = () =>{
-    removeCookies('post_item');
     window.location.reload();
+    removeCookies('post_item');
   }
 
 
@@ -138,7 +140,7 @@ const Postitem = () => {
         <div>
             <Header/>
             <Container className="dashboard">
-                <h3>Post item page.</h3><br/>
+                <h3>Post item page</h3><br/>
                 <Alert show={show} variant="dark">
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
@@ -156,7 +158,7 @@ const Postitem = () => {
                     <Button onClick={()=>{history.push("/SignIn")}} variant="warning">
                         Sign in
                     </Button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <Button onClick={cancelItem} variant="warning">
+                    <Button onClick={cancelItem} variant="danger">
                         Not now
                     </Button>
                     </div>                   
@@ -173,7 +175,7 @@ const Postitem = () => {
                     <hr />
                     <form id = "itemForm">
                     <Form.Row>
-                                <Form.Group  as={Col} controlId="file">
+                                <Form.Group controlId="file">
                                     <Form.Label>Upload your file here again, then you good to go.</Form.Label>
                                         <div className="input-group">
                                             <div className="custom-file">
@@ -195,10 +197,14 @@ const Postitem = () => {
                                 </Form.Group>
                             </Form.Row>
                     </form>
-                    <Button variant="warning" onClick={postItem}>Post Item</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <Button onClick={cancelItem} variant="warning">
-                        Cancel
-                    </Button>                
+                    <Row>
+                        <Col>
+                            <Button onClick={cancelItem} variant="danger">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <Button variant="warning" onClick={postItem}>Post item</Button>
+                        </Col>
+                    </Row>
+                    
+                                   
                 </Alert>
                 }
                         
@@ -231,29 +237,6 @@ const Postitem = () => {
                                                 }).reverse()}
                                         </Form.Control>
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
-                                <Form.Group  as={Col} controlId="file">
-                                    <Form.Label>Upload your file.</Form.Label>
-                                        <div className="input-group">
-                                            <div className="custom-file">
-                                                <input
-                                                    name="file"
-                                                     type="file"
-                                                     className="custom-file-input"
-                                                     id="file"
-                                                     aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);  
-                                                     setFileName(e.currentTarget.files[0].name);}}
-                                                />
-                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
-                                                    {product_fileName}
-                                                </label>
-                                             </div>
-                                         </div>
-                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
@@ -293,17 +276,41 @@ const Postitem = () => {
                                         name="product_description"
                                         as="textarea"
                                         rows="3"
+                                        className = "textarea"
                                         onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); setDescription(e.currentTarget.value)}}
                                     />
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
                             </Form.Group>
 
+                            <Form.Row>
+                                <Form.Group  as={Col} controlId="file">
+                                    <Form.Label>Upload your file.</Form.Label>
+                                        <div className="input-group">
+                                            <div className="custom-file">
+                                                <input
+                                                    name="file"
+                                                     type="file"
+                                                     className="custom-file-input"
+                                                     id="file"
+                                                     aria-describedby="inputGroupFileAddon01"
+                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);  
+                                                     setFileName(e.currentTarget.files[0].name);}}
+                                                />
+                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
+                                                    {product_fileName}
+                                                </label>
+                                             </div>
+                                         </div>
+                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
+                                </Form.Group>
+                            </Form.Row><br/>
+
                             <Form.Row >
                                 <Col>
-                                    <Button variant="warning" onClick = {resetForm} block>Cancel</Button>
+                                    <Button variant="danger" onClick = {resetForm} block>Cancel</Button>
                                 </Col>
                                 <Col>
-                                    <Button variant="warning" type="submit" block>Post Item</Button>
+                                    <Button variant="warning" type="submit" block>Post item</Button>
                                 </Col>
                             </Form.Row>
                         </form>

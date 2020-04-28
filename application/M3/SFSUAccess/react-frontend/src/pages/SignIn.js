@@ -1,3 +1,5 @@
+//PURPOSE: This is the sign in page.
+//AUTHOR: JunMin Li
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
 import ReactGA from "react-ga";
@@ -77,10 +79,10 @@ const SignIn = () => {
     >
         {formik => (
             <div>
+                <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
                 <Navbar bg="dark" variant="dark" className="navbar">
-                <Navbar.Brand>SFSUAccess</Navbar.Brand>
+                <Navbar.Brand href="/">SFSUAccess</Navbar.Brand>
                 </Navbar><br/>
-                <Notice/>
                 <Container className="overAll">
                     <div className="greeting">Sign in</div><br/>
                     <div className="message">{message}</div><br/>
@@ -104,11 +106,16 @@ const SignIn = () => {
                             />
                             {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
                         </Form.Group>
-
-                        <Button variant="warning" block type="submit">{isLoading ? 'Logging in, please wait...': 'SIGN IN'}</Button>
+                        <Row>
                         {!isLoading &&(
-                            <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>
+                        <Col>
+                            <Button variant="danger" block href="/" block>Cancel</Button>
+                        </Col>
                         )}
+                        <Col>
+                            <Button variant="warning" block type="submit" block>{isLoading ? 'Logging in, please wait...': 'Sign in'}</Button>
+                        </Col>
+                        </Row>
                         <Row>
                             <Col>
                                 <Link className="leftlinks" to ="">Forgot password</Link>

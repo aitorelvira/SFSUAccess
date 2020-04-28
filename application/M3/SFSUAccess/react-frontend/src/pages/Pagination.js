@@ -1,10 +1,12 @@
+//PURPOSE: This page is used as the pagination of search items.
+//         Showing eight items per page.
+//AUTHOR: JunMin Li
 import React from 'react';
 import { Container} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { setNotes_perpage, setShow_number_of_items } from '../redux/actions/notesActions.js';
 import '../css/Content.css';
 
-//always say how many found out of how many "showing 1-10 out of 12345"
 const Pagination = ({ dispatch, notes }) => {
 
   // This function is setting how many items will be shown in one page.

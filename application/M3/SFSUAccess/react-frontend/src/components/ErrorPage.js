@@ -1,3 +1,5 @@
+//PURPOSE: This is the error message page for any invalid url in the app.
+//AUTHOR: JunMin Li
 import React from "react";
 import { Navbar, Button } from 'react-bootstrap';
 import Notice from './Notice';

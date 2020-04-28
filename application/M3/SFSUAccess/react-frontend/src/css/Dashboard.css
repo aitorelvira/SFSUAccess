@@ -30,3 +30,6 @@
     align-items: right;
 }
 
+.textarea {
+    resize: none;
+}

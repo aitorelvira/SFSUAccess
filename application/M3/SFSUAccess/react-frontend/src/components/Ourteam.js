@@ -1,3 +1,5 @@
+//PURPOSE: This is our team information component.
+//AUTHOR: JunMin Li
 import React from "react";
 import { Container } from "reactstrap";
 

@@ -1,3 +1,6 @@
+//PURPOSE: This page is used to show our team information.
+//         Including sub pages for each team members.
+//AUTHOR: JunMin Li
 import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { Switch, Route } from "react-router-dom";
@@ -25,8 +28,9 @@ const About = () => {
 
     return (
       <div>
+         <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
          <Navbar bg="dark" variant="dark">
-            <Navbar.Brand>SFSUAccess</Navbar.Brand>
+            <Navbar.Brand href="/">SFSUAccess</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Nav className="page">
                 <Button href = "/About" className ="navButton">Our Team</Button>&nbsp;&nbsp;
@@ -43,7 +47,6 @@ const About = () => {
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
             </Navbar.Collapse>
             </Navbar><br/>
-            <Notice/>
 
           <Container className = "page">
              <Switch>

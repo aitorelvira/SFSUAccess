@@ -1,3 +1,5 @@
+//PURPOSE: This is the home page of our app.
+//AUTHOR: JunMin Li
 import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
 import ReactGA from "react-ga";
@@ -140,12 +142,12 @@ const submitSearch = ()=> {
       
   return (  
     <div>
+      <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
     {/* Navbar section  */}
       <Navbar bg="dark" variant="dark" className="navbar">
-      <Navbar.Brand>SFSUAccess</Navbar.Brand>
+      <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-
           <select id="category" >
           {lists.map((x) => {
             return (
@@ -153,7 +155,7 @@ const submitSearch = ()=> {
                 }).reverse()}
           </select>&nbsp;
           <input className="searchBar" id ="searchItem" placeholder="Enter item name.." maxLength="40" onChange={e=>setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))} />&nbsp;&nbsp;
-          <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;
+          <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
         
         <Navbar.Collapse className="justify-content-end">       
@@ -168,7 +170,7 @@ const submitSearch = ()=> {
         {username &&(
           <div>             
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-            <Button variant="warning" href = "/Dashboard">My Dashboard</Button>&nbsp;&nbsp;
+            <Button variant="warning" href = "/Dashboard">My dashboard</Button>&nbsp;&nbsp;
             <Button variant="warning" onClick ={logOut}>Log out</Button>
           </div>
         )}
@@ -180,8 +182,7 @@ const submitSearch = ()=> {
         <Navbar.Brand className="navLogo"></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-        <Nav>
-          <NavItem><a href="/"><button className ="navButton">Home</button></a></NavItem>     
+        <Nav>    
             {lists.map((x) => {
               if(x.product_category_name !== 'All'){
                return (
@@ -197,11 +198,10 @@ const submitSearch = ()=> {
           <NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
         </Nav>
         </Navbar.Collapse> 
-        </Navbar> 
-
+        </Navbar>
+         <br/>
     {/* Navbar end here     */}
 
-    <Notice/>
     {/* Here is the default content page */}
     {!searchinfo && (
     <Container>

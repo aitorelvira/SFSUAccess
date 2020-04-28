@@ -1,6 +1,9 @@
+//PURPOSE: This page is used to manage user's item.
+//         To check active / pending posted item, messages and able to post item.
+//AUTHOR: JunMin Li
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Form, Button, Container, Col } from 'react-bootstrap';
+import { Form, Button, Container, Col, Row } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useCookies } from 'react-cookie';
@@ -118,64 +121,73 @@ const Dashboard = () => {
     setFileName("Upload File here...");
   }
 
+   //Use to redirecting to post item page.
+   const goPostitem = () => {
+     console.log("go post item page.")
+    window.open("/Postitem");
+  };
+
   return (
-    <Formik
-        initialValues={{product_name: '', product_category: '', 
-        file: null, 
-        product_price: '', 
-        product_license: '', product_description: '' }}
-        validationSchema={Yup.object({
-            product_name: Yup.string()
-                .max(50, 'Must be 50 characters or less')
-                .required('Required'),
-            product_category: Yup.string()
-                .oneOf(['Notes', 'Video', 'Music'])
-                .required('Please indicate your category preference'),
-            file: Yup.mixed()
-                .required('A file is required'),
-            product_price: Yup.number()
-                .required("Please enter a price")
-                .min(0, "Must be '0' or a positive number"),
-            product_license: Yup.string()
-                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
-                .required("Please indicate your license preference"),
-            product_description: Yup.string()
-                .max(500, 'Must be 500 characters or less')
-                .required('Please enter description'),
-        })}
+    // <Formik
+    //     initialValues={{product_name: '', product_category: '', 
+    //     file: null, 
+    //     product_price: '', 
+    //     product_license: '', product_description: '' }}
+    //     validationSchema={Yup.object({
+    //         product_name: Yup.string()
+    //             .max(50, 'Must be 50 characters or less')
+    //             .required('Required'),
+    //         product_category: Yup.string()
+    //             .oneOf(['Notes', 'Video', 'Music'])
+    //             .required('Please indicate your category preference'),
+    //         file: Yup.mixed()
+    //             .required('A file is required'),
+    //         product_price: Yup.number()
+    //             .required("Please enter a price")
+    //             .min(0, "Must be '0' or a positive number"),
+    //         product_license: Yup.string()
+    //             .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
+    //             .required("Please indicate your license preference"),
+    //         product_description: Yup.string()
+    //             .max(500, 'Must be 500 characters or less')
+    //             .required('Please enter description'),
+    //     })}
         
-        onSubmit={(values, {setSubmitting}) => {
-           values.user_id = user_id;
-           values.product_author = cookies.first_name;
-           //convert json obj to formdata.
-           var form_data = new FormData();
-            for ( var key in values ) {
-            form_data.append(key, values[key]);
-            }
-            console.log(form_data);
-           axios.post('/api/product',form_data)
-               .then((response) =>{
-                   console.log("Item posted successfully");    
-                    get_pendingItem();
-                    alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
-               })
-               .catch((error) => console.log(error))
-                resetForm();   
-            setSubmitting(false);
-        }}
-    >
-    {formik => (
+    //     onSubmit={(values, {setSubmitting}) => {
+    //        values.user_id = user_id;
+    //        values.product_author = cookies.first_name;
+    //        //convert json obj to formdata.
+    //        var form_data = new FormData();
+    //         for ( var key in values ) {
+    //         form_data.append(key, values[key]);
+    //         }
+    //         console.log(form_data);
+    //        axios.post('/api/product',form_data)
+    //            .then((response) =>{
+    //                console.log("Item posted successfully");    
+    //                 get_pendingItem();
+    //                 alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+    //            })
+    //            .catch((error) => console.log(error))
+    //             resetForm();   
+    //         setSubmitting(false);
+    //     }}
+    // >
+    // {formik => (
         <div>
             <Header/>
             {/* Dash content   */}
             <Container className="dashboard">
-                <h3>{user_privelege_type ==='1'? "Administrator Dashboard" : "My Dashboard"}</h3><br/>
+                <Row><h3>{user_privelege_type ==='1'? "Administrator Dashboard" : "My Dashboard"}</h3>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="warning" onClick = { goPostitem }>Post an item</Button></Row>
+                <br/>
                 <Tabs defaultActiveKey="listItem" id="dashboard">
                     <Tab eventKey="listItem" title="My Items">
                         <Table>
                             <thead>
                                 <tr>
-                                    <th>Item#</th>
+                                    <th>Item</th>
                                     <th>Thumbnails</th>
                                     <th>Description</th>
                                     <th>Remove item</th>
@@ -188,7 +200,7 @@ const Dashboard = () => {
                                             <td width ="5%"> {y+1} </td>
                                             <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
                                             <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
-                                            <td width ="15%"> <Button variant="warning" id = {item.id} onClick={()=>remove_activeitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                                            <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                                         </tr>
                                     )})
                                 }
@@ -196,7 +208,7 @@ const Dashboard = () => {
                         </Table>
                     </Tab>
 
-                    <Tab eventKey="postItem" title="Post an item">
+                    {/* <Tab eventKey="postItem" title="Post an item">
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
                                 <Form.Group as={Col} id="product_name">
@@ -225,28 +237,6 @@ const Dashboard = () => {
                                                 }).reverse()}
                                         </Form.Control>
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
-                                <Form.Group  as={Col} controlId="img">
-                                    <Form.Label>Upload a file.</Form.Label>
-                                        <div className="input-group">
-                                            <div className="custom-file">
-                                                <input
-                                                    name="file"
-                                                     type="file"
-                                                     className="custom-file-input"
-                                                     id="file"
-                                                     aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); setFileName(e.currentTarget.files[0].name)}}
-                                                />
-                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
-                                                    {product_fileName}
-                                                </label>
-                                             </div>
-                                         </div>
-                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
@@ -291,9 +281,31 @@ const Dashboard = () => {
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
                             </Form.Group>
 
+                            <Form.Row>
+                                <Form.Group  as={Col} controlId="img">
+                                    <Form.Label>Upload a file.</Form.Label>
+                                        <div className="input-group">
+                                            <div className="custom-file">
+                                                <input
+                                                    name="file"
+                                                     type="file"
+                                                     className="custom-file-input"
+                                                     id="file"
+                                                     aria-describedby="inputGroupFileAddon01"
+                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); setFileName(e.currentTarget.files[0].name)}}
+                                                />
+                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
+                                                    {product_fileName}
+                                                </label>
+                                             </div>
+                                         </div>
+                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
+                                </Form.Group>
+                            </Form.Row>
+
                             <Form.Row >
                                 <Col>
-                                    <Button variant="warning" onClick = {resetForm} block>Cancel</Button>
+                                    <Button variant="danger" onClick = {resetForm} block>Cancel</Button>
                                 </Col>
                                 <Col>
                                     <Button variant="warning" type="submit" block>Post Item</Button>
@@ -301,7 +313,7 @@ const Dashboard = () => {
                             </Form.Row>
                         </form>
                         <br/><br/><br/><br/><br/>
-                    </Tab>
+                    </Tab> */}
 
                     {user_privelege_type !== '1' &&
                     <Tab eventKey="pending" title="Pending items">
@@ -321,7 +333,7 @@ const Dashboard = () => {
                                     <td> {item.product_name} </td>
                                     <td> {item.product_description} </td>
                                     <td> {item.date_time_added}</td>
-                                    <td> <Button variant="warning" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                                    <td> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                                   </tr>
 
                                   )})
@@ -376,7 +388,7 @@ const Dashboard = () => {
                                     <td width="65%">Hello CoSE Students,
                                     </td>
                                     <td><Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
-                                        <Button variant="warning">Remove</Button>
+                                        <Button variant="danger">Remove</Button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -385,8 +397,8 @@ const Dashboard = () => {
                 </Tabs>
             </Container>
         </div>
-    )}
-    </Formik>
+    //)}
+    // </Formik>
   );
 };
 export default Dashboard;

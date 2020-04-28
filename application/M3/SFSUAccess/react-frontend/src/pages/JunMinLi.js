@@ -1,3 +1,5 @@
+//PURPOSE: JunMin's about page.
+//AUTHOR: JunMin Li
 import React from 'react';
 
 const JunMinLi = () => {

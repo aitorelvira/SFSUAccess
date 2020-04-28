@@ -1,3 +1,5 @@
+//PURPOSE: This is the footer component.
+//AUTHOR: JunMin Li
 import React from 'react';
 import '../css/Home.css';
 import { Navbar } from 'react-bootstrap';

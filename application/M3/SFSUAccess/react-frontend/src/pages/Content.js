@@ -1,3 +1,6 @@
+//PURPOSE: This page is used to list items after user used any search functions
+//         on the home page. Including free-text search, nav bar selection.
+//AUTHOR: JunMin Li
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';

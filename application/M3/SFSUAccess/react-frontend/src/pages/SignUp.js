@@ -1,8 +1,10 @@
+//PURPOSE: This is the sign up page.
+//AUTHOR: JunMin Li
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form,Button, Container, Navbar} from 'react-bootstrap';
+import { Form,Button, Container, Navbar, Col, Row} from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../css/Sign.css';
 import Notice from '../components/Notice';
@@ -77,10 +79,10 @@ const SignUp = () => {
     >
     {formik => (
         <div>
+            <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
             <Navbar bg="dark" variant="dark" className="navbar">
-            <Navbar.Brand>SFSUAccess</Navbar.Brand>
+            <Navbar.Brand href="/">SFSUAccess</Navbar.Brand>
             </Navbar><br/>
-            <Notice/>
             <Container className="overAll">
                 <div className="greeting">Sign up</div><br/>
                 <div className="message">{message}</div><br/>
@@ -148,10 +150,16 @@ const SignUp = () => {
                         {formik.touched.privelegeType && formik.errors.privelegeType ? (<div className="error_message">{formik.errors.privelegeType}</div>) : null}
                     </Form.Group><br/>
                     <Form.Group>
-                        <Button variant="warning" block type="submit">{isLoading ? 'Registered successfully, redirecting to sign in page...': 'SIGN UP'}</Button>
+                        <Row>
                         {!isLoading &&(
-                            <Button variant="warning" block href="/">BACK TO HOMEPAGE</Button>
+                        <Col>
+                            <Button variant="danger" href="/" block>Cancel</Button>
+                        </Col>
                         )}
+                        <Col >
+                            <Button variant="warning"  type="submit" block>{isLoading ? 'Registered successfully, redirecting to sign in page...': 'Sign up'}</Button>
+                        </Col>
+                        </Row>
                         <div className="rightlinks">
                             <Link  to = "/SignIn" >Already have an account? Sign in</Link>
                         </div>
