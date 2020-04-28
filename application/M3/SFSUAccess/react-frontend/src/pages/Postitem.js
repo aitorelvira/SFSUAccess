@@ -13,7 +13,7 @@ const Postitem = () => {
     const username = cookies.first_name;
     const [list, setList] = useState([]);
     const [show, setShow] = useState(false);
-    const [product_name, setItemName] = useState('');
+    const [product_title, setTitle] = useState('');
     const [product_category, setCategory] = useState('');
     const [product_file, setFile] = useState({});
     const [product_fileName, setFileName] = useState('Upload File here...')
@@ -33,7 +33,7 @@ const Postitem = () => {
         console.log("isLoggedin? "+ user_isloggedin);
 
         if(typeof cookies.post_item !== 'undefined'){
-            setItemName(cookies.post_item.product_name);
+            setTitle(cookies.post_item.product_name);
             setCategory(cookies.post_item.product_category);
             setPrice(cookies.post_item.product_price);
             setLicense(cookies.post_item.product_license);
@@ -67,7 +67,7 @@ const Postitem = () => {
             .catch((error) => console.log(error))  
     
         // display message when an item posted.
-        alert(product_name + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+        alert(product_title + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
         setFileName('Upload File here...');
         removeCookies('post_item');
         setShow(false);
@@ -84,11 +84,11 @@ const Postitem = () => {
 
     return (
         <Formik
-        initialValues={{product_name: product_name, product_category: product_category, 
+        initialValues={{product_title: product_title, product_category: product_category,
         file: null, product_price: '', 
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
-            product_name: Yup.string()
+            product_title: Yup.string()
                 .max(15, 'Must be 15 characters or less')
                 .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Required'),
@@ -143,7 +143,7 @@ const Postitem = () => {
                 <h3>Post item page.</h3><br/>
                 <Alert show={show} variant="dark">
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
-                        <b>Name : </b>{product_name}<br/>
+                        <b>Name : </b>{product_title}<br/>
                         <b>File : </b>{product_fileName}<br/>
                         <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
@@ -167,7 +167,7 @@ const Postitem = () => {
                 {(cookies.post_item && user_isloggedin) &&
                     <Alert variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
-                        <b>Name : </b>{product_name}<br/>
+                        <b>Name : </b>{product_title}<br/>
                         <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
                         <b>License : </b>{product_license}<br/>
@@ -207,15 +207,17 @@ const Postitem = () => {
                 {!cookies.post_item &&         
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
-                                <Form.Group as={Col} id="product_name">
-                                    <Form.Label>Item Name</Form.Label>
+                                <Form.Group as={Col} id="product_title">
+                                    <Form.Label>Title</Form.Label>
                                     <Form.Control
-                                        name="product_name"
+                                        name="product_title"
                                         type="text"
-                                        placeholder="Enter item name"
-                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value); setItemName(e.currentTarget.value)}}
+                                        onFocus={(e) => e.target.placeholder = ""}
+                                        onBlur={(e) => e.target.placeholder = "Enter title"}
+                                        placeholder="Enter title"
+                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value); setTitle(e.currentTarget.value)}}
                                     />
-                                    {formik.touched.product_name && formik.errors.product_name ? (<div className="error_message">{formik.errors.product_name}</div>) : null}
+                                    {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
@@ -238,7 +240,7 @@ const Postitem = () => {
 
                             <Form.Row>
                                 <Form.Group  as={Col} controlId="file">
-                                    <Form.Label>Upload your file.</Form.Label>
+                                    <Form.Label>Upload file</Form.Label>
                                         <div className="input-group">
                                             <div className="custom-file">
                                                 <input
@@ -265,7 +267,9 @@ const Postitem = () => {
                                         <Form.Control
                                             name="product_price"
                                             type="text"
-                                            placeholder="$"
+                                            placeholder="$0"
+                                            onFocus={(e) => e.target.placeholder = ""}
+                                            onBlur={(e) => e.target.placeholder = "$0"}
                                             onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
                                         />
                                         {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
@@ -295,6 +299,9 @@ const Postitem = () => {
                                         name="product_description"
                                         as="textarea"
                                         rows="3"
+                                        placeholder=""
+                                        onFocus={(e) => e.target.placeholder = ""}
+                                        onBlur={(e) => e.target.placeholder = ""}
                                         onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); setDescription(e.currentTarget.value)}}
                                     />
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
