@@ -103,6 +103,8 @@ const ItemDetail = () => {
                                     name="message"
                                     as="textarea"
                                     placeholder="Enter message here..."
+                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
+                                    onBlur={(e) => {e.currentTarget.placeholder="Enter message here..."}}
                                     onChange={(e) => {formik.setFieldValue("message", e.currentTarget.value); setMessage(e.currentTarget.value)}}
                              />
                             {formik.touched.message && formik.errors.message ? (<div className="error_message">{formik.errors.message}</div>) : null}
@@ -116,6 +118,8 @@ const ItemDetail = () => {
                                     name="userName"
                                     type="text"
                                     placeholder="Name"
+                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
+                                    onBlur={(e) => {e.currentTarget.placeholder="Name"}}
                                     onChange={(e) => {formik.setFieldValue("userName", e.currentTarget.value); setUserName(e.currentTarget.value)}}
                              />
                              {formik.touched.userName && formik.errors.userName ? (<div className="error_message">{formik.errors.userName}</div>) : null}
@@ -129,6 +133,8 @@ const ItemDetail = () => {
                                     name="email"
                                     type="email"
                                     placeholder="Email"
+                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
+                                    onBlur={(e) => {e.currentTarget.placeholder="Email"}}
                                     onChange={(e) => {formik.setFieldValue("email", e.currentTarget.value); setEmail(e.currentTarget.value)}}
                              />
                              {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
