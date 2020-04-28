@@ -211,15 +211,17 @@ const Dashboard = () => {
                     {/* <Tab eventKey="postItem" title="Post an item">
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
-                                <Form.Group as={Col} id="product_name">
-                                    <Form.Label>Item Name</Form.Label>
+                                <Form.Group as={Col} id="product_title">
+                                    <Form.Label>Title</Form.Label>
                                     <Form.Control
-                                        name="product_name"
+                                        name="product_title"
                                         type="text"
-                                        placeholder="Enter item name"
-                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value)}}
+                                        placeholder="Enter title"
+                                        onFocus={(e) => e.target.placeholder = ""}
+                                        onBlur={(e) => e.target.placeholder = "Enter title"}
+                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value)}}
                                     />
-                                    {formik.touched.product_name && formik.errors.product_name ? (<div className="error_message">{formik.errors.product_name}</div>) : null}
+                                    {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
                                 </Form.Group>
                             </Form.Row>
 
@@ -246,7 +248,9 @@ const Dashboard = () => {
                                         <Form.Control
                                             name="product_price"
                                             type="text"
-                                            placeholder="$"
+                                            placeholder="$0"
+                                            onFocus={(e) => e.target.placeholder = ""}
+                                            onBlur={(e) => e.target.placeholder = "$0"}
                                             onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
                                         />
                                         {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
