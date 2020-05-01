@@ -71,8 +71,6 @@ const ItemDetail = () => {
         <div>
             <Header/>
             <Container>
-                {/* product_name, product_category, product_author, product_description, registered_user_id, product_license
-                product_status */}
                 <Row>
                     <Col md={{ span: 5, offset: 1 }}>
                         <Figure className="image">
@@ -90,13 +88,9 @@ const ItemDetail = () => {
                         </Figure.Caption>
                     </Col>
                 </Row>
-                <Row>
-                    <Col md={{ span: 8, offset: 1 }}>
-                        <div>Description: &nbsp;&nbsp;{product_description}</div>
-                    </Col>
-                </Row>
+               
                 <br/>
-
+                <Row><Col md={{ span: 5, offset: 1 }}>
                 <form className="message_form" onSubmit={formik.handleSubmit}>
                     <Form.Row>
                         <Form.Group as={Col}>
@@ -104,6 +98,7 @@ const ItemDetail = () => {
                                 <Form.Control
                                     name="message"
                                     as="textarea"
+                                    className="textarea"
                                     placeholder="Enter message here..."
                                     onFocus={(e) => {e.currentTarget.placeholder=""}}
                                     onBlur={(e) => {e.currentTarget.placeholder="Enter message here..."}}
@@ -146,9 +141,10 @@ const ItemDetail = () => {
                         <Button variant="warning" type="submit">  &nbsp;&nbsp;Send a message&nbsp;&nbsp;</Button>
                     </Form.Row>
                 </form>
+                </Col></Row>
+                
                 <br/><br/><br/><br/><br/>
             </Container>
-        {/* <Footer/> */}
         </div>
     )}
    </Formik>

@@ -13,11 +13,11 @@ import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from
 import {setUsername} from '../redux/actions/userActions.js';
 import Content from './Content';
 import Notice from '../components/Notice';
-import Footer from '../components/Footer';
 import '../css/Home.css';
 
 
 const Home = ({ dispatch, username, searchinfo}) => {
+  const item_perpage = 8;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
   const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
@@ -65,9 +65,11 @@ const submitSearch = ()=> {
             .then(response => {
                getRange_last(response.data);
                if(category === "All"){
-                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are all items listed. '));
+                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + 
+                   '\' and \'' + product_name + '\'. Here are all items listed. '));
                } else {
-                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + '\' and \'' + product_name + '\'. Here are items in the same category. '));
+                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + 
+                   '\' and \'' + product_name + '\'. Here are items in the same category. '));
                }
             })
         }     
@@ -104,10 +106,10 @@ const submitSearch = ()=> {
     let last;
     dispatch(setNotes(data));           // All the items
     dispatch(setNotes_perpage(data));   // Itmes shown per page.
-    if(8 > data.length)
+    if(item_perpage > data.length)
       last = data.length;
     else
-      last = 8;
+      last = item_perpage;
     dispatch(setShow_number_of_items('Showing ' + 1 + '-' + last + ' out of ' + data.length + '.')); // Showing 1-4 out of 5..
     return last;
   }
@@ -135,7 +137,7 @@ const submitSearch = ()=> {
     window.open("/ItemDetail?itemId=" + id);
   };
 
-  //Formatting the MySQL date on the card
+  //Formatting the item posted date on the card
   const formatDate =(dateString)=>{
     return dateString.replace('GMT','')
   }
@@ -154,10 +156,10 @@ const submitSearch = ()=> {
                 <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
                 }).reverse()}
           </select>&nbsp;
-          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." maxLength="40" onChange={e=>setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))} />&nbsp;&nbsp;
+          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." maxLength="40" 
+            onChange={e=>setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))} />&nbsp;&nbsp;
           <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
-        
         <Navbar.Collapse className="justify-content-end">       
         
         {/* Display signIn, signUp, signOut buttons according to the user status */}
@@ -209,13 +211,13 @@ const submitSearch = ()=> {
       <div>Notes category</div><br/>
       <Row>{
         notes_list.map((x,item_number) => {  
-          if(item_number < 4){ // initialized how many items per page. 
+          if(item_number < item_perpage){ // initialized how many items per page. 
             return(
               <Col  sm="3" key={item_number} >
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" className="thumbnails"/>
+                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
                 <CardBody>
-                <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
+                <CardTitle className="card_text">{x.product_name}</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
                 <CardText className="card_date">{ formatDate(x.date_time_added)}</CardText>
                 </CardBody>
@@ -230,13 +232,13 @@ const submitSearch = ()=> {
       <div>Video category</div><br/>
       <Row>{
         video_list.map((x,item_number) => {  
-          if(item_number < 4){ // initialized how many items per page. 
+          if(item_number < item_perpage){ // initialized how many items per page. 
             return(
               <Col  sm="3" key={item_number} >
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
                 <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
                 <CardBody>
-                <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
+                <CardTitle className="card_text">{x.product_name}</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
                 <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
                 </CardBody>
@@ -250,13 +252,13 @@ const submitSearch = ()=> {
       <div>Music category</div><br/>
       <Row>{
         music_list.map((x,item_number) => {  
-          if(item_number < 4){ // initialized how many items per page. 
+          if(item_number < item_perpage){ // initialized how many items per page. 
             return(
               <Col  sm="3" key={item_number} >
               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
                 <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>  
                 <CardBody>
-                <CardTitle className="card_text">{x.product_name}__Here is the product_name section. Added more chars to test the css.</CardTitle>
+                <CardTitle className="card_text">{x.product_name}</CardTitle>
                 <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
                 <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
                 </CardBody>
@@ -271,15 +273,12 @@ const submitSearch = ()=> {
     )}  
     {/* End of the default content page */}
 
-
     <Switch>
         <Route path ="/" component = {Content}/> 
     </Switch>
-    <Footer/>
     </div>
   );
 };
-
 
 const mapStateToProps = state => ({
   username: state.userReducer.username,

@@ -8,6 +8,7 @@ import { setNotes_perpage, setShow_number_of_items } from '../redux/actions/note
 import '../css/Content.css';
 
 const Pagination = ({ dispatch, notes }) => {
+  const item_perpage = 8;
 
   // This function is setting how many items will be shown in one page.
   // Using 2 indexes to get items in notes array(all items). 
@@ -36,36 +37,33 @@ const Pagination = ({ dispatch, notes }) => {
 
     let pagination = document.getElementById("pagination");
     let all = pagination.getElementsByTagName("button");
-    
-  
-    let temp = id/8;
+    let temp = id / item_perpage;
     for(var i = 0; i<all.length; i++){
          if(i !== temp)
           all[i].setAttribute('class','pagination_button');
     }
   }
 
-  
-
   return (
     <Container>
       <div id = "pagination" className="pagination">
-     {
-      typeof notes !=='undefined' &&(
-      notes.map((note, index) => {   
-       if(index % 8 === 0){
-        return(
-          <div  key = {index}>
-          <button key = {index} id = {index} onClick={e => { setIndex(index) }}  name = "button" className ={ index === 0 ? 'pagination_button active' : 'pagination_button'}>
-            {Math.abs(Math.round(Math.sqrt(index)-1))}</button>
-          &nbsp;&nbsp;
-          </div>
-        )
-      }
-      else
-        return('');
-      })) 
-      }
+        {
+          typeof notes !=='undefined' &&(
+          notes.map((note, index) => {   
+          if(index % item_perpage === 0){
+            return(
+              <div  key = {index}>
+                <button key = {index} id = {index} onClick={e => { setIndex(index) }}  name = "button" 
+                  className ={ index === 0 ? 'pagination_button active' : 'pagination_button'}>
+                  {Math.abs(Math.round(Math.sqrt(index)-1))}
+                </button>&nbsp;&nbsp;
+              </div>
+            )
+          }
+          else
+            return('');
+          })) 
+          }
       </div>
     </Container>
   );

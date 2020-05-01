@@ -93,9 +93,6 @@
     color: grey;
 }
 
-
-
-
 .descriptionFormat{
     max-width:200px;
     overflow:hidden;
@@ -103,9 +100,10 @@
     white-space:nowrap;
 }
 
-
 .footer{
     display:flex;
+    position:fixed;
+    bottom:0;
     margin:0px;
     padding-top:15px;
     padding-bottom:10px;

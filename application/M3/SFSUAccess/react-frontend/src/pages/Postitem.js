@@ -23,9 +23,6 @@ const Postitem = () => {
     const [product_license, setLicense] = useState('');
     const [product_description, setDescription] = useState('');
     const [error_message, setErrormessage] = useState('');
-
-
-
     const history = useHistory();
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
@@ -49,10 +46,9 @@ const Postitem = () => {
     setFileName("Upload File here...");
   }
 
+  //this function is used to post cookies item
   const postItem =()=>{
-   
     if(document.getElementById("file").files.length !== 0 ){
-        console.log("postItem is called...")
         var form_data = new FormData();
         for ( var key in cookies.post_item ) {
             if(key !== "file")
@@ -64,7 +60,7 @@ const Postitem = () => {
 
         axios.post('/api/product',form_data)
             .then((response) =>{
-                console.log("Item posted successfully");
+                console.log("Item " + product_title + " posted successfully.");
             })
             .catch((error) => console.log(error))  
     
@@ -78,6 +74,7 @@ const Postitem = () => {
         setErrormessage('A file is required');
   }
 
+  //delete the cookies item.
   const cancelItem = () =>{
     window.location.reload();
     removeCookies('post_item');
@@ -115,15 +112,15 @@ const Postitem = () => {
         if(user_isloggedin){
            values.user_id = user_id;
            values.product_author = cookies.first_name;
-           //convert json obj to formdata.
            var form_data = new FormData();
             for ( var key in values ) {
             form_data.append(key, values[key]);
             }
            axios.post('/api/product',form_data)
                .then((response) =>{
-                   console.log("Item posted successfully");
-                   alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+                   console.log("Item " + JSON.stringify(values.product_name) + " posted successfully");
+                   alert(JSON.stringify(values.product_name) + 
+                   " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                    removeCookies('post_item');
                })
                .catch((error) => console.log(error))  
@@ -142,7 +139,8 @@ const Postitem = () => {
             <Header/>
             <Container className="dashboard">
                 <h3>Post item page</h3><br/>
-                <Alert show={show} variant="dark">
+                {/* display when a user try to post an item without log in. */}
+                <Alert show={show} variant="dark"> 
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
                         <b>Name : </b>{product_title}<br/>
                         <b>File : </b>{product_fileName}<br/>
@@ -165,6 +163,7 @@ const Postitem = () => {
                     </div>                   
                 </Alert>
 
+                {/* display when a user logged in, and having an existing post item which saved in cookies. */}
                 {(cookies.post_item && user_isloggedin) &&
                     <Alert variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
@@ -176,39 +175,38 @@ const Postitem = () => {
                     <hr />
                     <form id = "itemForm">
                     <Form.Row>
-                                <Form.Group controlId="file">
-                                    <Form.Label>Upload your file here again, then you good to go.</Form.Label>
-                                        <div className="input-group">
-                                            <div className="custom-file">
-                                                <input
-                                                     name="file"
-                                                     type="file"
-                                                     className="custom-file-input"
-                                                     id="file"
-                                                     onChange={(e) => {  
-                                                     setFileName(e.currentTarget.files[0].name); setFile(e.currentTarget.files[0])
-                                                    }}
-                                                />
-                                                <label className="custom-file-label">
-                                                    {product_fileName}
-                                                </label>
-                                             </div>
-                                         </div>
-                                         <div className="error_message">{ product_fileName === 'Upload File here...' ? error_message: null}</div>
-                                </Form.Group>
-                            </Form.Row>
+                        <Form.Group controlId="file">
+                            <Form.Label>Upload your file here again, then you good to go.</Form.Label>
+                                <div className="input-group">
+                                    <div className="custom-file">
+                                        <input
+                                            name="file"
+                                            type="file"
+                                            className="custom-file-input"
+                                            id="file"
+                                            onChange={(e) => {  
+                                            setFileName(e.currentTarget.files[0].name); setFile(e.currentTarget.files[0])
+                                            }}
+                                        />
+                                        <label className="custom-file-label">
+                                            {product_fileName}
+                                        </label>
+                                    </div>
+                                </div>
+                            <div className="error_message">{ product_fileName === 'Upload File here...' ? error_message: null}</div>
+                        </Form.Group>
+                    </Form.Row>
                     </form>
                     <Row>
                         <Col>
                             <Button onClick={cancelItem} variant="danger">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="warning" onClick={postItem}>Post item</Button>
                         </Col>
-                    </Row>
-                    
-                                   
+                    </Row>                   
                 </Alert>
                 }
-                        
+
+                {/* default post item form  */}
                 {!cookies.post_item &&         
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Row>
@@ -220,7 +218,8 @@ const Postitem = () => {
                                         onFocus={(e) => e.target.placeholder = ""}
                                         onBlur={(e) => e.target.placeholder = "Enter title"}
                                         placeholder="Enter title"
-                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value); setTitle(e.currentTarget.value)}}
+                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value); 
+                                        setTitle(e.currentTarget.value)}}
                                     />
                                     {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
                                 </Form.Group>
@@ -232,11 +231,13 @@ const Postitem = () => {
                                         <Form.Control
                                             name="product_category"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); setCategory(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); 
+                                            setCategory(e.currentTarget.value)}}
                                         >
                                             {list.map((x) => {
                                                 return (
-                                                    <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                                                    <option value={x.product_category_name} key={x.product_category_name}>
+                                                    {x.product_category_name}</option>)
                                                 }).reverse()}
                                         </Form.Control>
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
@@ -252,7 +253,8 @@ const Postitem = () => {
                                             placeholder="$0"
                                             onFocus={(e) => e.target.placeholder = ""}
                                             onBlur={(e) => e.target.placeholder = "$0"}
-                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); 
+                                            setPrice(e.currentTarget.value)}}
                                         />
                                         {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
                                 </Form.Group>
@@ -264,7 +266,8 @@ const Postitem = () => {
                                         <Form.Control
                                             name="product_license"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value); setLicense(e.currentTarget.value)}}
+                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value); 
+                                            setLicense(e.currentTarget.value)}}
                                         >
                                             <option value="Choose...">Choose...</option>
                                             <option value="Free use & modification">Free use & modification</option>
@@ -285,7 +288,8 @@ const Postitem = () => {
                                         placeholder=""
                                         onFocus={(e) => e.target.placeholder = ""}
                                         onBlur={(e) => e.target.placeholder = ""}
-                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); setDescription(e.currentTarget.value)}}
+                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); 
+                                        setDescription(e.currentTarget.value)}}
                                     />
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
                             </Form.Group>

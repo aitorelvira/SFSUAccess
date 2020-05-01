@@ -128,281 +128,123 @@ const Dashboard = () => {
   };
 
   return (
-    // <Formik
-    //     initialValues={{product_name: '', product_category: '', 
-    //     file: null, 
-    //     product_price: '', 
-    //     product_license: '', product_description: '' }}
-    //     validationSchema={Yup.object({
-    //         product_name: Yup.string()
-    //             .max(50, 'Must be 50 characters or less')
-    //             .required('Required'),
-    //         product_category: Yup.string()
-    //             .oneOf(['Notes', 'Video', 'Music'])
-    //             .required('Please indicate your category preference'),
-    //         file: Yup.mixed()
-    //             .required('A file is required'),
-    //         product_price: Yup.string()
-    //             .required("Please enter a price")
-    //             .matches(/^\s*(?=.*[0-9])\d*(?:\.\d{1,2})?\s*$/g, 'Must be a positive number'),
-    //         product_license: Yup.string()
-    //             .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
-    //             .required("Please indicate your license preference"),
-    //         product_description: Yup.string()
-    //             .max(500, 'Must be 500 characters or less')
-    //             .required('Please enter description'),
-    //     })}
-        
-    //     onSubmit={(values, {setSubmitting}) => {
-    //        values.user_id = user_id;
-    //        values.product_author = cookies.first_name;
-    //        //convert json obj to formdata.
-    //        var form_data = new FormData();
-    //         for ( var key in values ) {
-    //         form_data.append(key, values[key]);
-    //         }
-    //         console.log(form_data);
-    //        axios.post('/api/product',form_data)
-    //            .then((response) =>{
-    //                console.log("Item posted successfully");    
-    //                 get_pendingItem();
-    //                 alert(JSON.stringify(values.product_name) + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
-    //            })
-    //            .catch((error) => console.log(error))
-    //             resetForm();   
-    //         setSubmitting(false);
-    //     }}
-    // >
-    // {formik => (
-        <div>
-            <Header/>
-            {/* Dash content   */}
-            <Container className="dashboard">
-                <Row><h3>{user_privelege_type ==='1'? "Administrator Dashboard" : "My Dashboard"}</h3>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="warning" onClick = { goPostitem }>Post an item</Button></Row>
-                <br/>
-                <Tabs defaultActiveKey="listItem" id="dashboard">
-                    <Tab eventKey="listItem" title="My Items">
-                        <Table>
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Thumbnails</th>
-                                    <th>Description</th>
-                                    <th>Remove item</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {active_item.map((item,y) => {
-                                    return (
-                                        <tr key = {y+1}>
-                                            <td width ="5%"> {y+1} </td>
-                                            <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
-                                            <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
-                                            <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
-                                        </tr>
-                                    )})
-                                }
-                            </tbody>
-                        </Table>
-                    </Tab>
-
-                    {/* <Tab eventKey="postItem" title="Post an item">
-                        <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
-                            <Form.Row>
-                                <Form.Group as={Col} id="product_title">
-                                    <Form.Label>Title</Form.Label>
-                                    <Form.Control
-                                        name="product_title"
-                                        type="text"
-                                        placeholder="Enter title"
-                                        onFocus={(e) => e.target.placeholder = ""}
-                                        onBlur={(e) => e.target.placeholder = "Enter title"}
-                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value)}}
-                                    />
-                                    {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
-                                <Form.Group as={Col} id="product_category">
-                                    <Form.Label>Category</Form.Label>
-                                        <Form.Control
-                                            name="product_category"
-                                            as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value)}}
-                                        >
-                                            {list.map((x) => {
-                                                return (
-                                                    <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
-                                                }).reverse()}
-                                        </Form.Control>
-                                        {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
-                                <Form.Group as={Col} controlId="product_price">
-                                    <Form.Label>Price</Form.Label>
-                                        <Form.Control
-                                            name="product_price"
-                                            type="text"
-                                            placeholder="$0"
-                                            onFocus={(e) => e.target.placeholder = ""}
-                                            onBlur={(e) => e.target.placeholder = "$0"}
-                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); setPrice(e.currentTarget.value)}}
-                                        />
-                                        {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
-                                <Form.Group as={Col} id="product_license">
-                                    <Form.Label>License</Form.Label>
-                                        <Form.Control
-                                            name="product_license"
-                                            as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value)}}
-                                        >
-                                            <option value="Choose...">Choose...</option>
-                                            <option value="Free use & modification">Free use & modification</option>
-                                            <option value="Free to SFSU related projects">Free to SFSU related projects</option>
-                                            <option value="For sale">For sale</option>
-                                         </Form.Control>
-                                        {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Group id="product_description">
-                                <Form.Label>Item Description</Form.Label>
-                                    <Form.Control
-                                        name="product_description"
-                                        as="textarea"
-                                        rows="3"
-                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value)}}
-                                    />
-                                    {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
-                            </Form.Group>
-
-                            <Form.Row>
-                                <Form.Group  as={Col} controlId="img">
-                                    <Form.Label>Upload a file.</Form.Label>
-                                        <div className="input-group">
-                                            <div className="custom-file">
-                                                <input
-                                                    name="file"
-                                                     type="file"
-                                                     className="custom-file-input"
-                                                     id="file"
-                                                     aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]); setFile(e.currentTarget.files[0]); setFileName(e.currentTarget.files[0].name)}}
-                                                />
-                                                <label className="custom-file-label" htmlFor="inputGroupFile01">
-                                                    {product_fileName}
-                                                </label>
-                                             </div>
-                                         </div>
-                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
-                                </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row >
-                                <Col>
-                                    <Button variant="danger" onClick = {resetForm} block>Cancel</Button>
-                                </Col>
-                                <Col>
-                                    <Button variant="warning" type="submit" block>Post Item</Button>
-                                </Col>
-                            </Form.Row>
-                        </form>
-                        <br/><br/><br/><br/><br/>
-                    </Tab> */}
-
-                    {user_privelege_type !== '1' &&
-                    <Tab eventKey="pending" title="Pending items">
-                        <Table responsive>
-                              <thead>
-                                <th>Number</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Post time</th>
-                                <th>Remove item</th>
-                              </thead>
-                              <tbody>
-                                {pending_item.map((item,y) => {
-                                  return (
-                                    <tr key = {y + 1}>
-                                    <td> {y + 1} </td>
-                                    <td> {item.product_name} </td>
-                                    <td> {item.product_description} </td>
-                                    <td> {item.date_time_added}</td>
-                                    <td> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
-                                  </tr>
-
-                                  )})
-                                }
-                              </tbody>
-                         </Table>
-                    </Tab>
+    <div>
+      <Header/>
+      {/* Dash content   */}
+      <Container className="dashboard">
+          <Row><h3>{user_privelege_type ==='1'? "Administrator Dashboard" : "My Dashboard"}</h3>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button variant="warning" onClick = { goPostitem }>Post an item</Button></Row>
+          <br/>
+          <Tabs defaultActiveKey="listItem" id="dashboard">
+              <Tab eventKey="listItem" title="My Items">
+                <Table>
+                  <thead>
+                      <tr>
+                          <th>Item</th>
+                          <th>Thumbnails</th>
+                          <th>Description</th>
+                          <th>Remove item</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {active_item.map((item,y) => {
+                      return (
+                        <tr key = {y+1}>
+                          <td width ="5%"> {y+1} </td>
+                          <td width ="20%"> <Image src="https://helpx.adobe.com/content/dam/help/en/photoshop/how-to/compositing/_jcr_content/main-pars/image/compositing_1408x792.jpg" thumbnail/></td>
+                          <td width ="60%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
+                          <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                        </tr>
+                      )})
                     }
+                  </tbody>
+                </Table>
+            </Tab>
+          
+          {/* user pending list */}
+          {user_privelege_type !== '1' &&
+          <Tab eventKey="pending" title="Pending items">
+            <Table responsive>
+              <thead>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Post time</th>
+                <th>Remove item</th>
+              </thead>
+              <tbody>
+                {pending_item.map((item,y) => {
+                  return (
+                    <tr key = {y + 1}>
+                    <td> {y + 1} </td>
+                    <td> {item.product_name} </td>
+                    <td> {item.product_description} </td>
+                    <td> {item.date_time_added}</td>
+                    <td> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                  </tr>
+                  )})
+                }
+              </tbody>
+            </Table>
+          </Tab>
+          }
 
-                  {user_privelege_type === '1' &&
-                    <Tab eventKey="admin_pending" title="Pending items">
-                    <Table responsive>
-                          <thead>
-                            <tr>
-                            <th>Number</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Post time</th>
-                            <th>Approve/Deny item</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {admin_pending_item.map((item,y) => {
-                                  return (
-                                    <tr key = {y + 1}>
-                                    <td> {y + 1} </td>
-                                    <td> {item.product_name} </td>
-                                    <td> {item.product_description} </td>
-                                    <td> {item.date_time_added}</td>
-                                    <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
-                                         <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
-                                  </tr>
-                                  )})
-                            }
-                          </tbody>
-                      </Table>
-                    </Tab>
-                  }
+          {/* admin pending item list */}
+          {user_privelege_type === '1' &&
+            <Tab eventKey="admin_pending" title="Pending items">
+            <Table responsive>
+              <thead>
+                <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Post time</th>
+                <th>Approve/Deny item</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admin_pending_item.map((item,y) => {
+                  return (
+                    <tr key = {y + 1}>
+                      <td> {y + 1} </td>
+                      <td> {item.product_name} </td>
+                      <td> {item.product_description} </td>
+                      <td> {item.date_time_added}</td>
+                      <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
+                            <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
+                    </tr>
+                  )})
+                }
+              </tbody>
+            </Table>
+          </Tab>
+          }
 
-                    <Tab eventKey="message" title="My Message">
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>From</th>
-                                    <th>Message content</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td width="10%">User one</td>
-                                    <td width="65%">Hello CoSE Students,
-                                    </td>
-                                    <td><Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
-                                        <Button variant="danger">Remove</Button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Tab>
-                </Tabs>
-            </Container>
-        </div>
-    //)}
-    // </Formik>
+          <Tab eventKey="message" title="My Message">
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>Message content</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td width="10%">User one</td>
+                  <td width="65%">Hello CoSE Students,
+                  </td>
+                  <td><Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
+                      <Button variant="danger">Remove</Button>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </Tab>
+          </Tabs>
+      </Container>
+    </div>
   );
 };
 export default Dashboard;
