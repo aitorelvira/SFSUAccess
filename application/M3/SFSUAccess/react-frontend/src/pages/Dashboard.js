@@ -142,9 +142,9 @@ const Dashboard = () => {
     //             .required('Please indicate your category preference'),
     //         file: Yup.mixed()
     //             .required('A file is required'),
-    //         product_price: Yup.number()
+    //         product_price: Yup.string()
     //             .required("Please enter a price")
-    //             .min(0, "Must be '0' or a positive number"),
+    //             .matches(/^\s*(?=.*[0-9])\d*(?:\.\d{1,2})?\s*$/g, 'Must be a positive number'),
     //         product_license: Yup.string()
     //             .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
     //             .required("Please indicate your license preference"),
