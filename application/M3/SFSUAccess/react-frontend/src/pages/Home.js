@@ -106,10 +106,14 @@ const Home = ({ dispatch, username, searchinfo}) => {
             let select = document.getElementById("category");
             let index = select.selectedIndex;
             let category = select.options[index].value;
+            let select_license = document.getElementById("license_name");
+            let index_license = select_license.selectedIndex;
+            let license = select_license.options[index_license].value;
 
-            if(product_name){    // search by category + searchKey
+            if(product_name || (license !== 'Any license')){    // search by category + searchKey
               const body = {
-                product_name : product_name.toLowerCase()
+                product_name : product_name.toLowerCase(),
+                  license_name : license
             }
             ReactGA.event({
              category: 'Search',
@@ -125,7 +129,13 @@ const Home = ({ dispatch, username, searchinfo}) => {
                   axios.get('/api/search/'+ category)
                     .then(response => {
                        getRange_last(response.data);
-                       if(category === "All"){
+                       if(category === "All" && product_name.length == ''){
+                           dispatch(setSearchInfo('Here are all items listed. '));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(product_name.length == '') {
+                           dispatch(setSearchInfo('Here are items in the same category.'));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(category === "All"){
                            dispatch(setSearchInfo('Here are all items listed. '));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + product_name + '\'.'})
                        } else {
@@ -137,7 +147,11 @@ const Home = ({ dispatch, username, searchinfo}) => {
                 else{ // If something was found, return items.
                    console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
                    getRange_last(response.data);
-                   dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\' ' + product_name + '\'. '));
+                   if(product_name.length == '') {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
+                   } else {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + product_name + '\'. '));
+                   }
                 }
               })
               .catch(error => console.log(error))
@@ -147,7 +161,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
               axios.get('/api/search/'+ category)
                 .then(response => {
                   getRange_last(response.data);
-                  dispatch(setSearchInfo('   Search results for:   ' + category + '. ' ));
+                  dispatch(setSearchInfo('   Search results for:   ' + category + ', ' + license + '. ' ));
               })
             }
         }}
@@ -177,15 +191,14 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                         placeholder="Enter item name.."
                                         onChange={(e) => {formik.setFieldValue("searchItem", e.target.value.replace(/[^a-z0-9\s']+/ig,"")); setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))}}
                                     />&nbsp;
-                                    {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
                                 </Form.Group>
                                 <Form.Group>
                                     <select id="license_name">
                                         return (
                                             <option value="Any license" key="Any license">Any license</option>
-                                            <option value="Public Domain" key="Public Domain">Public Domain</option>
+                                            <option value="Free use & modification" key="Free use & modification">Free Use</option>
+                                            <option value="Free to SFSU related projects" key="Free to SFSU related projects">Free for Projects</option>
                                             <option value="Copyrighted" key="Copyrighted">Copyrighted</option>
-                                            <option value="CC - Attribution" key="CC - Attribution">CC - Attribution</option>
                                         )
                                     </select>&nbsp;
                                 </Form.Group>
@@ -196,6 +209,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                 </Form.Group>
                             </Form.Row>
                         </Form>
+
 
                             <Navbar.Collapse className="justify-content-end">
                                 {/* Display signIn, signUp, signOut buttons according to the user status */}
@@ -217,6 +231,9 @@ const Home = ({ dispatch, username, searchinfo}) => {
                     </Navbar>
 
 
+                        <Navbar  bg="dark" variant="dark">
+                            {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
+                        </Navbar>
                         <br/>
                         {/* Navbar end here     */}
 

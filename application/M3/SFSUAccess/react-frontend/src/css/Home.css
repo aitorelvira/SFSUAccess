@@ -26,6 +26,11 @@
     color: white;
 }
 
+.navbar-brand{
+    padding-top: 0rem;
+    padding-bottom: .8125rem;
+    padding-left: .5rem;
+}
 
 .searchBar{
    width: 300px;
@@ -46,6 +51,12 @@
 #nav_bar_button{
     height:35px;
     /* width:100px; */
+}
+
+.error_message{
+    padding-left: 200px;
+    position: absolute;
+    padding-bottom: 25px;
 }
 
 .navButton{
