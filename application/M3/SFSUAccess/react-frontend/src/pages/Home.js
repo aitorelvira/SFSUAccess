@@ -137,10 +137,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
                        } else if(category === "All"){
                            dispatch(setSearchInfo('Here are all items listed. '));
-                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + product_name + '\'.'})
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
                        } else {
                            dispatch(setSearchInfo('Here are items in the same category.'));
-                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + product_name + '\'.'})
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
                        }
                     })
                 }
@@ -150,7 +150,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                    if(product_name.length == '') {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
                    } else {
-                        dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + product_name + '\'. '));
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));
                    }
                 }
               })
