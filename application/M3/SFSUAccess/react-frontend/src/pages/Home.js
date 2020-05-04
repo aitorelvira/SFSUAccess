@@ -17,11 +17,11 @@ import Content from './Content';
 import Notice from '../components/Notice';
 import '../css/Home.css';
 
-const Home = ({ dispatch, username, searchinfo}) => {
+const Home = ({dispatch, username, searchinfo}) => {
   const item_perpage = 8;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'itemID']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -72,6 +72,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
     removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
+    removeCookies('itemID')
     ReactGA.event({
      category: 'LogOut',
      action: 'User Logged Out',
@@ -82,9 +83,8 @@ const Home = ({ dispatch, username, searchinfo}) => {
   }
 
   //Use to redirecting to item detail page with an item id.
-  const goItemDetail =(id) => {
+  const goItemDetail =(event, id) => {
        window.open("/ItemDetail?itemId=" + id);
-
   };
 
   //Formatting the item posted date on the card
@@ -102,7 +102,6 @@ const Home = ({ dispatch, username, searchinfo}) => {
         })}
 
         onSubmit={(values, {setSubmitting, setErrors}) => {
-
             // getting the category input from the dropdown menu
             let select = document.getElementById("category");
             let index = select.selectedIndex;
@@ -240,7 +239,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                         if(item_number < item_perpage){ // initialized how many items per page.
                                             return(
                                                  <Col  sm="3" key={item_number} >
-                                                     <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                                     <Card id = {x.id} onClick = {e => {goItemDetail(e, x.id); setCookies('itemID', x.id, { expires: 0});}}  border="light" className = "card_div">
                                                         <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
                                                         <CardBody>
                                                             <CardTitle className="card_text">{x.product_name}</CardTitle>
