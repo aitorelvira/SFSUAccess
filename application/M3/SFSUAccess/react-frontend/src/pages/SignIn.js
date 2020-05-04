@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
 import ReactGA from "react-ga";
+import { connect } from 'react-redux';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Navbar } from 'react-bootstrap';
 import { Link } from "react-router-dom";
@@ -19,7 +20,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
 
   //cookies
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin', 'itemID']);
 
   return (
     <Formik
@@ -60,6 +61,8 @@ const SignIn = () => {
                 });
                 if(cookies.post_item)
                     setTimeout(function(){ window.location.href = '/Postitem'},1000);
+                else if(cookies.itemID)
+                    setTimeout(function(){ window.location.href = '/ItemDetail?itemId=' + cookies.itemID},1000);
                 else
                     setTimeout(function(){ window.location.href = '/'},1000);
 
@@ -113,7 +116,7 @@ const SignIn = () => {
                         </Col>
                         )}
                         <Col>
-                            <Button variant="warning" block type="submit" block>{isLoading ? 'Logging in, please wait...': 'Sign in'}</Button>
+                            <Button variant="warning" block type="submit">{isLoading ? 'Logging in, please wait...': 'Sign in'}</Button>
                         </Col>
                         </Row>
                         <Row>
@@ -133,4 +136,5 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
 
