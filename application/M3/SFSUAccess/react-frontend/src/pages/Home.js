@@ -97,8 +97,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
         initialValues={{searchItem: ''}}
         validationSchema={Yup.object({
             searchItem: Yup.string()
-                .max(40, 'Must be 40 character or less.')
-                .required('Please enter term to search.'),
+                .max(40, 'Must be 40 character or less.'),
         })}
 
         onSubmit={(values, {setSubmitting, setErrors}) => {
@@ -177,12 +176,23 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                         id ="searchItem"
                                         placeholder="Enter item name.."
                                         onChange={(e) => {formik.setFieldValue("searchItem", e.target.value.replace(/[^a-z0-9\s']+/ig,"")); setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))}}
-                                    />&nbsp;&nbsp;
+                                    />&nbsp;
                                     {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
                                 </Form.Group>
                                 <Form.Group>
-                                    <Button variant="warning" size="sm" type="submit">Search</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <Button variant="warning" size="sm" href="/Postitem">Upload File</Button>&nbsp;&nbsp;
+                                    <select id="license_name">
+                                        return (
+                                            <option value="Any license" key="Any license">Any license</option>
+                                            <option value="Public Domain" key="Public Domain">Public Domain</option>
+                                            <option value="Copyrighted" key="Copyrighted">Copyrighted</option>
+                                            <option value="CC - Attribution" key="CC - Attribution">CC - Attribution</option>
+                                        )
+                                    </select>&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <Button id="nav_bar_button" variant="warning" type="submit">Search</Button> &nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/Postitem">Upload File</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/About">About Us</Button>&nbsp;
                                 </Form.Group>
                             </Form.Row>
                         </Form>
@@ -191,42 +201,22 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                 {/* Display signIn, signUp, signOut buttons according to the user status */}
                                 {!username &&(
                                       <div>
-                                        <Button variant="warning" size="sm" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
-                                        <Button variant="warning" size="sm" href="/SignUp">Sign up</Button>
+                                        <Button id="nav_bar_button" variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
+                                        <Button id="nav_bar_button" variant="warning" href="/SignUp">Sign up</Button>
                                       </div>
                                 )}
                                 {username &&(
                                   <div>
                                     {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-                                    <Button variant="warning" size="sm" href = "/Dashboard">My dashboard</Button>&nbsp;&nbsp;
-                                    <Button variant="warning" size="sm" onClick ={logOut}>Log out</Button>
+                                    <Button id="nav_bar_button" variant="warning" href = "/Dashboard">Dashboard</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" onClick ={logOut}>Log out</Button>
                                   </div>
                                 )}
                             </Navbar.Collapse>
                         </Navbar.Collapse>
                     </Navbar>
 
-                        <Navbar  bg="dark" variant="dark">
-                            <Navbar.Brand className="navLogo"></Navbar.Brand>
-                            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                            <Navbar.Collapse id="basic-navbar-nav">
-                                <Nav>
-                                    {lists.map((x) => {
-                                      if(x.product_category_name !== 'All'){
-                                       return (
-                                          <NavItem title="Category" key = {x.product_category_name}>
-                                            <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                                            onClick ={search_by_category}>{x.product_category_name} </button>
-                                          </NavItem>
-                                        )}
-                                        else
-                                          return('');
-                                      }).reverse()
-                                    }
-                                    <NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
-                                </Nav>
-                            </Navbar.Collapse>
-                        </Navbar>
+
                         <br/>
                         {/* Navbar end here     */}
 

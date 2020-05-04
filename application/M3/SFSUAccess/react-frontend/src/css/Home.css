@@ -19,7 +19,7 @@
 }
 
 .navLogo{
-    min-width:170px;
+    min-width:120px;
 }
 
 .navbar{
@@ -28,7 +28,7 @@
 
 
 .searchBar{
-   width:400px;
+   width: 300px;
    height: 35px;
 }
 
@@ -38,6 +38,15 @@
     /* width:100px; */
 }
 
+#license_name{
+    height:35px;
+    /* width:100px; */
+}
+
+#nav_bar_button{
+    height:35px;
+    /* width:100px; */
+}
 
 .navButton{
     padding:0px;
@@ -57,6 +66,9 @@
     outline: none;
 }
 
+.navbar-collapse{
+    align-items: normal;
+}
 
 .loginSection{
     position: absolute; 
