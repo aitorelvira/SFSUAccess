@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, Response
 
 from db_credentials import cur, connection
+from files.files_bp import upload_file
 
 products_bp = Blueprint('products_bp', import_name=__name__)
 
@@ -31,8 +32,27 @@ def get_products():
     results = cur.fetchall()
     return jsonify(results)
 
+@products_bp.route('/product',methods=['POST'])
+def post_product():
+    product_name = request.form['product_name']
+    product_category = request.form['product_category']
+    product_author = request.form['product_author']
+    product_description = request.form['product_description']
+    registered_user_id = request.form['user_id']
+    product_license = request.form['product_license']
+    file = request.files['file']
+    sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license,date_time_added,product_status) VALUES (%s,%s,%s,%s,%s,%s,NOW(),'PENDING')"
+    cur.execute(sql, (
+    product_name, product_category, product_author, product_description, registered_user_id, product_license))
+    connection.commit()
+    cur.fetchall()
+    #get the new product id number to rename upload
+    product_id = cur.lastrowid
+    return upload_file(request,product_id)
 
-@products_bp.route('/api/product/<id>', methods=['GET', 'PUT', 'DELETE'])
+
+
+@products_bp.route('/product/<id>', methods=['GET', 'PUT', 'DELETE'])
 def manage_product(id):
     if request.method == 'GET':
         sql = "select products.*, registered_users.`email` FROM products inner join `registered_users` ON registered_users.id=products.`registered_user_id` WHERE products.id=%s"
