@@ -89,7 +89,7 @@ const ItemDetail = () => {
                     </Col>
                 </Row>
                
-                <br/>
+                <hr/>
                 <Row><Col md={{ span: 5, offset: 1 }}>
                 <form className="message_form" onSubmit={formik.handleSubmit}>
                     <Form.Row>
@@ -109,40 +109,10 @@ const ItemDetail = () => {
                     </Form.Row>
 
                     <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    name="userName"
-                                    type="text"
-                                    placeholder="Name"
-                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
-                                    onBlur={(e) => {e.currentTarget.placeholder="Name"}}
-                                    onChange={(e) => {formik.setFieldValue("userName", e.currentTarget.value); setUserName(e.currentTarget.value)}}
-                             />
-                             {formik.touched.userName && formik.errors.userName ? (<div className="error_message">{formik.errors.userName}</div>) : null}
-                        </Form.Group>
-                    </Form.Row>
-
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Email</Form.Label>
-                                <Form.Control
-                                    name="email"
-                                    type="email"
-                                    placeholder="Email"
-                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
-                                    onBlur={(e) => {e.currentTarget.placeholder="Email"}}
-                                    onChange={(e) => {formik.setFieldValue("email", e.currentTarget.value); setEmail(e.currentTarget.value)}}
-                             />
-                             {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
-                        </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
                         <Button variant="warning" type="submit">  &nbsp;&nbsp;Send a message&nbsp;&nbsp;</Button>
                     </Form.Row>
                 </form>
                 </Col></Row>
-                
                 <br/><br/><br/><br/><br/>
             </Container>
         </div>

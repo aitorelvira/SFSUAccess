@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form, Button, Container, Col, Alert,Row } from 'react-bootstrap';
+import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -139,6 +139,7 @@ const Postitem = () => {
             <Header/>
             <Container className="dashboard">
                 <h3>Post item page</h3><br/>
+                
                 {/* display when a user try to post an item without log in. */}
                 <Alert show={show} variant="dark"> 
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
@@ -207,8 +208,9 @@ const Postitem = () => {
                 }
 
                 {/* default post item form  */}
-                {!cookies.post_item &&         
+                {!cookies.post_item &&        
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
+                            <Form.Label><b>All fields are required</b></Form.Label>
                             <Form.Row>
                                 <Form.Group as={Col} id="product_title">
                                     <Form.Label>Title</Form.Label>
@@ -315,11 +317,11 @@ const Postitem = () => {
                                          </div>
                                          {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
                                 </Form.Group>
-                            </Form.Row><br/>
-
+                            </Form.Row>
+                            <Form.Label><p>Notice: all item might take up to 24 hours to be approved.</p></Form.Label><br/>
                             <Form.Row >
                                 <Col>
-                                    <Button variant="danger" onClick = {resetForm} block>Cancel</Button>
+                                    <Button variant="danger" onClick = {resetForm} block>Reset</Button>
                                 </Col>
                                 <Col>
                                     <Button variant="warning" type="submit" block>Post item</Button>

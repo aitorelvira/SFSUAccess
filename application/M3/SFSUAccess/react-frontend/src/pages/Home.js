@@ -13,6 +13,7 @@ import {setNotes, setSearchInfo, setNotes_perpage, setShow_number_of_items} from
 import {setUsername} from '../redux/actions/userActions.js';
 import Content from './Content';
 import Notice from '../components/Notice';
+import AboutSFSU from '../components/AboutSFSU';
 import '../css/Home.css';
 
 
@@ -165,12 +166,14 @@ const submitSearch = ()=> {
         {/* Display signIn, signUp, signOut buttons according to the user status */}
         {!username &&(
           <div>
+            <a href = "/About"><button className ="navButton">About us</button></a>| &nbsp;&nbsp;
             <Button variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
             <Button variant="warning" href="/SignUp">Sign up</Button>
           </div>
          )}  
         {username &&(
-          <div>             
+          <div>   
+            <a href = "/About"><button className ="navButton">About us</button></a>          
             {'Welcome, '+ username + '   '}&nbsp;&nbsp;
             <Button variant="warning" href = "/Dashboard">My dashboard</Button>&nbsp;&nbsp;
             <Button variant="warning" onClick ={logOut}>Log out</Button>
@@ -197,17 +200,17 @@ const submitSearch = ()=> {
                   return('');
               }).reverse()       
             }
-          <NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
         </Nav>
         </Navbar.Collapse> 
         </Navbar>
          <br/>
+         <AboutSFSU/>
     {/* Navbar end here     */}
 
     {/* Here is the default content page */}
     {!searchinfo && (
     <Container>
-      <div>Latest items in each category</div><hr/>
+      <div>Most recent items in each category</div><hr/>
       <div>Notes category</div><br/>
       <Row>{
         notes_list.map((x,item_number) => {  
@@ -272,7 +275,7 @@ const submitSearch = ()=> {
     </Container>
     )}  
     {/* End of the default content page */}
-
+    
     <Switch>
         <Route path ="/" component = {Content}/> 
     </Switch>
