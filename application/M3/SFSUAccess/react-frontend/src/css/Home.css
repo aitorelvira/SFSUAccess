@@ -19,16 +19,21 @@
 }
 
 .navLogo{
-    min-width:170px;
+    min-width:120px;
 }
 
 .navbar{
     color: white;
 }
 
+.navbar-brand{
+    padding-top: 0rem;
+    padding-bottom: .8125rem;
+    padding-left: .5rem;
+}
 
 .searchBar{
-   width:400px;
+   width: 300px;
    height: 35px;
 }
 
@@ -38,6 +43,21 @@
     /* width:100px; */
 }
 
+#license_name{
+    height:35px;
+    /* width:100px; */
+}
+
+#nav_bar_button{
+    height:35px;
+    /* width:100px; */
+}
+
+.error_message{
+    padding-left: 200px;
+    position: absolute;
+    padding-bottom: 25px;
+}
 
 .navButton{
     padding:0px;
@@ -57,6 +77,9 @@
     outline: none;
 }
 
+.navbar-collapse{
+    align-items: normal;
+}
 
 .loginSection{
     position: absolute; 
