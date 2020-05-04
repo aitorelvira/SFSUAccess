@@ -18,11 +18,11 @@ import Notice from '../components/Notice';
 import AboutSFSU from '../components/AboutSFSU';
 import '../css/Home.css';
 
-const Home = ({ dispatch, username, searchinfo}) => {
+const Home = ({dispatch, username, searchinfo}) => {
   const item_perpage = 8;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'itemID']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -73,6 +73,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
     removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
+    removeCookies('itemID')
     ReactGA.event({
      category: 'LogOut',
      action: 'User Logged Out',
@@ -83,9 +84,8 @@ const Home = ({ dispatch, username, searchinfo}) => {
   }
 
   //Use to redirecting to item detail page with an item id.
-  const goItemDetail =(id) => {
+  const goItemDetail =(event, id) => {
        window.open("/ItemDetail?itemId=" + id);
-
   };
 
   //Formatting the item posted date on the card
@@ -98,20 +98,22 @@ const Home = ({ dispatch, username, searchinfo}) => {
         initialValues={{searchItem: ''}}
         validationSchema={Yup.object({
             searchItem: Yup.string()
-                .max(40, 'Must be 40 character or less.')
-                .required('Please enter term to search.'),
+                .max(40, 'Must be 40 character or less.'),
         })}
 
         onSubmit={(values, {setSubmitting, setErrors}) => {
-
             // getting the category input from the dropdown menu
             let select = document.getElementById("category");
             let index = select.selectedIndex;
             let category = select.options[index].value;
+            let select_license = document.getElementById("license_name");
+            let index_license = select_license.selectedIndex;
+            let license = select_license.options[index_license].value;
 
-            if(product_name){    // search by category + searchKey
+            if(product_name || (license !== 'Any license')){    // search by category + searchKey
               const body = {
-                product_name : product_name.toLowerCase()
+                product_name : product_name.toLowerCase(),
+                  license_name : license
             }
             ReactGA.event({
              category: 'Search',
@@ -127,19 +129,29 @@ const Home = ({ dispatch, username, searchinfo}) => {
                   axios.get('/api/search/'+ category)
                     .then(response => {
                        getRange_last(response.data);
-                       if(category === "All"){
+                       if(category === "All" && product_name.length == ''){
                            dispatch(setSearchInfo('Here are all items listed. '));
-                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + product_name + '\'.'})
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(product_name.length == '') {
+                           dispatch(setSearchInfo('Here are items in the same category.'));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(category === "All"){
+                           dispatch(setSearchInfo('Here are all items listed. '));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
                        } else {
                            dispatch(setSearchInfo('Here are items in the same category.'));
-                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + product_name + '\'.'})
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
                        }
                     })
                 }
                 else{ // If something was found, return items.
                    console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
                    getRange_last(response.data);
-                   dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\' ' + product_name + '\'. '));
+                   if(product_name.length == '') {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
+                   } else {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));
+                   }
                 }
               })
               .catch(error => console.log(error))
@@ -149,7 +161,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
               axios.get('/api/search/'+ category)
                 .then(response => {
                   getRange_last(response.data);
-                  dispatch(setSearchInfo('   Search results for:   ' + category + '. ' ));
+                  dispatch(setSearchInfo('   Search results for:   ' + category + ', ' + license + '. ' ));
               })
             }
         }}
@@ -162,31 +174,42 @@ const Home = ({ dispatch, username, searchinfo}) => {
                     <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                      <Form onSubmit={formik.handleSubmit}>
-                        <Form.Row>
-                          <Form.Group>
-                              <select id="category">
-                                {lists.map((x) => {
-                                    return (
-                                      <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
-                                }).reverse()}
-                              </select>&nbsp;
-                          </Form.Group>
-                          <Form.Group>
-                              <input
-                                  className="searchBar"
-                                  id ="searchItem"
-                                  placeholder="Enter item name.."
-                                  onChange={(e) => {formik.setFieldValue("searchItem", e.target.value.replace(/[^a-z0-9\s']+/ig,"")); setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))}}
-                              />&nbsp;&nbsp;
-                              {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
-                          </Form.Group>
-                          <Form.Group>
-                              <Button variant="warning" size="sm" type="submit">Search</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                              <Button variant="warning" size="sm" href="/Postitem">Post an item</Button>&nbsp;&nbsp;
-                          </Form.Group>
-                        </Form.Row>
-                      </Form>
+                        <Form onSubmit={formik.handleSubmit}>
+                            <Form.Row>
+                                <Form.Group>
+                                    <select id="category">
+                                        {lists.map((x) => {
+                                            return (
+                                                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                                        }).reverse()}
+                                    </select>&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <input
+                                        className="searchBar"
+                                        id ="searchItem"
+                                        placeholder="Enter item name.."
+                                        onChange={(e) => {formik.setFieldValue("searchItem", e.target.value.replace(/[^a-z0-9\s']+/ig,"")); setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))}}
+                                    />&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <select id="license_name">
+                                        return (
+                                            <option value="Any license" key="Any license">Any license</option>
+                                            <option value="Free use & modification" key="Free use & modification">Free Use</option>
+                                            <option value="Free to SFSU related projects" key="Free to SFSU related projects">Free for Projects</option>
+                                            <option value="Copyrighted" key="Copyrighted">Copyrighted</option>
+                                        )
+                                    </select>&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <Button id="nav_bar_button" variant="warning" type="submit">Search</Button> &nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/Postitem">Upload File</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/About">About Us</Button>&nbsp;
+                                </Form.Group>
+                            </Form.Row>
+                        </Form>
+
 
                             <Navbar.Collapse className="justify-content-end">
                                 {/* Display signIn, signUp, signOut buttons according to the user status */}
@@ -201,33 +224,17 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                   <div>
                                      <a href = "/About"><button className ="navButton">About us</button></a>|&nbsp;&nbsp;
                                     {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-                                    <Button variant="warning" size="sm" href = "/Dashboard">My dashboard</Button>&nbsp;&nbsp;
-                                    <Button variant="warning" size="sm" onClick ={logOut}>Log out</Button>
+                                    <Button id="nav_bar_button" variant="warning" href = "/Dashboard">Dashboard</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" onClick ={logOut}>Log out</Button>
                                   </div>
                                 )}
                             </Navbar.Collapse>
                         </Navbar.Collapse>
                     </Navbar>
 
+
                         <Navbar  bg="dark" variant="dark">
-                            <Navbar.Brand className="navLogo"></Navbar.Brand>
-                            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                            <Navbar.Collapse id="basic-navbar-nav">
-                                <Nav>
-                                    {lists.map((x) => {
-                                      if(x.product_category_name !== 'All'){
-                                       return (
-                                          <NavItem title="Category" key = {x.product_category_name}>
-                                            <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                                            onClick ={search_by_category}>{x.product_category_name} </button>
-                                          </NavItem>
-                                        )}
-                                        else
-                                          return('');
-                                      }).reverse()
-                                    }
-                                </Nav>
-                            </Navbar.Collapse>
+                            {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
                         </Navbar>
                         <br/>
       {/* Navbar end here     */}
