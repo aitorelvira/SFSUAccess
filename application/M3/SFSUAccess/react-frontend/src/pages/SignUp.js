@@ -20,12 +20,10 @@ const SignUp = () => {
   const [email_validation, setEmail_validation] = useState('');
   const [password, setPassword] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
-  const [privilege_type, setPrivilege_type] = useState('');
-  const [validated, setValidated] = useState(false);
 
   return (
     <Formik
-        initialValues={{firstName: '', lastName: '', email: '', password: '', confirmPassword: '', privilegeType: ''}}
+        initialValues={{ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' }}
         validationSchema={Yup.object({
             firstName: Yup.string()
                 .max(15, 'Must be 15 characters or less')
@@ -47,19 +45,15 @@ const SignUp = () => {
                 .min(8, 'Must be more than 8 characters')
                 .required('Confirm Password is required')
                 .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-            privilegeType: Yup.string()
-                .oneOf(['Student', 'Faculty', 'Admin'])
-                .default('Student')
-                .required('Please indicate your account type'),
         })}
         onSubmit={(values, {setSubmitting, setErrors }) => {
-            axios.post('/api/register',{
-                email,
-                first_name,
-                last_name,
-                password,
-                privilege_type
-            })
+            var form_data = new FormData();    
+            form_data.append(email, email);
+            form_data.append(first_name, first_name);
+            form_data.append(last_name, last_name);
+            form_data.append(password, password);
+            
+            axios.post('/auth/register', email, first_name, last_name, password)
             .then(res => {
                 if(res.status === 201){
                     setLoading(true);
@@ -85,7 +79,7 @@ const SignUp = () => {
             </Navbar><br/>
             <Container className="overAll">
                 <div className="greeting">Sign up</div><br/>
-                <div className="message">{message}</div><br/>
+                <Form.Label>All fields are required</Form.Label>
                 <form onSubmit={formik.handleSubmit}>
                     <Form.Group controlId="first_name">
                         <Form.Control
@@ -94,8 +88,10 @@ const SignUp = () => {
                             placeholder="First Name *"
                             onChange={(e) => {formik.setFieldValue("firstName", e.currentTarget.value); setFirst_name(e.currentTarget.value)}}
                         />
-                        {formik.touched.firstName && formik.errors.firstName ? (<div className="error_message">{formik.errors.firstName}</div>) : null}
-                     </Form.Group>
+                        <Form.Text className="text-muted">
+                            {formik.touched.firstName && formik.errors.firstName ? (<div className="error_message">{formik.errors.firstName}</div>) : null}
+                        </Form.Text>
+                     </Form.Group><br/>
 
                     <Form.Group controlId="last_name">
                         <Form.Control
@@ -104,8 +100,10 @@ const SignUp = () => {
                             placeholder="Last Name *"
                             onChange={(e) => {formik.setFieldValue("lastName", e.currentTarget.value); setLast_name(e.currentTarget.value)}}
                         />
-                        {formik.touched.lastName && formik.errors.lastName ? (<div className="error_message">{formik.errors.lastName}</div>) : null}
-                    </Form.Group>
+                        <Form.Text className="text-muted">
+                            {formik.touched.lastName && formik.errors.lastName ? (<div className="error_message">{formik.errors.lastName}</div>) : null}
+                        </Form.Text>
+                    </Form.Group><br/>
 
                     <Form.Group controlId="email">
                         <Form.Control
@@ -114,8 +112,10 @@ const SignUp = () => {
                             placeholder="Email Address *"
                             onChange={(e) => {formik.setFieldValue("email", e.currentTarget.value); setEmail(e.currentTarget.value)}}
                          />
-                         {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
-                    </Form.Group>
+                        <Form.Text className="text-muted">
+                            {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
+                        </Form.Text>
+                    </Form.Group><br/>
 
                     <Form.Group controlId="password">
                         <Form.Control
@@ -124,8 +124,10 @@ const SignUp = () => {
                             placeholder="Password *"
                             onChange={(e) => {formik.setFieldValue("password", e.currentTarget.value); setPassword(md5(e.currentTarget.value))}}
                         />
-                        {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
-                    </Form.Group>
+                        <Form.Text className="text-muted">
+                            {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
+                        </Form.Text>
+                    </Form.Group><br/>{password}
 
                     <Form.Group controlId="confirm_password">
                         <Form.Control
@@ -134,32 +136,13 @@ const SignUp = () => {
                             placeholder="Confirm Password *"
                             onChange={(e) => {formik.setFieldValue("confirmPassword", e.currentTarget.value); setConfirm_password(md5(e.currentTarget.value))}}
                         />
-                        {formik.touched.confirmPassword && formik.errors.confirmPassword ? (<div className="error_message">{formik.errors.confirmPassword}</div>) : null}
-                    </Form.Group>
-
-                    <Form.Group>Please choose your account type&nbsp;&nbsp;&nbsp;&nbsp;
-                        <select
-                            name="privilegeType"
-                            onChange={(e) => {formik.setFieldValue("privilegeType", e.currentTarget.value); setPrivilege_type(e.currentTarget.value)}}
-                        >
-                            <option value="Choose...">Choose...</option>
-                            <option value="Student">Student</option>
-                            <option value="Faculty">Faculty</option>
-                            <option value="Admin">Admin</option>
-                        </select>
-                        {formik.touched.privelegeType && formik.errors.privelegeType ? (<div className="error_message">{formik.errors.privelegeType}</div>) : null}
+                        <Form.Text className="text-muted">
+                            {formik.touched.confirmPassword && formik.errors.confirmPassword ? (<div className="error_message">{formik.errors.confirmPassword}</div>) : null}
+                        </Form.Text>
                     </Form.Group><br/>
+
                     <Form.Group>
-                        <Row>
-                        {!isLoading &&(
-                        <Col>
-                            <Button variant="danger" href="/" block>Cancel</Button>
-                        </Col>
-                        )}
-                        <Col >
-                            <Button variant="warning"  type="submit" block>{isLoading ? 'Registered successfully, redirecting to sign in page...': 'Sign up'}</Button>
-                        </Col>
-                        </Row>
+                        <Button variant="warning"  type="submit" block>{isLoading ? 'Registered successfully, redirecting to sign in page...': 'Sign up'}</Button>
                         <div className="rightlinks">
                             <Link  to = "/SignIn" >Already have an account? Sign in</Link>
                         </div>

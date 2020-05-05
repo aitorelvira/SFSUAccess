@@ -205,7 +205,6 @@ const Home = ({dispatch, username, searchinfo}) => {
                                 <Form.Group>
                                     <Button id="nav_bar_button" variant="warning" type="submit">Search</Button> &nbsp;
                                     <Button id="nav_bar_button" variant="warning" href="/Postitem">Upload File</Button>&nbsp;&nbsp;
-                                    <Button id="nav_bar_button" variant="warning" href="/About">About Us</Button>&nbsp;
                                 </Form.Group>
                             </Form.Row>
                         </Form>
@@ -224,8 +223,8 @@ const Home = ({dispatch, username, searchinfo}) => {
                                   <div>
                                      <a href = "/About"><button className ="navButton">About us</button></a>|&nbsp;&nbsp;
                                     {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-                                    <Button id="nav_bar_button" variant="warning" href = "/Dashboard">Dashboard</Button>&nbsp;&nbsp;
-                                    <Button id="nav_bar_button" variant="warning" onClick ={logOut}>Log out</Button>
+                                    <Button id="nav_bar_button" variant="warning" size="sm" href = "/Dashboard">Dashboard</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" size="sm" onClick ={logOut}>Log out</Button>
                                   </div>
                                 )}
                             </Navbar.Collapse>

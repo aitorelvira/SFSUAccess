@@ -7,11 +7,11 @@ import { Container } from 'react-bootstrap';
 
 const AboutSFSU = () => {
         return (
-            <Container>
+            <div>
             <p>SFSU Access provides a safe, easy, and convenient place, 
                 for all SFSU students and faculties, to purchase, exchange, and share media
                 contents.</p><br/><br/>
-            </Container>
+            </div>
         )
 }
 

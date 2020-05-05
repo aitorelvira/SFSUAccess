@@ -66,12 +66,11 @@ const SignIn = () => {
                 else
                     setTimeout(function(){ window.location.href = '/'},1000);
 
-                //What's this?    
-                // ReactGA.event({
-                //  category: 'SignIn',
-                //  action: 'User Signed In',
-                //  transport: 'beacon'
-                // });
+                ReactGA.event({
+                 category: 'SignIn',
+                 action: 'User Signed In',
+                 transport: 'beacon'
+                });
             })
             .catch(err => {
                 setErrors({password: 'Incorrect email or password'});
@@ -88,7 +87,6 @@ const SignIn = () => {
                 </Navbar><br/>
                 <Container className="overAll">
                     <div className="greeting">Sign in</div><br/>
-                    <div className="message">{message}</div><br/>
                     <form onSubmit={formik.handleSubmit}>
                         <Form.Group controlId="email">
                             <Form.Control
@@ -97,8 +95,10 @@ const SignIn = () => {
                                 placeholder="Email Address *"
                                 onChange={(e) => {formik.setFieldValue("email", e.currentTarget.value); setEmail(e.currentTarget.value)}}
                             />
-                            {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
-                        </Form.Group>
+                            <Form.Text className="text-muted">
+                                {formik.touched.email && formik.errors.email ? (<div className="error_message">{formik.errors.email}</div>) : null}
+                            </Form.Text>
+                        </Form.Group><br/>
 
                         <Form.Group controlId="password">
                             <Form.Control
@@ -107,14 +107,11 @@ const SignIn = () => {
                                 placeholder="Password *"
                                 onChange={(e) => {formik.setFieldValue("password", e.currentTarget.value); setPassword(md5(e.currentTarget.value))}}
                             />
-                            {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
-                        </Form.Group>
+                            <Form.Text className="text-muted">
+                                {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
+                            </Form.Text>
+                        </Form.Group><br/>
                         <Row>
-                        {!isLoading &&(
-                        <Col>
-                            <Button variant="danger" block href="/" block>Cancel</Button>
-                        </Col>
-                        )}
                         <Col>
                             <Button variant="warning" block type="submit">{isLoading ? 'Logging in, please wait...': 'Sign in'}</Button>
                         </Col>

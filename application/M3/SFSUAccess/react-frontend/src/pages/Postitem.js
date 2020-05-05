@@ -210,10 +210,10 @@ const Postitem = () => {
                 {/* default post item form  */}
                 {!cookies.post_item &&        
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
-                            <Form.Label><b>All fields are required</b></Form.Label>
+                            <Form.Label>All fields are required</Form.Label>
                             <Form.Row>
                                 <Form.Group as={Col} id="product_title">
-                                    <Form.Label>Title</Form.Label>
+                                    <Form.Label>Title </Form.Label>
                                     <Form.Control
                                         name="product_title"
                                         type="text"
@@ -223,7 +223,9 @@ const Postitem = () => {
                                         onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value); 
                                         setTitle(e.currentTarget.value)}}
                                     />
-                                    {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
+                                    <Form.Text className="text-muted">
+                                        {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
+                                    </Form.Text>
                                 </Form.Group>
                             </Form.Row>
 
@@ -242,7 +244,9 @@ const Postitem = () => {
                                                     {x.product_category_name}</option>)
                                                 }).reverse()}
                                         </Form.Control>
+                                    <Form.Text className="text-muted"> 
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
+                                    </Form.Text>
                                 </Form.Group>
                             </Form.Row>
 
@@ -258,7 +262,9 @@ const Postitem = () => {
                                             onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); 
                                             setPrice(e.currentTarget.value)}}
                                         />
+                                    <Form.Text className="text-muted"> 
                                         {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
+                                    </Form.Text>
                                 </Form.Group>
                             </Form.Row>
 
@@ -276,7 +282,9 @@ const Postitem = () => {
                                             <option value="Free to SFSU related projects">Free to SFSU related projects</option>
                                             <option value="For sale">For sale</option>
                                          </Form.Control>
+                                    <Form.Text className="text-muted">   
                                         {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
+                                    </Form.Text>
                                 </Form.Group>
                             </Form.Row>
 
@@ -293,7 +301,9 @@ const Postitem = () => {
                                         onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); 
                                         setDescription(e.currentTarget.value)}}
                                     />
+                                <Form.Text className="text-muted">    
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
+                                </Form.Text>                
                             </Form.Group>
 
                             <Form.Row>
@@ -315,7 +325,9 @@ const Postitem = () => {
                                                 </label>
                                              </div>
                                          </div>
-                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
+                                    <Form.Text className="text-muted">
+                                        {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
+                                    </Form.Text>        
                                 </Form.Group>
                             </Form.Row>
                             <Form.Label><p>Notice: all item might take up to 24 hours to be approved.</p></Form.Label><br/>
