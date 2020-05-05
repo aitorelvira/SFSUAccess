@@ -15,7 +15,7 @@ const Postitem = () => {
     const username = cookies.first_name;
     const [list, setList] = useState([]);
     const [show, setShow] = useState(false);
-    const [product_title, setTitle] = useState('');
+    const [product_name, setName] = useState('');
     const [product_category, setCategory] = useState('');
     const [product_file, setFile] = useState({});
     const [product_fileName, setFileName] = useState('Upload File here...')
@@ -32,7 +32,7 @@ const Postitem = () => {
         console.log("isLoggedin? "+ user_isloggedin);
 
         if(typeof cookies.post_item !== 'undefined'){
-            setTitle(cookies.post_item.product_name);
+            setName(cookies.post_item.product_name);
             setCategory(cookies.post_item.product_category);
             setPrice(cookies.post_item.product_price);
             setLicense(cookies.post_item.product_license);
@@ -60,14 +60,12 @@ const Postitem = () => {
 
         axios.post('/api/product',form_data)
             .then((response) =>{
-                console.log("Item " + product_title + " posted successfully.");
+                console.log("Item has been posted successfully.");
+                alert("Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+                setFileName('Upload File here...');
+                removeCookies('post_item');
             })
             .catch((error) => console.log(error))  
-    
-        // display message when an item posted.
-        alert(product_title + " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
-        setFileName('Upload File here...');
-        removeCookies('post_item');
         setShow(false);
     }
      else
@@ -83,11 +81,11 @@ const Postitem = () => {
 
     return (
         <Formik
-        initialValues={{product_title: product_title, product_category: product_category,
+        initialValues={{product_name: product_name, product_category: product_category,
         file: null, product_price: '', 
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
-            product_title: Yup.string()
+            product_name: Yup.string()
                 .max(15, 'Must be 15 characters or less')
                 .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Required'),
@@ -112,15 +110,17 @@ const Postitem = () => {
         if(user_isloggedin){
            values.user_id = user_id;
            values.product_author = cookies.first_name;
+
            var form_data = new FormData();
             for ( var key in values ) {
             form_data.append(key, values[key]);
             }
+
            axios.post('/api/product',form_data)
                .then((response) =>{
-                   console.log("Item " + JSON.stringify(values.product_name) + " posted successfully");
-                   alert(JSON.stringify(values.product_name) + 
-                   " has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+                   console.log("Item has been posted successfully.");
+                   alert( 
+                   " Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                    removeCookies('post_item');
                })
                .catch((error) => console.log(error))  
@@ -143,7 +143,7 @@ const Postitem = () => {
                 {/* display when a user try to post an item without log in. */}
                 <Alert show={show} variant="dark"> 
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
-                        <b>Name : </b>{product_title}<br/>
+                        <b>Name : </b>{product_name}<br/>
                         <b>File : </b>{product_fileName}<br/>
                         <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
@@ -168,7 +168,7 @@ const Postitem = () => {
                 {(cookies.post_item && user_isloggedin) &&
                     <Alert variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
-                        <b>Name : </b>{product_title}<br/>
+                        <b>Name : </b>{product_name}<br/>
                         <b>Price : </b>{product_price}<br/>
                         <b>Category : </b>{product_category}<br/>
                         <b>License : </b>{product_license}<br/>
@@ -212,19 +212,19 @@ const Postitem = () => {
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Label>All fields are required</Form.Label>
                             <Form.Row>
-                                <Form.Group as={Col} id="product_title">
+                                <Form.Group as={Col} id="product_name">
                                     <Form.Label>Title </Form.Label>
                                     <Form.Control
-                                        name="product_title"
+                                        name="product_name"
                                         type="text"
                                         onFocus={(e) => e.target.placeholder = ""}
                                         onBlur={(e) => e.target.placeholder = "Enter title"}
                                         placeholder="Enter title"
-                                        onChange={(e) => {formik.setFieldValue("product_title", e.currentTarget.value); 
-                                        setTitle(e.currentTarget.value)}}
+                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value); 
+                                        setName(e.currentTarget.value)}}
                                     />
                                     <Form.Text className="text-muted">
-                                        {formik.touched.product_title && formik.errors.product_title ? (<div className="error_message">{formik.errors.product_title}</div>) : null}
+                                        {formik.touched.product_name && formik.errors.product_name ? (<div className="error_message">{formik.errors.product_name}</div>) : null}
                                     </Form.Text>
                                 </Form.Group>
                             </Form.Row>

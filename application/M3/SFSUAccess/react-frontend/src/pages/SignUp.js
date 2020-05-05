@@ -1,10 +1,10 @@
 //PURPOSE: This is the sign up page.
 //AUTHOR: JunMin Li
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form,Button, Container, Navbar, Col, Row} from 'react-bootstrap';
+import { Form,Button, Container, Navbar } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../css/Sign.css';
 import Notice from '../components/Notice';
@@ -47,13 +47,19 @@ const SignUp = () => {
                 .oneOf([Yup.ref('password'), null], 'Passwords must match'),
         })}
         onSubmit={(values, {setSubmitting, setErrors }) => {
-            var form_data = new FormData();    
-            form_data.append(email, email);
-            form_data.append(first_name, first_name);
-            form_data.append(last_name, last_name);
-            form_data.append(password, password);
-            
-            axios.post('/auth/register', email, first_name, last_name, password)
+            //  var body = new FormData();    
+            //  body.append(email, email);
+            //  body.append(first_name, first_name);
+            //  body.append(last_name, last_name);
+            //  body.append(password, password);
+            const body = {
+                email: email,
+                first_name: first_name,
+                last_name: last_name,
+                password: password
+            }
+
+            axios.post('/api/auth/register', body)
             .then(res => {
                 if(res.status === 201){
                     setLoading(true);

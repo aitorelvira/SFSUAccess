@@ -38,7 +38,7 @@ const SignIn = () => {
             setEmail(email.trim().toLowerCase());
             setPassword(password.trim().toLowerCase());
 
-            axios.post('/api/login',{
+            axios.post('/api/auth/login',{
                 email, password
             })
             .then(response => {

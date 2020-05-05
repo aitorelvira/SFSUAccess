@@ -61,6 +61,7 @@ const Dashboard = () => {
     fetchData();
   },[]);
 
+  // /api/product?user_id=1&status=active
   const get_activeItem = () =>{
     axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
       .then(response =>{

@@ -48,7 +48,7 @@ def post_product():
     cur.fetchall()
     #get the new product id number to rename upload
     product_id = cur.lastrowid
-    return upload_file(request,product_id)
+    return Response(upload_file(request,product_id))
 
 
 
