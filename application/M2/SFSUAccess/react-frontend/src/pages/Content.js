@@ -8,7 +8,7 @@ import {
   CardTitle, CardSubtitle, Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import { connect } from 'react-redux';
-import '../css/content.css';
+import '../css/Content.css';
 
 
 const Content = ({dispatch, searchinfo, notes}) => {

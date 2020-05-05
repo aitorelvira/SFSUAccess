@@ -1,0 +1,35 @@
+.image{
+    height:5%;
+}
+
+.cardButton{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width:200px;
+}
+
+.detail{
+    align-items: center;
+}
+
+.postItem{
+    width:50%;
+    height:100%;
+    padding-left:100px;
+    padding-top:30px;
+}
+
+
+.loginSection{
+    position: absolute;
+    right:15px;
+}
+
+.postButton{
+    align-items: right;
+}
+
+.textarea {
+    resize: none;
+}

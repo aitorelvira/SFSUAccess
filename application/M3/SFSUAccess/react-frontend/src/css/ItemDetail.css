@@ -1,0 +1,27 @@
+.image{
+   border: solid 2px white;
+   overflow: hidden;
+   min-width: 400px;
+   height: 280px;
+}
+
+.textarea{
+    outline: 1px solid lightgrey;
+    min-height:100px;
+    resize: none;
+    overflow-x:hidden;
+    overflow-y:auto;
+        
+}
+
+.textarea:empty:before{ 
+    content: 'Message content...'; 
+    color: gray; 
+} 
+.textarea:focus:before{
+    content:none;
+}
+
+.overall{
+    width:80%;
+}

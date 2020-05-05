@@ -1,0 +1,48 @@
+.overAll{
+  /* padding-top:10px; */
+  padding-bottom: 15%;
+  padding-top:1%;
+}
+
+  .page {
+    padding-left:20px;
+  }
+
+  .footer{
+    font-size: calc(12px);
+  }
+
+.errorgreeting{
+    text-align: center;  
+    padding-top: 5%;
+}
+
+.error_greeting.not_second{
+  font: 15px arial, sans-serif; 
+}
+.error_greeting.not_second.not_third{
+  font: 10px; 
+}
+
+
+.navLogo{
+  display:block;
+  width:85px;
+  /* background-color: black; */
+}
+
+.navButton{
+  padding:0px;
+  width:100px;
+  background-color:transparent; 
+  border-style: none;    
+  outline: none;  
+  color:white;
+  font-size: 15px;   
+}
+
+.navButton:focus{
+  background-color: #FFCC11;
+  color:black;
+  outline: none;
+}
