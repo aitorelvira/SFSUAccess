@@ -33,6 +33,7 @@ def get_categories():
 
 @search_bp.route('/search/<category>',methods=['GET','POST'])
 def get_category_items(category):
+    search_query = request.get_json()
     if request.method=='GET':
         if category.lower() == "all":
             sql = "SELECT * FROM products WHERE product_status = 'ACTIVE' ORDER BY date_time_added DESC"

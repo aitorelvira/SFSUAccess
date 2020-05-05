@@ -2,10 +2,12 @@
 //AUTHOR: JunMin Li
 import React,{useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import ReactGA from "react-ga";
 import axios from 'axios';
-import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText } from 'reactstrap';
-import { Navbar, Button, Col, Row } from 'react-bootstrap';
+import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText} from 'reactstrap';
+import { Navbar, Button, Col, Row, Form } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Image from 'react-bootstrap/Image';
 import { connect } from 'react-redux';
@@ -15,17 +17,16 @@ import Content from './Content';
 import Notice from '../components/Notice';
 import '../css/Home.css';
 
-
 const Home = ({ dispatch, username, searchinfo}) => {
   const item_perpage = 8;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);  
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
   const [music_list, set_music_list] = useState([]);
-  
+
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
@@ -36,67 +37,15 @@ const Home = ({ dispatch, username, searchinfo}) => {
     }
     dispatch(setUsername(cookies.first_name));
     fetchData();
-  },[dispatch, cookies.first_name]);  
- 
-//Main Search function for Navbar search section
-const submitSearch = ()=> {
-    // getting the category input from the dropdown menu
-    let select = document.getElementById("category");
-    let index = select.selectedIndex;
-    let category = select.options[index].value;
+  },[dispatch, cookies.first_name]);
 
-    if(product_name){    // search by category + searchKey
-      const body = {
-        product_name : product_name.toLowerCase()
-    }
-    ReactGA.event({
-     category: 'Search',
-     action: 'Search Submit',
-     label: 'Category: ' + category + '. SearchKey: ' + product_name,
-     transport: 'beacon'
-    });
-      axios.post('/api/search/' + category,body)
-      .then((response) => {
-        
-        // If nothing was found , return items in the same category. 
-        if(!response.data.length){
-          console.log("Category: " + category + ". SearchKey: " + product_name);
-          axios.get('/api/search/'+ category)
-            .then(response => {
-               getRange_last(response.data);
-               if(category === "All"){
-                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + 
-                   '\' and \'' + product_name + '\'. Here are all items listed. '));
-               } else {
-                   dispatch(setSearchInfo('Nothing found with search key:  \'' + category + 
-                   '\' and \'' + product_name + '\'. Here are items in the same category. '));
-               }
-            })
-        }     
-        else{ // If something was found, return items.
-           console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
-           getRange_last(response.data);
-           dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\' ' + product_name + '\'. '));
-        }
-      })
-      .catch(error => console.log(error))
-    }
-    else{ // search by category + '' as searchKey, return items in that category.
-      console.log("Category: " + category +". SearchKey: Null" )
-      axios.get('/api/search/'+ category)
-        .then(response => {
-          getRange_last(response.data);
-          dispatch(setSearchInfo('   Search results for:   ' + category + '. ' ));
-       })
-    }
-  }
 
   //Search funtion for Navbar buttons, return items in that category.
   const search_by_category = (e) =>{
    let category = e.target.id
    axios.get('/api/search/'+ category)
    .then(response => {
-      getRange_last(response.data);  
+      getRange_last(response.data);
       dispatch(setSearchInfo(category + '  Category. '));
   })
   }
@@ -129,154 +78,240 @@ const submitSearch = ()=> {
      transport: 'beacon'
     });
     ReactGA.initialize('UA-163580713-1'); // reinitialize GA on log out to reset clientId
-    dispatch(setUsername('')); 
+    dispatch(setUsername(''));
   }
 
   //Use to redirecting to item detail page with an item id.
   const goItemDetail =(id) => {
-    window.open("/ItemDetail?itemId=" + id);
+       window.open("/ItemDetail?itemId=" + id);
+
   };
 
   //Formatting the item posted date on the card
   const formatDate =(dateString)=>{
     return dateString.replace('GMT','')
   }
-      
-  return (  
-    <div>
-      <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
-    {/* Navbar section  */}
-      <Navbar bg="dark" variant="dark" className="navbar">
-      <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-          <select id="category" >
-          {lists.map((x) => {
-            return (
-                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
-                }).reverse()}
-          </select>&nbsp;
-          <input className="searchBar" id ="searchItem" placeholder="Enter item name.." maxLength="40" 
-            onChange={e=>setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))} />&nbsp;&nbsp;
-          <Button variant="warning" onClick ={submitSearch}>Search</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button variant="warning" href="/Postitem">Post an item</Button>&nbsp;&nbsp;         
-        <Navbar.Collapse className="justify-content-end">       
-        
-        {/* Display signIn, signUp, signOut buttons according to the user status */}
-        {!username &&(
-          <div>
-            <Button variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
-            <Button variant="warning" href="/SignUp">Sign up</Button>
-          </div>
-         )}  
-        {username &&(
-          <div>             
-            {'Welcome, '+ username + '   '}&nbsp;&nbsp;
-            <Button variant="warning" href = "/Dashboard">My dashboard</Button>&nbsp;&nbsp;
-            <Button variant="warning" onClick ={logOut}>Log out</Button>
-          </div>
-        )}
-        </Navbar.Collapse>
-        </Navbar.Collapse>
-        </Navbar>
 
-        <Navbar  bg="dark" variant="dark">
-        <Navbar.Brand className="navLogo"></Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-        <Nav>    
-            {lists.map((x) => {
-              if(x.product_category_name !== 'All'){
-               return (
-                  <NavItem title="Category" key = {x.product_category_name}>
-                    <button className ="navButton" value = {x.product_category_name} id ={x.product_category_name}
-                    onClick ={search_by_category}>{x.product_category_name} </button> 
-                  </NavItem>             
-                )}
-                else
-                  return('');
-              }).reverse()       
+  return (
+    <Formik
+        initialValues={{searchItem: ''}}
+        validationSchema={Yup.object({
+            searchItem: Yup.string()
+                .max(40, 'Must be 40 character or less.'),
+        })}
+
+        onSubmit={(values, {setSubmitting, setErrors}) => {
+
+            // getting the category input from the dropdown menu
+            let select = document.getElementById("category");
+            let index = select.selectedIndex;
+            let category = select.options[index].value;
+            let select_license = document.getElementById("license_name");
+            let index_license = select_license.selectedIndex;
+            let license = select_license.options[index_license].value;
+
+            if(product_name || (license !== 'Any license')){    // search by category + searchKey
+              const body = {
+                product_name : product_name.toLowerCase(),
+                  license_name : license
             }
-          <NavItem><a href = "/About"><button className ="navButton">About us</button></a></NavItem>
-        </Nav>
-        </Navbar.Collapse> 
-        </Navbar>
-         <br/>
-    {/* Navbar end here     */}
+            ReactGA.event({
+             category: 'Search',
+             action: 'Search Submit',
+             label: 'Category: ' + category + '. SearchKey: ' + product_name,
+             transport: 'beacon'
+            });
+              axios.post('/api/search/' + category,body)
+              .then((response) => {
+                // If nothing was found , return items in the same category.
+                if(!response.data.length){
+                  console.log("Category: " + category + ". SearchKey: " + product_name);
+                  axios.get('/api/search/'+ category)
+                    .then(response => {
+                       getRange_last(response.data);
+                       if(category === "All" && product_name.length == ''){
+                           dispatch(setSearchInfo('Here are all items listed. '));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(product_name.length == '') {
+                           dispatch(setSearchInfo('Here are items in the same category.'));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
+                       } else if(category === "All"){
+                           dispatch(setSearchInfo('Here are all items listed. '));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
+                       } else {
+                           dispatch(setSearchInfo('Here are items in the same category.'));
+                           setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'})
+                       }
+                    })
+                }
+                else{ // If something was found, return items.
+                   console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
+                   getRange_last(response.data);
+                   if(product_name.length == '') {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
+                   } else {
+                        dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));
+                   }
+                }
+              })
+              .catch(error => console.log(error))
+            }
+            else{ // search by category + '' as searchKey, return items in that category.
+              console.log("Category: " + category +". SearchKey: Null" )
+              axios.get('/api/search/'+ category)
+                .then(response => {
+                  getRange_last(response.data);
+                  dispatch(setSearchInfo('   Search results for:   ' + category + ', ' + license + '. ' ));
+              })
+            }
+        }}
+    >
+        {formik => (
+            <div>
+                <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
+                {/* Navbar section  */}
+                <Navbar bg="dark" variant="dark" className="navbar">
+                    <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Form onSubmit={formik.handleSubmit}>
+                            <Form.Row>
+                                <Form.Group>
+                                    <select id="category">
+                                        {lists.map((x) => {
+                                            return (
+                                                <option value={x.product_category_name} key={x.product_category_name}>{x.product_category_name}</option>)
+                                        }).reverse()}
+                                    </select>&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <input
+                                        className="searchBar"
+                                        id ="searchItem"
+                                        placeholder="Enter item name.."
+                                        onChange={(e) => {formik.setFieldValue("searchItem", e.target.value.replace(/[^a-z0-9\s']+/ig,"")); setProduct_name(e.target.value.replace(/[^a-z0-9\s']+/ig,""))}}
+                                    />&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <select id="license_name">
+                                        return (
+                                            <option value="Any license" key="Any license">Any license</option>
+                                            <option value="Free use & modification" key="Free use & modification">Free Use</option>
+                                            <option value="Free to SFSU related projects" key="Free to SFSU related projects">Free for Projects</option>
+                                            <option value="Copyrighted" key="Copyrighted">Copyrighted</option>
+                                        )
+                                    </select>&nbsp;
+                                </Form.Group>
+                                <Form.Group>
+                                    <Button id="nav_bar_button" variant="warning" type="submit">Search</Button> &nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/Postitem">Upload File</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href="/About">About Us</Button>&nbsp;
+                                </Form.Group>
+                            </Form.Row>
+                        </Form>
 
-    {/* Here is the default content page */}
-    {!searchinfo && (
-    <Container>
-      <div>Latest items in each category</div><hr/>
-      <div>Notes category</div><br/>
-      <Row>{
-        notes_list.map((x,item_number) => {  
-          if(item_number < item_perpage){ // initialized how many items per page. 
-            return(
-              <Col  sm="3" key={item_number} >
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
-                <CardBody>
-                <CardTitle className="card_text">{x.product_name}</CardTitle>
-                <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">{ formatDate(x.date_time_added)}</CardText>
-                </CardBody>
-            </Card>
-            </Col> 
-            )}
-          else
-            return('');
-      })} 
-      </Row><hr/>
-      
-      <div>Video category</div><br/>
-      <Row>{
-        video_list.map((x,item_number) => {  
-          if(item_number < item_perpage){ // initialized how many items per page. 
-            return(
-              <Col  sm="3" key={item_number} >
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
-                <CardBody>
-                <CardTitle className="card_text">{x.product_name}</CardTitle>
-                <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
-                </CardBody>
-            </Card>
-            </Col> 
-            )}
-          else
-            return('');
-        })} 
-      </Row><hr/>
-      <div>Music category</div><br/>
-      <Row>{
-        music_list.map((x,item_number) => {  
-          if(item_number < item_perpage){ // initialized how many items per page. 
-            return(
-              <Col  sm="3" key={item_number} >
-              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>  
-                <CardBody>
-                <CardTitle className="card_text">{x.product_name}</CardTitle>
-                <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
-                <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
-                </CardBody>
-            </Card>
-            </Col>  
-            )}
-          else
-            return('');
-        })} 
-      </Row>
-    </Container>
-    )}  
-    {/* End of the default content page */}
 
-    <Switch>
-        <Route path ="/" component = {Content}/> 
-    </Switch>
-    </div>
+                            <Navbar.Collapse className="justify-content-end">
+                                {/* Display signIn, signUp, signOut buttons according to the user status */}
+                                {!username &&(
+                                      <div>
+                                        <Button id="nav_bar_button" variant="warning" href="/SignIn">&nbsp;&nbsp;Login&nbsp;&nbsp;</Button>&nbsp;&nbsp;
+                                        <Button id="nav_bar_button" variant="warning" href="/SignUp">Sign up</Button>
+                                      </div>
+                                )}
+                                {username &&(
+                                  <div>
+                                    {'Welcome, '+ username + '   '}&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" href = "/Dashboard">Dashboard</Button>&nbsp;&nbsp;
+                                    <Button id="nav_bar_button" variant="warning" onClick ={logOut}>Log out</Button>
+                                  </div>
+                                )}
+                            </Navbar.Collapse>
+                        </Navbar.Collapse>
+                    </Navbar>
+
+
+                        <Navbar  bg="dark" variant="dark">
+                            {formik.touched.searchItem && formik.errors.searchItem ? (<div className="error_message">{formik.errors.searchItem}</div>) : null}
+                        </Navbar>
+                        <br/>
+                        {/* Navbar end here     */}
+
+                        {/* Here is the default content page */}
+                        {!searchinfo && (
+                            <Container>
+                                <div>Latest items in each category</div><hr/>
+                                <div>Notes category</div><br/>
+                                <Row>{
+                                    notes_list.map((x,item_number) => {
+                                        if(item_number < item_perpage){ // initialized how many items per page.
+                                            return(
+                                                 <Col  sm="3" key={item_number} >
+                                                     <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                                        <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                                                        <CardBody>
+                                                            <CardTitle className="card_text">{x.product_name}</CardTitle>
+                                                            <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
+                                                            <CardText className="card_date">{ formatDate(x.date_time_added)}</CardText>
+                                                        </CardBody>
+                                                     </Card>
+                                                 </Col>
+                                            )}
+                                        else
+                                            return('');
+                                    })}
+                                </Row><hr/>
+
+                                <div>Video category</div><br/>
+                                    <Row>{
+                                        video_list.map((x,item_number) => {
+                                            if(item_number < item_perpage){ // initialized how many items per page.
+                                                return(
+                                                  <Col  sm="3" key={item_number} >
+                                                      <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                                        <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                                                        <CardBody>
+                                                        <CardTitle className="card_text">{x.product_name}</CardTitle>
+                                                        <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
+                                                        <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
+                                                        </CardBody>
+                                                      </Card>
+                                                  </Col>
+                                                )}
+                                            else
+                                                return('');
+                                        })}
+                                    </Row><hr/>
+
+                                <div>Music category</div><br/>
+                                <Row>{
+                                    music_list.map((x,item_number) => {
+                                        if(item_number < item_perpage){ // initialized how many items per page.
+                                            return(
+                                                 <Col  sm="3" key={item_number} >
+                                                    <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                                        <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>
+                                                        <CardBody>
+                                                            <CardTitle className="card_text">{x.product_name}</CardTitle>
+                                                            <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
+                                                            <CardText className="card_date">{formatDate(x.date_time_added)}</CardText>
+                                                        </CardBody>
+                                                    </Card>
+                                                 </Col>
+                                            )}
+                                        else
+                                            return('');
+                                    })}
+                                </Row>
+                            </Container>
+                        )}
+                        {/* End of the default content page */}
+                        <Switch>
+                            <Route path ="/" component = {Content}/>
+                        </Switch>
+            </div>
+        )}
+    </Formik>
   );
 };
 
@@ -287,3 +322,5 @@ const mapStateToProps = state => ({
   searchinfo: state.notesReducer.searchinfo,
 })
 export default connect(mapStateToProps)(Home);
+
+
