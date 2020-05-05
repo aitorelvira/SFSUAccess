@@ -18,11 +18,11 @@ import Notice from '../components/Notice';
 import AboutSFSU from '../components/AboutSFSU';
 import '../css/Home.css';
 
-const Home = ({dispatch, username, searchinfo}) => {
+const Home = ({ dispatch, username, searchinfo}) => {
   const item_perpage = 8;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'itemID']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -84,8 +84,9 @@ const Home = ({dispatch, username, searchinfo}) => {
   }
 
   //Use to redirecting to item detail page with an item id.
-  const goItemDetail =(event, id) => {
+  const goItemDetail =(id) => {
        window.open("/ItemDetail?itemId=" + id);
+
   };
 
   //Formatting the item posted date on the card
@@ -102,6 +103,7 @@ const Home = ({dispatch, username, searchinfo}) => {
         })}
 
         onSubmit={(values, {setSubmitting, setErrors}) => {
+
             // getting the category input from the dropdown menu
             let select = document.getElementById("category");
             let index = select.selectedIndex;
@@ -324,5 +326,3 @@ const mapStateToProps = state => ({
   searchinfo: state.notesReducer.searchinfo,
 })
 export default connect(mapStateToProps)(Home);
-
-
