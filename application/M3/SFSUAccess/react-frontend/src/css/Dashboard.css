@@ -30,6 +30,25 @@
     align-items: right;
 }
 
+.messageContent p{
+  height: 18px;
+  width: 250px;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+  margin: 0 5px 0 0px;
+  text-align: center;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #000;
+}
+
+.messageReply {
+    resize: none;
+}
+
 .textarea {
     resize: none;
 }
