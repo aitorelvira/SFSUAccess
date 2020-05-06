@@ -87,7 +87,6 @@ const Postitem = () => {
         validationSchema={Yup.object({
             product_name: Yup.string()
                 .max(15, 'Must be 15 characters or less')
-                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
                 .required('Required'),
             product_category: Yup.string()
                 .oneOf(['Notes', 'Video', 'Music'])
