@@ -3,7 +3,7 @@
 //AUTHOR: JunMin Li
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Form, Button, Container, Col, Row } from 'react-bootstrap';
+import { Form, Button, Container, Col, Row, Modal, InputGroup, FormControl } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useCookies } from 'react-cookie';
@@ -16,12 +16,24 @@ import Header from '../components/Header';
 
 const Dashboard = () => {
   const [list, setLists] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [cookies, setCookies] = useCookies([]);
+  const [toggle, setToggle] = useState(false);
   const [active_item, set_active_item] = useState([]);
   const [pending_item, set_pending_item] = useState([]);
   const [admin_pending_item, set_admin_pending_item] = useState([]);
   const user_privelege_type = cookies.privelege_type;
   const user_id = cookies.id;
+
+  //Message reply popup window
+  const [show, setShow] = useState(false);
+  const [reply, setReply] = useState(false);
+  const [markRead, setMarkRead] = useState(true);
+  const closeReply = () => setReply(false);
+  const showReply = () => setReply(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
 
 
   const [product_name, setItemName] = useState('');
@@ -43,6 +55,7 @@ const Dashboard = () => {
                                   set_active_item(response.data);
                                 })
                                 .catch(error => console.log(error))
+        await axios.get('/api/messages').then(response =>{setMessages(response.data)}).catch(error=>console.log(error));
         if(user_privelege_type !== '1' ){
           await axios.get('/api/product?', { params:{user_id: user_id, status: 'pending'}})
                                   .then(response =>{
@@ -61,7 +74,6 @@ const Dashboard = () => {
     fetchData();
   },[]);
 
-  // /api/product?user_id=1&status=active
   const get_activeItem = () =>{
     axios.get('/api/product?', { params:{user_id: user_id, status: 'active'}})
       .then(response =>{
@@ -86,7 +98,11 @@ const Dashboard = () => {
       .catch(error => console.log(error))
   }
 
- 
+  const get_user_message = () => {
+    axios.get('/api/')
+  }
+
+
   const remove_pendingitem = (id) =>{
     axios.delete('/api/product/' + id)
     .then ((response) => { console.log("Item deleted");
@@ -94,11 +110,11 @@ const Dashboard = () => {
   })
     .catch((error) => console.log("Delete error..."));
   }
- 
+
   const remove_activeitem = (id) =>{
     axios.delete('/api/product/' + id)
     .then ((response) => { console.log("Item deleted");
-    get_activeItem();  
+    get_activeItem();
   })
     .catch((error) => console.log("Delete error..."));
   }
@@ -162,7 +178,7 @@ const Dashboard = () => {
                   </tbody>
                 </Table>
             </Tab>
-          
+
           {/* user pending list */}
           {user_privelege_type !== '1' &&
           <Tab eventKey="pending" title="Pending items">
@@ -223,25 +239,81 @@ const Dashboard = () => {
           }
 
           <Tab eventKey="message" title="My Message">
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>From</th>
-                  <th>Message content</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td width="10%">User one</td>
-                  <td width="65%">Hello CoSE Students,
-                  </td>
-                  <td><Button variant="warning">Mark as read</Button>&nbsp; &nbsp;
-                      <Button variant="danger">Remove</Button>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+                   <Table hover>
+                        <thead>
+                            <tr>
+                              <th></th>
+                              <th>Message</th>
+                              <th>Date</th>
+                              <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                   <td width="1%">{markRead ? <img src={require('../images/blue-dot.png')} width="35px"/> : <img src={require('../images/white-dot.png')} width="35px"/>}</td>
+                                   <td width="30%">
+                                        <h6><b>John</b></h6>
+                                        <div className="messageContent">
+                                            <p>Hello asdfasfasdfafdsaffdsafaasdfafafaf a asfasf afasdfasfafsa asdfasfa asdf asf sfa asdfasfdaasdfafsaasfd CoSE Students</p>
+                                        </div>
+                                   </td>
+                                   <td width="46%">
+                                       10/2/2020
+                                   </td>
+                                   <td>
+                                     <Button variant="warning" onClick={handleShow}>Read</Button>&nbsp; &nbsp;
+                                        {!reply && (
+                                            <Modal
+                                                size="md"
+                                                aria-labelledby="contained-modal-title-vcenter"
+                                                centered
+                                                show={show}
+                                                onHide={handleClose}
+                                            >
+                                            <Modal.Header closeButton>
+                                            <Modal.Title>Form: john</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <p>Message goes here...</p>
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button variant="primary" onClick={()=> {showReply(); handleClose()}}>
+                                                Reply
+                                                </Button>
+
+                                            </Modal.Footer>
+                                          </Modal>
+                                        )}
+
+                                        {reply && (
+                                            <Modal
+                                                size="md"
+                                                aria-labelledby="contained-modal-title-vcenter"
+                                                centered
+                                                show={reply}
+                                                onHide={closeReply}
+                                            >
+                                            <Modal.Header closeButton>
+                                            <Modal.Title>To: john</Modal.Title>
+                                            </Modal.Header>
+                                                <textarea
+                                                className="messageReply"
+                                                id="message"
+                                                rows="5"
+                                                placeholder="Message..."
+                                            />
+                                            <Modal.Footer>
+                                                <Button variant="primary" onClick={() => {closeReply(); handleClose()}}>
+                                                    Send
+                                                </Button>
+                                            </Modal.Footer>
+                                          </Modal>
+                                        )}
+                                     <Button variant="danger">Remove</Button>
+                                   </td>
+                                 </tr>
+                        </tbody>
+                   </Table>
           </Tab>
           </Tabs>
       </Container>
