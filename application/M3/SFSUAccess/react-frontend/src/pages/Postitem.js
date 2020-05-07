@@ -86,11 +86,11 @@ const Postitem = () => {
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
             product_name: Yup.string()
-                .max(15, 'Must be 15 characters or less')
+                .max(30, 'Must be 30 characters or less') // increased limit
+                .matches(/^[a-zA-Z0-9\s]*$/gm, 'Alphanumeric characters only')
                 .required('Required'),
             product_category: Yup.string()
-                .oneOf(['Notes', 'Video', 'Music'])
-                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
+                .oneOf(['Other', 'Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
             file: Yup.mixed()
                 .required('A file is required'),
@@ -98,7 +98,7 @@ const Postitem = () => {
                 .required("Please enter a price")
                 .matches(/^\s*(?=.*[0-9])\d*(?:\.\d{1,2})?\s*$/g, 'Must be a positive number'),
             product_license: Yup.string()
-                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
+                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'Copyrighted'])
                 .required("Please indicate your license preference"),
             product_description: Yup.string()
                 .max(500, 'Must be 500 characters or less')
@@ -137,7 +137,7 @@ const Postitem = () => {
         <div>
             <Header/>
             <Container className="dashboard">
-                <h3>Post item page</h3><br/>
+                <h3>Post an item</h3><br/>
                 
                 {/* display when a user try to post an item without log in. */}
                 <Alert show={show} variant="dark"> 
@@ -237,11 +237,11 @@ const Postitem = () => {
                                             onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); 
                                             setCategory(e.currentTarget.value)}}
                                         >
-                                            {list.map((x) => {
-                                                return (
-                                                    <option value={x.product_category_name} key={x.product_category_name}>
-                                                    {x.product_category_name}</option>)
-                                                }).reverse()}
+                                            <option value="Choose...">Choose...</option>
+                                            <option value="Notes">Notes</option>
+                                            <option value="Video">Video</option>
+                                            <option value="Music">Music</option>
+                                            <option value="Other">Other</option>
                                         </Form.Control>
                                     <Form.Text className="text-muted"> 
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
