@@ -38,7 +38,6 @@ def upload_file(request, product_id):
             generate_thumbnail(filename,product_id,file_extension[1])
             return Response(status=200)
 
-
 def generate_thumbnail(filename,product_id, extension):
     from sfsuaccess import app
     if extension == ".mp3":
