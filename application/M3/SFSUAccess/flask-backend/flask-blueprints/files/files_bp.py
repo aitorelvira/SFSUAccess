@@ -8,7 +8,7 @@ from db_credentials import cur, connection
 
 files_bp = Blueprint('files_bp', import_name=__name__)
 
-ALLOWED_EXTENSIONS = {'pdf', 'mp3', 'mp4'}
+ALLOWED_EXTENSIONS = {'pdf', 'mp3', 'mp4', 'jpg', 'png'}
 
 
 def allowed_file(filename):
@@ -36,8 +36,7 @@ def upload_file(request, product_id):
             from sfsuaccess import app
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             generate_thumbnail(filename,product_id,file_extension[1])
-            status_code = Response(status=200)
-            return status_code
+            return Response(status=200)
 
 
 def generate_thumbnail(filename,product_id, extension):
@@ -48,8 +47,12 @@ def generate_thumbnail(filename,product_id, extension):
         with open(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'), 'wb') as img:
             img.write(artwork)  # write artwork to new image
     elif extension == ".pdf":
-        img = Image(filename=os.path.join(app.config['UPLOAD_FOLDER'],filename), resolution=300, width=600)
-        img.save(filename=os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'))
+        img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename, resolution=300, width=600)
+        img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
+    elif extension == ".jpg" or extension == ".png":
+        img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename)
+        img.thumbnail(img.size[0]/10, img.size[1]/10) # set thumbnail sizing to 1/10th resolution
+        img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".mp4":
         #TODO
         print ("issa video")
