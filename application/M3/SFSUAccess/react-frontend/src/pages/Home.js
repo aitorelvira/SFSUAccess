@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import ReactGA from "react-ga";
 import axios from 'axios';
-import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText} from 'reactstrap';
+import { Container, Card, CardBody, CardTitle, CardText} from 'reactstrap';
 import { Navbar, Button, Col, Row, Form } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Image from 'react-bootstrap/Image';
@@ -19,7 +19,7 @@ import AboutSFSU from '../components/AboutSFSU';
 import '../css/Home.css';
 
 const Home = ({ dispatch, username, searchinfo}) => {
-  const item_perpage = 8;
+  const item_perpage = 4;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
   const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
@@ -94,6 +94,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
     return dateString.replace('GMT','')
   }
 
+  const get_thumbnails = (item_id) => {
+    return '/api/thumbnails/' + item_id + '-0';
+  }
+
   return (
     <Formik
         initialValues={{searchItem: ''}}
@@ -131,10 +135,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
                   axios.get('/api/search/'+ category)
                     .then(response => {
                        getRange_last(response.data);
-                       if(category === "All" && product_name.length == ''){
+                       if(category === "All" && product_name.length === ''){
                            dispatch(setSearchInfo('Here are all items listed. '));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
-                       } else if(product_name.length == '') {
+                       } else if(product_name.length === '') {
                            dispatch(setSearchInfo('Here are items in the same category.'));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
                        } else if(category === "All"){
@@ -149,7 +153,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                 else{ // If something was found, return items.
                    console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
                    getRange_last(response.data);
-                   if(product_name.length == '') {
+                   if(product_name.length === '') {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
                    } else {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));
@@ -252,7 +256,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                           return(
                             <Col  sm="3" key={item_number} >
                               <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                                <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                 <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
                                     <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -273,7 +277,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                             return(
                               <Col  sm="3" key={item_number} >
                                   <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                    <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                                    <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
                                     <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -294,7 +298,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                             return(
                               <Col  sm="3" key={item_number} >
                                 <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                    <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>
+                                    <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                         <CardTitle className="card_text">{x.product_name}</CardTitle>
                                         <CardText className="card_user">by&nbsp;{x.product_author}</CardText>

@@ -1,8 +1,10 @@
 .image{
-   border: solid 2px white;
-   overflow: hidden;
-   min-width: 400px;
-   height: 280px;
+   border: solid 1px lightgray;
+   height: 500px;
+   align-items:center;
+   justify-content:center;
+   object-fit: contain;
+   cursor: pointer;
 }
 
 .textarea{

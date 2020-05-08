@@ -3,7 +3,6 @@
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
 import ReactGA from "react-ga";
-import { connect } from 'react-redux';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Navbar } from 'react-bootstrap';
 import { Link } from "react-router-dom";
@@ -14,7 +13,6 @@ import Notice from '../components/Notice';
 var md5 = require('md5');
 
 const SignIn = () => {
-  const [message, setMessage] = useState('');               //Error message
   const [isLoading, setLoading] = useState(false);          //Loading state for the login button
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

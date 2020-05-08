@@ -1,5 +1,8 @@
-//PURPOSE: This page is used to show an selected item detail information, after
-//         user clicked its thumbnail.
+//PURPOSE: This page is used to show an selected item detail information.
+//         User should able to do the following: 
+//          1. to view all the details information about this item.
+//          2. to send a message to the seller.
+//          3. to view the original image by clicking the thumbnail.
 //AUTHOR: JunMin Li
 import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
@@ -15,6 +18,7 @@ const ItemDetail = () => {
     const [cookies, setCookies] = useCookies(['first_name']);
     const [username, setUsername] = useState('');
     const [id, setId] = useState('')
+    const [imgURL, setURL] = useState('');
 
     const [product_name, setName] = useState('');
     const [product_author, setAuthor] = useState('');
@@ -39,8 +43,18 @@ const ItemDetail = () => {
                 setDescription(response.data[0].product_description); 
                 setCategory(response.data[0].product_category); 
                 setLicense(response.data[0].product_license);     
-         });}
+         });
+        setURL('/api/thumbnails/' + id + '-0');
+
+        }
        },[cookies.first_name, id, username]);
+
+    
+    const open_originalImage = (id) =>{
+        console.log("open original image: " + id)
+        let url = '/api/thumbnails/' + id + '-0';
+        window.open(url);
+    }
 
   return (
     <Formik
@@ -73,17 +87,15 @@ const ItemDetail = () => {
             <Container>
                 <Row>
                     <Col md={{ span: 5, offset: 1 }}>
-                        <Figure className="image">
-                        <Figure.Image
-                            alt="171x180"
-                            src="https://www.w3schools.com/html/img_chania.jpg"
-                        />
+                        <Figure>
+                        <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage(id)}}/>
                         </Figure>
+                    </Col><Col>
                         <Figure.Caption>
                             <div><b>{product_name}</b></div>
                             <div>by: &nbsp;&nbsp;{product_author}</div>
-                            <div>{product_category}</div>
-                            <div>{product_license}</div>
+                            <div>Category: &nbsp;&nbsp;{product_category}</div>
+                            <div>License:&nbsp;&nbsp;{product_license}</div>
                             <div>Description: &nbsp;&nbsp;{product_description}</div>
                         </Figure.Caption>
                     </Col>

@@ -89,6 +89,7 @@
 .thumbnails{
     height:180px;
     overflow: hidden;
+    object-fit: cover;
 }
 
 .card_div{
