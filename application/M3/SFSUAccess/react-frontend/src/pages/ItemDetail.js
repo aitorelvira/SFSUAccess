@@ -52,8 +52,7 @@ const ItemDetail = () => {
     
     const open_originalImage = (id) =>{
         console.log("open original image: " + id)
-        let url = '/api/thumbnails/' + id + '-0';
-        window.open(url);
+        window.open(imgURL);
     }
 
   return (

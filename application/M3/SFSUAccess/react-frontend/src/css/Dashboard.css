@@ -1,10 +1,9 @@
-.cover{
-    cursor:pointer;
-}
+
 .thumbnails{
     height:180px;
     overflow: hidden;
     object-fit: cover;
+    cursor:pointer;
 }
 
 .cardButton{

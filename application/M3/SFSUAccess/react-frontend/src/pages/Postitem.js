@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
+import Spinner from 'react-bootstrap/Spinner'
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -15,6 +16,8 @@ const Postitem = () => {
     const username = cookies.first_name;
     const [list, setList] = useState([]);
     const [show, setShow] = useState(false);
+    const [posting_item, setPosting] = useState(false);
+    const [post_successully, setSuccessully] = useState(false);
     const [product_name, setName] = useState('');
     const [product_category, setCategory] = useState('');
     const [product_file, setFile] = useState({});
@@ -26,6 +29,7 @@ const Postitem = () => {
     const history = useHistory();
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
+
 
     useEffect (() => {
         axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
@@ -58,10 +62,12 @@ const Postitem = () => {
         form_data.append("product_author", cookies.first_name);
         form_data.append("file", product_file);
 
+        setPosting(true);
+
         axios.post('/api/product',form_data)
             .then((response) =>{
                 console.log("Item has been posted successfully.");
-                alert("Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+                setSuccessully(true);
                 setFileName('Upload File here...');
                 removeCookies('post_item');
             })
@@ -115,12 +121,13 @@ const Postitem = () => {
             form_data.append(key, values[key]);
             }
 
+            setPosting(true);
+
            axios.post('/api/product',form_data)
                .then((response) =>{
                    console.log("Item has been posted successfully.");
-                   alert( 
-                   " Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                    removeCookies('post_item');
+                   setSuccessully(true);
                })
                .catch((error) => console.log(error))  
             resetForm();
@@ -138,6 +145,24 @@ const Postitem = () => {
             <Header/>
             <Container className="dashboard">
                 <h3>Post an item</h3><br/>
+                <Alert show = {posting_item} variant="dark">
+                    { !post_successully &&
+                        <div>
+                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting item, please wait..</Alert.Heading> 
+                        </div>
+                    }
+                    { post_successully &&
+                    <div>
+                        <Alert.Heading>Item has been posted successfully. You can find it on dashboard, pending item list.</Alert.Heading><hr/>
+                        <Button onClick={()=>{history.push("/Dashboard")}} variant="warning">
+                            Dashboard
+                        </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Button onClick={cancelItem} variant="warning">
+                            Post another item
+                        </Button>
+                    </div>
+                    }   
+                </Alert>
                 
                 {/* display when a user try to post an item without log in. */}
                 <Alert show={show} variant="dark"> 
@@ -165,7 +190,7 @@ const Postitem = () => {
 
                 {/* display when a user logged in, and having an existing post item which saved in cookies. */}
                 {(cookies.post_item && user_isloggedin) &&
-                    <Alert variant="dark">
+                    <Alert show={!posting_item} variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
                         <b>Price : </b>{product_price}<br/>
@@ -176,7 +201,7 @@ const Postitem = () => {
                     <form id = "itemForm">
                     <Form.Row>
                         <Form.Group controlId="file">
-                            <Form.Label>Upload your file here again, then you good to go.</Form.Label>
+                            <Form.Label>Upload your file here again, then you are good to go.</Form.Label>
                                 <div className="input-group">
                                     <div className="custom-file">
                                         <input
@@ -207,7 +232,7 @@ const Postitem = () => {
                 }
 
                 {/* default post item form  */}
-                {!cookies.post_item &&        
+                {(!cookies.post_item && !posting_item) &&        
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Label>All fields are required</Form.Label>
                             <Form.Row>

@@ -125,6 +125,11 @@ const Dashboard = () => {
       return '/api/thumbnails/' + item_id + '-0';
   }
 
+  const open_originalImage = (id) =>{
+    console.log("open original image: " + id)
+    window.open(get_thumbnails(id));
+  }
+
 
    //Use to redirecting to post item page.
    const goPostitem = () => {
@@ -157,7 +162,7 @@ const Dashboard = () => {
                       return (
                         <tr key = {y+1}>
                           <td width ="10%"> {y+1} </td>
-                          <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails"/></td>
+                          <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails" onClick = {(e) =>{open_originalImage(item.id)}}/></td>
                           <td width ="55%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
                           <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>
                             Remove</Button>  &nbsp; &nbsp;</td>
