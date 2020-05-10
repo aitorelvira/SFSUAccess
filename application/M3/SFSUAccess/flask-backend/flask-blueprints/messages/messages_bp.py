@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 
 from db_credentials import cur, connection
 
@@ -55,3 +55,18 @@ def reply_to_thread(message_thread_id):
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
     return "replied to a message thread"
+
+
+# DELETE MESSAGES AND MESSAGE_THREAD
+@messages_bp.route('/messages/<int:message_thread_id> ', methods=['DELETE'])
+def delete_message_thread(message_thread_id):
+    # message_thread_id = request.form["message_thread_id"]
+    sql = "delete * from messages where message_thread_id values %s"
+    cur.execute(sql, message_thread_id)
+    connection.commit()
+
+    sql = "delete * from messages_threads where id values %s"
+    cur.execute(sql, message_thread_id)
+    connection.commit()
+    status_code = Response(status=204)
+    return status_code

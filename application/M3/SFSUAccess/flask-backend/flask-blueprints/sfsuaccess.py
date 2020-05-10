@@ -20,8 +20,8 @@ app.register_blueprint(admin_bp, url_prefix="/api")
 debug_mode = True
 
 if debug_mode:
-    UPLOAD_FOLDER = ''
-    THUMBNAILS_FOLDER = ''
+    UPLOAD_FOLDER = '/uploads'
+    THUMBNAILS_FOLDER = '/uploads/thumbnails'
     if UPLOAD_FOLDER == '' and THUMBNAILS_FOLDER == '':
         print ("sfsuaccess.py file error, please refer to debug mode if statement inside sfsuaccess.py for instructions listed below")
         print ("ALSO MAKE SURE TO RUN pip install -r requirements.txt , the requirements file is inside flask-blueprints")
