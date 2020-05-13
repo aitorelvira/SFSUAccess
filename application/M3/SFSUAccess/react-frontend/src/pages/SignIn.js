@@ -18,7 +18,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
 
   //cookies
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin', 'itemID']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin', 'product_id']);
 
   return (
     <Formik
@@ -59,8 +59,8 @@ const SignIn = () => {
                 });
                 if(cookies.post_item)
                     setTimeout(function(){ window.location.href = '/Postitem'},1000);
-                else if(cookies.itemID)
-                    setTimeout(function(){ window.location.href = '/ItemDetail?itemId=' + cookies.itemID},1000);
+                else if(cookies.product_id)
+                    setTimeout(function(){ window.location.href = '/ItemDetail?itemId=' + cookies.product_id},1000);
                 else
                     setTimeout(function(){ window.location.href = '/'},1000);
 
