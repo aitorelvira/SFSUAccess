@@ -8,15 +8,14 @@ messages_bp = Blueprint('messages_bp', import_name=__name__)
 # proper response: response code, content locations, thumbnails, etc
 # TODO proper response codes
 
-# READ
-@messages_bp.route("/messages/", methods=['GET'], defaults={'conversation_id': None})
+# /messages/ will give you a list of all conversations in the inbox, user_id required
+# /messages/1/ will give you the thread with corresponding thread id
+@messages_bp.route("/messages", methods=['POST'], defaults={'message_thread_id': None})
 @messages_bp.route("/messages/<int:message_thread_id>/", methods=['GET'])
 def view_inbox_conversations(message_thread_id):
-    # find out inbox user's id, maybe authentication
-    # optional, get conversation id from url
-    # each conversation should have a reference to the from user id, conversation id, product id, date and time
-    # return a list of threads, or messages from a thread in order it was sent
-    inbox_user_id = request.form["user_id"]
+    request_content = request.get_json()
+    inbox_user_id = request_content["user_id"]
+    print(inbox_user_id)
     if message_thread_id != None:
         sql = "select * from messages WHERE message_thread_id=%s"
         cur.execute(sql, (message_thread_id))
@@ -28,8 +27,7 @@ def view_inbox_conversations(message_thread_id):
         data = cur.fetchall()
         return jsonify(data), 200
 
-
-# CREATE
+# CREATE Sending a message about a product to a seller for the first time
 @messages_bp.route("/messages/new", methods=['POST'])
 def reply_to_post():
     form = request.get_json()
@@ -47,7 +45,7 @@ def reply_to_post():
     status_code = Response(status=200)
     return status_code
 
-
+#replying to an existing conversation
 @messages_bp.route('/messages/<int:message_thread_id>/reply/', methods=['POST'])
 def reply_to_thread(message_thread_id):
     sender_user_id = request.form["sender_user_id"]
@@ -60,7 +58,7 @@ def reply_to_thread(message_thread_id):
     return status_code
 
 
-# DELETE MESSAGES AND MESSAGE_THREAD
+# DELETE THE WHOLE THREAD
 @messages_bp.route('/messages/<int:message_thread_id>', methods=['DELETE'])
 def delete_message_thread(message_thread_id):
     # message_thread_id = request.form["message_thread_id"]

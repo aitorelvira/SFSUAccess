@@ -56,12 +56,19 @@ def generate_thumbnail(filename,product_id, extension):
         #TODO
         print ("issa video")
 
+def get_filename(product_id):
+    from sfsuaccess import app
+    path = app.config['UPLOAD_FOLDER']
+    for filename in os.listdir(path):
+        if filename.startswith(product_id):
+            return(filename)
+
 #downloading the file
-@files_bp.route('/uploads/<filename>')
-def uploaded_file(filename):
+@files_bp.route('/uploads/<product_id>')
+def uploaded_file(product_id):
     from sfsuaccess import app
     return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+                               get_filename(product_id))
 
 #downloading the thumbnails
 @files_bp.route('/thumbnails/<product_id>')
