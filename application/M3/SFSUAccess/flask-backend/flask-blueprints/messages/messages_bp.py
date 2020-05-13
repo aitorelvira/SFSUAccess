@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 
 from db_credentials import cur, connection
 
@@ -32,10 +32,11 @@ def view_inbox_conversations(message_thread_id):
 # CREATE
 @messages_bp.route("/messages/new", methods=['POST'])
 def reply_to_post():
-    sender_user_id = request.form["sender_user_id"]
-    recipient_user_id = request.form["recipient_user_id"]
-    message_contents = request.form["message_contents"]
-    product_id = request.form["product_id"]
+    form = request.get_json()
+    sender_user_id = form["sender_user_id"]
+    recipient_user_id = rform["recipient_user_id"]
+    message_contents = form["message_contents"]
+    product_id = form["product_id"]
     sql = "insert into message_threads(buyer_id,seller_id,product_id) values (%s,%s,%s)"
     cur.execute(sql, (sender_user_id, recipient_user_id, product_id))
     connection.commit()
@@ -43,7 +44,8 @@ def reply_to_post():
     sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,message_contents) values (%s,%s,%s,%s)"
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
-    return "contacting the seller for the first time using a new conversation"
+    status_code = Response(status=200)
+    return status_code
 
 
 @messages_bp.route('/messages/<int:message_thread_id>/reply/', methods=['POST'])
@@ -54,4 +56,20 @@ def reply_to_thread(message_thread_id):
     sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,message_contents) values (%s,%s,%s,%s)"
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
-    return "replied to a message thread"
+    status_code = Response(status=200)
+    return status_code
+
+
+# DELETE MESSAGES AND MESSAGE_THREAD
+@messages_bp.route('/messages/<int:message_thread_id>', methods=['DELETE'])
+def delete_message_thread(message_thread_id):
+    # message_thread_id = request.form["message_thread_id"]
+    sql = "delete from messages where message_thread_id=%s"
+    cur.execute(sql, message_thread_id)
+    connection.commit()
+
+    sql = "delete from message_threads where id=%s"
+    cur.execute(sql, message_thread_id)
+    connection.commit()
+    status_code = Response(status=204)
+    return status_code
