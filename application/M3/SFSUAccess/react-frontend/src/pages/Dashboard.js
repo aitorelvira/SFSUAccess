@@ -3,7 +3,7 @@
 //AUTHOR: JunMin Li
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Button, Container, Row, Modal } from 'react-bootstrap';
+import { Button, Container, Row, Modal, Col, Form, Toast } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import Image from 'react-bootstrap/Image';
 import { Table } from 'reactstrap';
@@ -30,6 +30,13 @@ const Dashboard = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  //User Message
+  const [buyer_id, setBuyerID] = useState(0);
+  const [seller_id, setSellerID] = useState(0);
+  const [id, setID] = useState(0);
+  const [last_message, setLastMessage] = useState('');
+  const [product_id, setProductID] = useState(0);
+
   useEffect (()=>{
 //    Based on the user_id, load the following to the Tab
 //    Load all active items -> active_item
@@ -55,7 +62,13 @@ const Dashboard = () => {
             })
             .catch(error => console.log(error))
         }
-      }
+
+        await axios.post('/api/messages', {user_id})
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(error => console.log(error))
+        }
     fetchData();
   },[]);
 
@@ -234,82 +247,121 @@ const Dashboard = () => {
           </Tab>
           }
 
+
           <Tab eventKey="message" title="My Message">
-                   <Table hover>
-                        <thead>
-                            <tr>
-                              <th></th>
-                              <th>Message</th>
-                              <th>Date</th>
-                              <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <tr>
-                                   <td width="1%">{markRead ? <img src={require('../images/blue-dot.png')} width="35px"/> : <img src={require('../images/white-dot.png')} width="35px"/>}</td>
-                                   <td width="30%">
-                                        <h6><b>John</b></h6>
-                                        <div className="messageContent">
-                                            <p>Hello asdfasfasdfafdsaffdsafaasdfafafaf a asfasf afasdfasfafsa asdfasfa asdf asf sfa asdfasfdaasdfafsaasfd CoSE Students</p>
-                                        </div>
-                                   </td>
-                                   <td width="46%">
-                                       10/2/2020
-                                   </td>
-                                   <td>
-                                     <Button variant="warning" onClick={handleShow}>Read</Button>&nbsp; &nbsp;
-                                        {!reply && (
-                                            <Modal
-                                                size="md"
-                                                aria-labelledby="contained-modal-title-vcenter"
-                                                centered
-                                                show={show}
-                                                onHide={handleClose}
-                                            >
-                                            <Modal.Header closeButton>
-                                            <Modal.Title>Form: john</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <p>Message goes here...</p>
-                                            </Modal.Body>
-                                            <Modal.Footer>
-                                                <Button variant="primary" onClick={()=> {showReply(); handleClose()}}>
-                                                Reply
-                                                </Button>
+            <Container>
+                <Row>
+                    <Col>
+                        <label><b>Name</b></label>
+                        <Row>
+                            <Col>
+                                <Table hover>
+                                  <tbody>
+                                    <tr>
+                                      <td>Mark</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Mark</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Mark</td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col>
+                        <label><b>Product</b></label>
+                        <Row>
+                            <Col>
+                                <Table hover>
+                                  <tbody>
+                                    <tr>
+                                      <td>TCP</td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col xs={7}>
+                        <label><b>Message</b></label>
+                        <Row>
+                            <Col>
+                                 <Table>
+                                  <tbody>
+                                        <tr>
+                                           <td>{markRead ? <img src={require('../images/blue-dot.png')} width="30px"/> : <img src={require('../images/white-dot.png')} width="35px"/>}</td>
+                                           <td>
+                                                <h6><b>John</b></h6>
+                                                <div className="messageContent">
+                                                    <p>Hello asdfasfasdfafdsaffdsafaasdfafafaf a asfasf afasdfasfafsa asdfasfa asdf asf sfa asdfasfdaasdfafsaasfd CoSE Students</p>
+                                                </div>
+                                           </td>
+                                           <td>
+                                               <h7>10/2/2020</h7>
+                                           </td>
+                                           <td>
+                                             <Button variant="warning" onClick={handleShow}>Read</Button>&nbsp; &nbsp;
+                                                {!reply && (
+                                                    <Modal
+                                                        size="md"
+                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                        centered
+                                                        show={show}
+                                                        onHide={handleClose}
+                                                    >
+                                                    <Modal.Header closeButton>
+                                                    <Modal.Title>Product: TCP</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <p>Message goes here..</p>
+                                                    </Modal.Body>
+                                                    <Modal.Footer>
+                                                        <Button variant="primary" onClick={()=> {showReply(); handleClose()}}>
+                                                        Reply
+                                                        </Button>
 
-                                            </Modal.Footer>
-                                          </Modal>
-                                        )}
+                                                    </Modal.Footer>
+                                                  </Modal>
+                                                )}
 
-                                        {reply && (
-                                            <Modal
-                                                size="md"
-                                                aria-labelledby="contained-modal-title-vcenter"
-                                                centered
-                                                show={reply}
-                                                onHide={closeReply}
-                                            >
-                                            <Modal.Header closeButton>
-                                            <Modal.Title>To: john</Modal.Title>
-                                            </Modal.Header>
-                                                <textarea
-                                                className="messageReply"
-                                                id="message"
-                                                rows="5"
-                                                placeholder="Message..."
-                                            />
-                                            <Modal.Footer>
-                                                <Button variant="primary" onClick={() => {closeReply(); handleClose()}}>
-                                                    Send
-                                                </Button>
-                                            </Modal.Footer>
-                                          </Modal>
-                                        )}
-                                     <Button variant="danger">Remove</Button>
-                                   </td>
-                                 </tr>
-                        </tbody>
-                   </Table>
+                                                {reply && (
+                                                    <Modal
+                                                        size="md"
+                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                        centered
+                                                        show={reply}
+                                                        onHide={closeReply}
+                                                    >
+                                                    <Modal.Header closeButton>
+                                                    <Modal.Title>To: John</Modal.Title>
+                                                    </Modal.Header>
+                                                        <textarea
+                                                        className="messageReply"
+                                                        id="message"
+                                                        rows="5"
+                                                        placeholder="Message..."
+                                                    />
+                                                    <Modal.Footer>
+                                                        <Button variant="primary" onClick={() => {closeReply(); handleClose()}}>
+                                                            Send
+                                                        </Button>
+                                                    </Modal.Footer>
+                                                  </Modal>
+                                                )}
+                                             <Button variant="danger">Remove</Button>
+                                           </td>
+                                        </tr>
+                                  </tbody>
+                                </Table>
+
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+             </Container>
           </Tab>
           </Tabs>
       </Container>
