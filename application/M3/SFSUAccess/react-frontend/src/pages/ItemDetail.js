@@ -10,6 +10,7 @@ import { useHistory, Link } from "react-router-dom";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import FileSaver, { saveAs } from 'file-saver';
 import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
@@ -30,6 +31,7 @@ const ItemDetail = () => {
     const [product_description, setDescription] = useState('');
     const [product_license, setLicense] = useState('');
     const [product_category, setCategory] = useState('');
+    const [product_price, setPrice] = useState('');
     const [product_author_id, setAuthorID] = useState('');
 
     const [message, setMessage] = useState('');
@@ -50,6 +52,7 @@ const ItemDetail = () => {
                 setCategory(response.data[0].product_category);
                 setLicense(response.data[0].product_license);
                 setAuthorID(response.data[0].registered_user_id);
+                setPrice(response.data[0].price); 
          });
         setURL('/api/thumbnails/' + id + '-0');
 
@@ -60,6 +63,10 @@ const ItemDetail = () => {
     const open_originalImage = (id) =>{
         console.log("open original image: " + id)
         window.open(imgURL);
+    }
+
+    const downloadItem = (id) =>{
+        window.open('api/uploads/' + id);
     }
 
   return (
@@ -102,12 +109,14 @@ const ItemDetail = () => {
                         <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage(id)}}/>
                         </Figure>
                     </Col><Col>
-                        <Figure.Caption>
+                        <Figure.Caption className="description">
                             <div><b>{product_name}</b></div>
                             <div>by: &nbsp;&nbsp;{product_author}</div>
                             <div>Category: &nbsp;&nbsp;{product_category}</div>
                             <div>License:&nbsp;&nbsp;{product_license}</div>
-                            <div>Description: &nbsp;&nbsp;{product_description}</div>
+                            <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
+                            <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
+                            <div>{product_price == '0'? <Button onClick ={(e) => downloadItem(id)}>Free download</Button> : ''}</div>
                         </Figure.Caption>
                         <br/>
                         {!user_isloggedin && (
