@@ -10,6 +10,7 @@ import { useHistory, Link } from "react-router-dom";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import FileSaver, { saveAs } from 'file-saver';
 import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
@@ -65,10 +66,7 @@ const ItemDetail = () => {
     }
 
     const downloadItem = (id) =>{
-        axios.get('api/uploads/' + id)
-        .then(response => {
-            console.log('downloading item...')
-        })
+        window.open('api/uploads/' + id);
     }
 
   return (
