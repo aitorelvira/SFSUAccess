@@ -22,7 +22,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
   const item_perpage = 4;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'product_id']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -73,7 +73,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
     removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
-    removeCookies('itemID')
+    removeCookies('product_id')
     ReactGA.event({
      category: 'LogOut',
      action: 'User Logged Out',
@@ -103,6 +103,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
         initialValues={{searchItem: ''}}
         validationSchema={Yup.object({
             searchItem: Yup.string()
+                .required('Please enter term in order to search.')
                 .max(40, 'Must be 40 character or less.'),
         })}
 
@@ -255,7 +256,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                       if(item_number < item_perpage){ // initialized how many items per page.
                           return(
                             <Col  sm="3" key={item_number} >
-                              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                              <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
                                 <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                 <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
@@ -276,7 +277,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                         if(item_number < item_perpage){ // initialized how many items per page.
                             return(
                               <Col  sm="3" key={item_number} >
-                                  <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                  <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
                                     <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
@@ -297,7 +298,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                         if(item_number < item_perpage){ // initialized how many items per page.
                             return(
                               <Col  sm="3" key={item_number} >
-                                <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
+                                <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
                                     <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                         <CardTitle className="card_text">{x.product_name}</CardTitle>
