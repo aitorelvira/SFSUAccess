@@ -25,7 +25,7 @@ def view_inbox_conversations(message_thread_id):
         request_content = request.get_json()
         inbox_user_id = request_content["user_id"]
         print(inbox_user_id)
-        sql = "select * from message_threads WHERE buyer_id=%s OR seller_id=%s"
+        sql = "select message_threads.*, registered_users.first_name from message_threads inner join registered_users ON message_threads.buyer_id=registered_users.id WHERE buyer_id=%s OR seller_id=%s; "
         cur.execute(sql, (inbox_user_id, inbox_user_id))
         data = cur.fetchall()
         return jsonify(data), 200
