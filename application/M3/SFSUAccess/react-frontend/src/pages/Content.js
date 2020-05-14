@@ -20,13 +20,17 @@ const Content = ({ searchinfo, notes_perpage, show_numberOfitems }) => {
   const formatDate =(dateString)=>{
     return dateString.replace('GMT','')
   }
+
+  const get_thumbnails = (item_id) => {
+    return '/api/thumbnails/' + item_id + '-0';
+  }
  
   const searchResult =  notes_perpage.map((x,item_number) => {  
     if(item_number < item_perpage){ // initialized how many items per page. 
     return(
       <Col  sm="3" key={item_number} >
         <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-          <Image src="https://www.w3schools.com/html/img_chania.jpg" thumbnail/>
+          <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
             <CardBody>
             <CardTitle className="card_text">{x.product_name}</CardTitle>
             <CardText className="card_user">by&nbsp;{x.product_author}</CardText>

@@ -27,3 +27,9 @@
 .overall{
     width:80%;
 }
+
+.description{
+    width:350px;
+    word-wrap: break-word;
+    word-break: normal;
+}

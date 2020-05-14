@@ -130,6 +130,10 @@ const Dashboard = () => {
     window.open(get_thumbnails(id));
   }
 
+    //Formatting the item posted date on the card
+    const formatDate =(dateString)=>{
+      return dateString.replace('GMT','')
+    }
 
    //Use to redirecting to post item page.
    const goPostitem = () => {
@@ -153,7 +157,7 @@ const Dashboard = () => {
                       <tr>
                           <th>Item</th>
                           <th>Thumbnails</th>
-                          <th>Description</th>
+                          <th>Item details</th>
                           <th>Remove item</th>
                       </tr>
                   </thead>
@@ -163,7 +167,9 @@ const Dashboard = () => {
                         <tr key = {y+1}>
                           <td width ="10%"> {y+1} </td>
                           <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails" onClick = {(e) =>{open_originalImage(item.id)}}/></td>
-                          <td width ="55%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
+                          <td width ="55%"> Name:&nbsp;&nbsp;{item.product_name}<br/>
+                                            Description:&nbsp;&nbsp;{item.product_description} <br/>
+                                            by : &nbsp;&nbsp;{formatDate(item.date_time_added)}</td>
                           <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>
                             Remove</Button>  &nbsp; &nbsp;</td>
                         </tr>
@@ -179,7 +185,7 @@ const Dashboard = () => {
             <Table responsive = "true">
               <thead>
                 <tr>
-                <th>Number</th>
+                <th>Item</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Post time</th>
@@ -193,7 +199,7 @@ const Dashboard = () => {
                     <td> {y + 1} </td>
                     <td> {item.product_name} </td>
                     <td> {item.product_description} </td>
-                    <td> {item.date_time_added}</td>
+                    <td> {formatDate(item.date_time_added)}</td>
                     <td> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                   )})
@@ -223,9 +229,9 @@ const Dashboard = () => {
                       <td> {y + 1} </td>
                       <td> {item.product_name} </td>
                       <td> {item.product_description} </td>
-                      <td> {item.date_time_added}</td>
+                      <td> {formatDate(item.date_time_added)}</td>
                       <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
-                            <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
+                           <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
                     </tr>
                   )})
                 }

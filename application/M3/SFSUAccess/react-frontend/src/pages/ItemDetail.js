@@ -25,6 +25,7 @@ const ItemDetail = () => {
     const [product_description, setDescription] = useState('');
     const [product_license, setLicense] = useState('');
     const [product_category, setCategory] = useState('');
+    const [product_price, setPrice] = useState('');
 
     const [message, setMessage] = useState('');
     const [userName, setUserName] = useState('');
@@ -42,7 +43,8 @@ const ItemDetail = () => {
                 setAuthor(response.data[0].product_author);  
                 setDescription(response.data[0].product_description); 
                 setCategory(response.data[0].product_category); 
-                setLicense(response.data[0].product_license);     
+                setLicense(response.data[0].product_license);   
+                setPrice(response.data[0].price)  
          });
         setURL('/api/thumbnails/' + id + '-0');
 
@@ -53,6 +55,13 @@ const ItemDetail = () => {
     const open_originalImage = (id) =>{
         console.log("open original image: " + id)
         window.open(imgURL);
+    }
+
+    const downloadItem = (id) =>{
+        axios.get('api/uploads/' + id)
+        .then(response => {
+            console.log('downloading item...')
+        })
     }
 
   return (
@@ -90,12 +99,14 @@ const ItemDetail = () => {
                         <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage(id)}}/>
                         </Figure>
                     </Col><Col>
-                        <Figure.Caption>
+                        <Figure.Caption className="description">
                             <div><b>{product_name}</b></div>
                             <div>by: &nbsp;&nbsp;{product_author}</div>
                             <div>Category: &nbsp;&nbsp;{product_category}</div>
                             <div>License:&nbsp;&nbsp;{product_license}</div>
-                            <div>Description: &nbsp;&nbsp;{product_description}</div>
+                            <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
+                            <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
+                            <div>{product_price == '0'? <Button onClick ={(e) => downloadItem(id)}>Free download</Button> : ''}</div>
                         </Figure.Caption>
                     </Col>
                 </Row>
