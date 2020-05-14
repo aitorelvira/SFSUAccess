@@ -133,7 +133,7 @@ const SignUp = () => {
                         <Form.Text className="text-muted">
                             {formik.touched.password && formik.errors.password ? (<div className="error_message">{formik.errors.password}</div>) : null}
                         </Form.Text>
-                    </Form.Group><br/>{password}
+                    </Form.Group><br/>
 
                     <Form.Group controlId="confirm_password">
                         <Form.Control

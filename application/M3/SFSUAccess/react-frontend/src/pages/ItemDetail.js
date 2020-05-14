@@ -21,6 +21,7 @@ const ItemDetail = () => {
     const [username, setUsername] = useState('');
     const [id, setId] = useState('')
     const [imgURL, setURL] = useState('');
+    const [downloadURL, setDownloadURL] = useState('');
     const user_isloggedin = cookies.isLoggedin;
     const productID = cookies.product_id;
     const userID = cookies.id;
@@ -33,6 +34,7 @@ const ItemDetail = () => {
     const [product_category, setCategory] = useState('');
     const [product_price, setPrice] = useState('');
     const [product_author_id, setAuthorID] = useState('');
+    
 
     const [message, setMessage] = useState('');
     const [userName, setUserName] = useState('');
@@ -55,18 +57,18 @@ const ItemDetail = () => {
                 setPrice(response.data[0].price); 
          });
         setURL('/api/thumbnails/' + id + '-0');
-
+        setDownloadURL('/api/uploads/' + id)
         }
        },[cookies.first_name, id, username]);
 
 
-    const open_originalImage = (id) =>{
-        console.log("open original image: " + id)
+    const open_originalImage = () =>{
+        console.log("open original image: " + imgURL)
         window.open(imgURL);
     }
 
-    const downloadItem = (id) =>{
-        window.open('api/uploads/' + id);
+    const downloadItem = () =>{
+    window.open(downloadURL);
     }
 
   return (
@@ -101,12 +103,12 @@ const ItemDetail = () => {
     >
     {formik => (
         <div>
-            <Header/>
+            <Header/><br/>
             <Container>
                 <Row>
                     <Col md={{ span: 5, offset: 1 }}>
                         <Figure>
-                        <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage(id)}}/>
+                        <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage()}}/>
                         </Figure>
                     </Col><Col>
                         <Figure.Caption className="description">
@@ -116,7 +118,7 @@ const ItemDetail = () => {
                             <div>License:&nbsp;&nbsp;{product_license}</div>
                             <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
                             <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
-                            <div>{product_price == '0'? <Button onClick ={(e) => downloadItem(id)}>Free download</Button> : ''}</div>
+                            <div>{product_price == '0'? <Button onClick ={(e) => downloadItem()}> Free download</Button> : ''}</div>
                         </Figure.Caption>
                         <br/>
                         {!user_isloggedin && (
@@ -128,7 +130,7 @@ const ItemDetail = () => {
                 </Row>
 
                 <br/>
-                {user_isloggedin && (
+                {user_isloggedin && (userID != product_author_id) &&(
                     <Row>
                         <Col md={{ span: 5, offset: 1 }}>
                             <Form className="message_form" onSubmit={formik.handleSubmit}>

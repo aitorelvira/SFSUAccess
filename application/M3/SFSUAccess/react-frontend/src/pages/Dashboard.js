@@ -37,6 +37,8 @@ const Dashboard = () => {
   const [last_message, setLastMessage] = useState('');
   const [product_id, setProductID] = useState(0);
 
+  const [messageList, setMessagelist] = useState([]);
+
   useEffect (()=>{
 //    Based on the user_id, load the following to the Tab
 //    Load all active items -> active_item
@@ -65,7 +67,7 @@ const Dashboard = () => {
 
         await axios.post('/api/messages', {user_id})
             .then(response => {
-                console.log(response.data)
+                setMessagelist(response.data);
             })
             .catch(error => console.log(error))
         }
@@ -97,10 +99,6 @@ const Dashboard = () => {
         set_admin_pending_item(response.data);
       })
       .catch(error => console.log(error))
-  }
-
-  const get_user_message = () => {
-    axios.get('/api/')
   }
 
   //Remove pending item function.
@@ -143,6 +141,19 @@ const Dashboard = () => {
     window.open(get_thumbnails(id));
   }
 
+  //message functions
+  const getAllmessage = () => {
+    axios.post('/api/messages', { user_id : user_id})
+    .then((response) => console.log(response.data))
+    .catch((error) => console.log("get message error..."))
+  }
+
+  const getMessage = (thread_id) =>{
+    axios.get('/api/messages/' + thread_id + '/')
+    .then((response) => console.log(response.data))
+    .catch((error) => console.log("get message error..."))
+  }
+
     //Formatting the item posted date on the card
     const formatDate =(dateString)=>{
       return dateString.replace('GMT','')
@@ -153,6 +164,7 @@ const Dashboard = () => {
      console.log("go post item page.")
     window.open("/Postitem");
   };
+
 
   return (
     <div>
@@ -178,12 +190,12 @@ const Dashboard = () => {
                     {active_item.map((item,y) => {
                       return (
                         <tr key = {y+1}>
-                          <td width ="10%"> {y+1} </td>
+                          <td width ="5%"> {y+1} </td>
                           <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails" onClick = {(e) =>{open_originalImage(item.id)}}/></td>
-                          <td width ="55%"> Name:&nbsp;&nbsp;{item.product_name}<br/>
+                          <td width ="50%"> Name:&nbsp;&nbsp;{item.product_name}<br/>
                                             Description:&nbsp;&nbsp;{item.product_description} <br/>
                                             by : &nbsp;&nbsp;{formatDate(item.date_time_added)}</td>
-                          <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>
+                          <td width ="20%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>
                             Remove</Button>  &nbsp; &nbsp;</td>
                         </tr>
                       )})
@@ -209,11 +221,11 @@ const Dashboard = () => {
                 {pending_item.map((item,y) => {
                   return (
                     <tr key = {y + 1}>
-                    <td> {y + 1} </td>
-                    <td> {item.product_name} </td>
-                    <td> {item.product_description} </td>
-                    <td> {formatDate(item.date_time_added)}</td>
-                    <td> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
+                    <td width ="8%"> {y + 1} </td>
+                    <td width ="10%"> {item.product_name} </td>
+                    <td width ="50%"> {item.product_description} </td>
+                    <td width ="10%"> {formatDate(item.date_time_added)}</td>
+                    <td width ="10%"> <Button variant="danger" id = {item.id} onClick = {()=>remove_pendingitem(item.id)}>Remove</Button>  &nbsp; &nbsp;</td>
                   </tr>
                   )})
                 }
@@ -244,7 +256,7 @@ const Dashboard = () => {
                       <td> {item.product_description} </td>
                       <td> {formatDate(item.date_time_added)}</td>
                       <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
-                           <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
+                           <Button variant="danger"  onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
                     </tr>
                   )})
                 }
@@ -253,8 +265,51 @@ const Dashboard = () => {
           </Tab>
           }
 
-
           <Tab eventKey="message" title="My Message">
+            <Table>
+              <thead>
+                <tr>
+                <th width ="8%">Number</th>
+                <th width ="15%">Related item</th>
+                <th width ="50%">From</th>
+                <th width ="20%">Delete message</th>
+                </tr>
+              </thead>
+              <tbody>
+              {messageList.map((message,message_number) => {
+                    return (
+                      <tr key = {message_number + 1}>
+                        <td> {message_number + 1} </td>
+                        <td> {message.product_id} </td>
+                        <td> {message.buyer_id} </td>
+                        <td> <Button variant="warning" onClick={(e)=> {handleShow(); getMessage(message.id)}}>Read</Button>  &nbsp; &nbsp;
+                             <Button variant="danger"  >Delete</Button>  &nbsp; &nbsp;</td>
+                      </tr>
+                    )})
+                  }
+              </tbody>
+            </Table>
+            <Modal
+                size="md"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={show}
+                onHide={handleClose}
+            >
+            <Modal.Header closeButton>
+            <Modal.Title>Product: TCP</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>Message goes here..</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="primary" onClick={()=> {handleClose()}}>
+                Reply
+                </Button>
+            </Modal.Footer>
+          </Modal>
+          </Tab>
+          {/* <Tab eventKey="message" title="My Message">
             <Container>
                 <Row>
                     <Col>
@@ -368,7 +423,7 @@ const Dashboard = () => {
                     </Col>
                 </Row>
              </Container>
-          </Tab>
+          </Tab> */}
           </Tabs>
       </Container>
     </div>

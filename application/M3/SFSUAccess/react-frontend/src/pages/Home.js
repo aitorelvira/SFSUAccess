@@ -22,7 +22,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
   const item_perpage = 4;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'product_id']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id','first_name', 'product_id','privelege_type']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -67,13 +67,11 @@ const Home = ({ dispatch, username, searchinfo}) => {
   // Use to log out. Clear the cookies and redux value.
   const logOut =()=>{
     removeCookies('first_name');
-    removeCookies('last_name');
     removeCookies('id');
-    removeCookies('email');
-    removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
-    removeCookies('product_id')
+    removeCookies('product_id');
+    removeCookies('privelege_type');
     ReactGA.event({
      category: 'LogOut',
      action: 'User Logged Out',
