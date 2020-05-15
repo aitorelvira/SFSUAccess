@@ -35,8 +35,6 @@
 }
 
 .messageContent p{
-  height: 18px;
-  width: 250px;
   padding: 0;
   overflow: hidden;
   position: relative;
