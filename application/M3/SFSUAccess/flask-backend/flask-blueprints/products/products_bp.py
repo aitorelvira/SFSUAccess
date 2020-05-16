@@ -80,5 +80,8 @@ def manage_product(id):
             sql = "DELETE FROM products WHERE id = %s"
             cur.execute(sql, (id))
             connection.commit()
+            sql = "DELETE messages, message_threads from messages inner join message_threads on messages.message_thread_id=message_threads.id WHERE message_threads.product_id=%s"
+            cur.execute(sql,(id))
+            connection.commit()
             status_code = Response(status=200)
             return status_code

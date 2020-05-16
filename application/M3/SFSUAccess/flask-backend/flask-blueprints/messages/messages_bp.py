@@ -16,6 +16,8 @@ def view_inbox_conversations(message_thread_id):
     if message_thread_id != None:
         sql = "update messages set read_status=1 where message_thread_id =%s"
         cur.execute(sql,message_thread_id)
+        sql = "update message_threads set read_status=1 where message_thread_id=%s"
+        cur.execute(sql,message_thread_id)
         connection.commit()
         sql = "select * from messages WHERE message_thread_id=%s"
         cur.execute(sql, (message_thread_id))
@@ -38,11 +40,11 @@ def reply_to_post():
     recipient_user_id = form["recipient_user_id"]
     message_contents = form["message_contents"]
     product_id = form["product_id"]
-    sql = "insert into message_threads(buyer_id,seller_id,product_id,last_message) values (%s,%s,%s,%s)"
+    sql = "insert into message_threads(buyer_id,seller_id,product_id,last_message,read_status) values (%s,%s,%s,%s,0)"
     cur.execute(sql, (sender_user_id, recipient_user_id, product_id,message_contents))
     connection.commit()
     message_thread_id = cur.lastrowid
-    sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,date_time_sent,message_contents) values (%s,%s,%s,NOW(),%s)"
+    sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,date_time_sent,message_contents,read_status) values (%s,%s,%s,NOW(),%s,0)"
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
     status_code = Response(status=200)
@@ -55,10 +57,10 @@ def reply_to_thread(message_thread_id):
     sender_user_id = form["sender_user_id"]
     recipient_user_id = form["recipient_user_id"]
     message_contents = form["message_contents"]
-    sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,date_time_sent,message_contents) values (%s,%s,%s,NOW(),%s)"
+    sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,date_time_sent,message_contents,read_status) values (%s,%s,%s,NOW(),%s,0)"
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
-    sql = "update message_threads set last_message=%s where id = %s"
+    sql = "update message_threads set last_message=%s and read_status=0 where id = %s"
     cur.execute(sql,(message_contents,message_thread_id))
     connection.commit()
     status_code = Response(status=200)
