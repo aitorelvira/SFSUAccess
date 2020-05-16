@@ -2,8 +2,6 @@
 //AUTHOR: JunMin Li
 import React from 'react';
 import '../css/Home.css';
-import { Container } from 'react-bootstrap';
-
 
 const AboutSFSU = () => {
         return (

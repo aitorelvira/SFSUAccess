@@ -6,11 +6,10 @@
 //AUTHOR: JunMin Li
 import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
-import { useHistory, Link } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import FileSaver, { saveAs } from 'file-saver';
 import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
@@ -21,7 +20,6 @@ const ItemDetail = () => {
     const [username, setUsername] = useState('');
     const [id, setId] = useState('')
     const [imgURL, setURL] = useState('');
-    const [downloadURL, setDownloadURL] = useState('');
     const user_isloggedin = cookies.isLoggedin;
     const productID = cookies.product_id;
     const userID = cookies.id;
@@ -35,10 +33,7 @@ const ItemDetail = () => {
     const [product_price, setPrice] = useState('');
     const [product_author_id, setAuthorID] = useState('');
     
-
     const [message, setMessage] = useState('');
-    const [userName, setUserName] = useState('');
-    const [email, setEmail] = useState('');
 
     useEffect (()=>{
         if(typeof cookies.first_name !== 'undefined')
@@ -57,7 +52,6 @@ const ItemDetail = () => {
                 setPrice(response.data[0].price); 
          });
         setURL('/api/thumbnails/' + id + '-0');
-        setDownloadURL('/api/uploads/' + id)
         }
        },[cookies.first_name, id, username]);
 
@@ -68,7 +62,22 @@ const ItemDetail = () => {
     }
 
     const downloadItem = () =>{
-    window.open(downloadURL);
+    axios.get('/api/uploads/' + id, { responseType:'blob'})
+    .then((response)=> {
+        const file = new Blob([response.data]);
+        let file_type = response.data.type;
+        let pos = file_type.lastIndexOf("/");
+        let slice_index = pos - file_type.length + 1;
+        
+        file_type = file_type.slice(slice_index)
+       
+        const url = window.URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.'+ file_type);
+        document.body.appendChild(link);
+        link.click();
+    })
     }
 
   return (

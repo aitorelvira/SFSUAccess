@@ -84,7 +84,6 @@ const Home = ({ dispatch, username, searchinfo}) => {
   //Use to redirecting to item detail page with an item id.
   const goItemDetail =(id) => {
        window.open("/ItemDetail?itemId=" + id);
-
   };
 
   //Formatting the item posted date on the card

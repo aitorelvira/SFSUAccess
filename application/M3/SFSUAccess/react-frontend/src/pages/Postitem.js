@@ -148,12 +148,20 @@ const Postitem = () => {
                 <Alert show = {posting_item} variant="dark">
                     { !post_successully &&
                         <div>
-                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting item, please wait..</Alert.Heading> 
+                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting the following item, please wait..</Alert.Heading> 
+                            <b>Name : </b>{product_name}<br/>
+                            <b>File : </b>{product_fileName}<br/>
+                            <b>Price : </b>{product_price}<br/>
+                            <b>Category : </b>{product_category}<br/>
+                            <b>License : </b>{product_license}<br/>
+                            <b>Description : </b>{product_description}<br/>
                         </div>
                     }
                     { post_successully &&
                     <div>
-                        <Alert.Heading>Item has been posted successfully. You can find it on dashboard, pending item list.</Alert.Heading><hr/>
+                        <Alert.Heading>Item has been posted successfully. </Alert.Heading><hr/>
+                        <p>You can find it on dashboard, pending item list.</p>
+                        <p>Notice: all item might take up to 24 hours to be approved.</p>
                         <Button onClick={()=>{history.push("/Dashboard")}} variant="warning">
                             Dashboard
                         </Button>&nbsp;&nbsp;&nbsp;&nbsp;
