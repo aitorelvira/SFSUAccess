@@ -14,9 +14,9 @@ messages_bp = Blueprint('messages_bp', import_name=__name__)
 @messages_bp.route("/messages/<int:message_thread_id>/", methods=['GET'])
 def view_inbox_conversations(message_thread_id):
     if message_thread_id != None:
-        sql = "update messages set read_status=1 where message_thread_id =%s"
+        sql = "update messages set read_status=1 where message_thread_id=%s"
         cur.execute(sql,message_thread_id)
-        sql = "update message_threads set read_status=1 where message_thread_id=%s"
+        sql = "update message_threads set read_status=1 where id=%s"
         cur.execute(sql,message_thread_id)
         connection.commit()
         sql = "select * from messages WHERE message_thread_id=%s"
@@ -27,7 +27,7 @@ def view_inbox_conversations(message_thread_id):
         request_content = request.get_json()
         inbox_user_id = request_content["user_id"]
         print(inbox_user_id)
-        sql = "select message_threads.*, registered_users.first_name from message_threads inner join registered_users ON message_threads.buyer_id=registered_users.id WHERE buyer_id=%s OR seller_id=%s; "
+        sql = "select message_threads.*, registered_users.first_name from message_threads inner join registered_users ON message_threads.buyer_id=registered_users.id WHERE buyer_id=%s OR seller_id=%s;"
         cur.execute(sql, (inbox_user_id, inbox_user_id))
         data = cur.fetchall()
         return jsonify(data), 200
