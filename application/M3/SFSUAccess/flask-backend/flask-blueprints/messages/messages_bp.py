@@ -60,7 +60,7 @@ def reply_to_thread(message_thread_id):
     sql = "insert into messages(sender_user_id,recipient_user_id,message_thread_id,date_time_sent,message_contents,read_status) values (%s,%s,%s,NOW(),%s,0)"
     cur.execute(sql, (sender_user_id, recipient_user_id, message_thread_id, message_contents))
     connection.commit()
-    sql = "update message_threads set last_message=%s and read_status=0 where id = %s"
+    sql = "update message_threads set last_message=%s,read_status=0 where id = %s"
     cur.execute(sql,(message_contents,message_thread_id))
     connection.commit()
     status_code = Response(status=200)
