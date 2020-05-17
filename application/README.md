@@ -9,17 +9,11 @@ You are free to organize the contents of the folder as you see fit. But remember
 
 
 # ---------------------------------------------
-# How to run M2
-# installation
-Open up the SFSUAccess folder as it's own project directory.
-cd into flask-backend and run py main.py
-cd into react-frontend and run yarn start
+# Deploying to AWS / EC2
+### Prerequisites
+> Apache, mod_wsgi, Python 3.6 
+> dependencies via yarn install, built using yarn build
+### Notes
+> react-router will require configuration of re-direct url re-writes, need to include .htaccess in public site folder
+> wsgi script file in the flask directory
 
-
-#to build for production
-yarn build
-copy the build folder onto the server. rename build to html and place inside /var/www/ 
-
-#notes to development team
-any calls to the flask api will be done by appending /api/ to the call.
-For example calling /search app-route of flask, within React you will call it as /api/search
