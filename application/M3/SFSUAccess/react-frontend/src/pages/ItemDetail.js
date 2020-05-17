@@ -1,8 +1,12 @@
-//PURPOSE: This page is used to show an selected item detail information, after
-//         user clicked its thumbnail.
+//PURPOSE: This page is used to show an selected item detail information.
+//         User should able to do the following:
+//          1. to view all the details information about this item.
+//          2. to send a message to the seller.
+//          3. to view the original image by clicking the thumbnail.
 //AUTHOR: JunMin Li
 import React, {useState, useEffect}from 'react';
 import { useCookies } from 'react-cookie';
+import { useHistory} from "react-router-dom";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -12,20 +16,25 @@ import '../css/ItemDetail.css'
 
 const ItemDetail = () => {
 
-    const [cookies, setCookies] = useCookies(['first_name']);
+    const [cookies, setCookies] = useCookies(['first_name', 'product_id', 'id']);
     const [username, setUsername] = useState('');
     const [id, setId] = useState('')
+    const [imgURL, setURL] = useState('');
+    const user_isloggedin = cookies.isLoggedin;
+    const productID = cookies.product_id;
+    const userID = cookies.id;
+    const history = useHistory();
 
     const [product_name, setName] = useState('');
     const [product_author, setAuthor] = useState('');
     const [product_description, setDescription] = useState('');
     const [product_license, setLicense] = useState('');
     const [product_category, setCategory] = useState('');
+    const [product_price, setPrice] = useState('');
+    const [product_author_id, setAuthorID] = useState('');
 
     const [message, setMessage] = useState('');
-    const [userName, setUserName] = useState('');
-    const [email, setEmail] = useState('');
-    
+
     useEffect (()=>{
         if(typeof cookies.first_name !== 'undefined')
         setUsername(cookies.first_name);
@@ -33,86 +42,133 @@ const ItemDetail = () => {
 
         if(id){
         axios.get('/api/product/' + id)
-            .then(response => {   
-                setName(response.data[0].product_name); 
-                setAuthor(response.data[0].product_author);  
-                setDescription(response.data[0].product_description); 
-                setCategory(response.data[0].product_category); 
-                setLicense(response.data[0].product_license);     
-         });}
+            .then(response => {
+                setName(response.data[0].product_name);
+                setAuthor(response.data[0].product_author);
+                setDescription(response.data[0].product_description);
+                setCategory(response.data[0].product_category);
+                setLicense(response.data[0].product_license);
+                setAuthorID(response.data[0].registered_user_id);
+                setPrice(response.data[0].price);
+         });
+        setURL('/api/thumbnails/' + id);
+        }
        },[cookies.first_name, id, username]);
+
+
+    const open_originalImage = () =>{
+        console.log("open original image: " + imgURL)
+        window.open(imgURL);
+    }
+
+    const downloadItem = () =>{
+    axios.get('/api/uploads/' + id, { responseType:'blob'})
+    .then((response)=> {
+        const file = new Blob([response.data]);
+        let file_type = response.data.type;
+        let pos = file_type.lastIndexOf("/");
+        let slice_index = pos - file_type.length + 1;
+
+        file_type = file_type.slice(slice_index)
+
+        const url = window.URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.'+ file_type);
+        document.body.appendChild(link);
+        link.click();
+    })
+    }
 
   return (
     <Formik
-        initialValues={{message: '', userName: '', email: ''}}
+        initialValues={{message: ''}}
         validationSchema={Yup.object({
             message: Yup.string()
                 .max(120, 'Must be 120 character or less')
                 .required('Message is required'),
-            userName: Yup.string()
-                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
-                .max(15, 'Must be 15 character or less')
-                .required('Name is required'),
-            email: Yup.string()
-                .email('Invalid email address')
-                .max(30, 'Must be 25 characters or less')
-                .matches(/^[a-zA-Z0-9]+@(mail.)?sfsu.edu/ig, 'Must use SFSU email: student@mail.sfsu.edu')
-                .required('Email is required'),
         })}
         onSubmit={(values, {setSubmitting}) => {
-            setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-            }, 1000);
+            const sender_user_id = userID;
+            const recipient_user_id = product_author_id;
+            const message_contents = values['message'];
+            const product_id = productID;
 
+            axios.post('/api/messages/new',{
+                sender_user_id,
+                recipient_user_id,
+                message_contents,
+                product_id
+            })
+            .then(res => {
+                if(res.status === 200){
+                    //take user back to home page after sending the message
+                    setTimeout(function(){ window.location.href='/' },1000);
+                }
+            })
             setSubmitting(false);
+
         }}
     >
     {formik => (
         <div>
-            <Header/>
+            <Header/><br/>
             <Container>
                 <Row>
                     <Col md={{ span: 5, offset: 1 }}>
-                        <Figure className="image">
-                        <Figure.Image
-                            alt="171x180"
-                            src="https://www.w3schools.com/html/img_chania.jpg"
-                        />
+                        <Figure>
+                        <Figure.Image  className="image" src = {imgURL}  onClick = {(e) =>{open_originalImage()}}/>
                         </Figure>
-                        <Figure.Caption>
+                    </Col><Col>
+                        <Figure.Caption className="description">
                             <div><b>{product_name}</b></div>
                             <div>by: &nbsp;&nbsp;{product_author}</div>
-                            <div>{product_category}</div>
-                            <div>{product_license}</div>
-                            <div>Description: &nbsp;&nbsp;{product_description}</div>
+                            <div>Category: &nbsp;&nbsp;{product_category}</div>
+                            <div>License:&nbsp;&nbsp;{product_license}</div>
+                            <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
+                            <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
+                            <div><b>{product_price == '0'?  "This item is free for registered users." : null}</b></div><br/>
+                            {user_isloggedin &&(
+                                <div>{product_price == '0'? <Button onClick ={(e) => downloadItem()}> Free download</Button> : ''}</div>
+                            )}
                         </Figure.Caption>
+                        <br/>
+                        {!user_isloggedin && (
+                            <Button onClick={()=>{history.push("/SignIn")}} variant="warning">
+                                Contact Seller
+                            </Button>
+                        )}
                     </Col>
                 </Row>
-               
-                <hr/>
-                <Row><Col md={{ span: 5, offset: 1 }}>
-                <form className="message_form" onSubmit={formik.handleSubmit}>
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Message</Form.Label>
-                                <Form.Control
-                                    name="message"
-                                    as="textarea"
-                                    className="textarea"
-                                    placeholder="Enter message here..."
-                                    onFocus={(e) => {e.currentTarget.placeholder=""}}
-                                    onBlur={(e) => {e.currentTarget.placeholder="Enter message here..."}}
-                                    onChange={(e) => {formik.setFieldValue("message", e.currentTarget.value); setMessage(e.currentTarget.value)}}
-                             />
-                            {formik.touched.message && formik.errors.message ? (<div className="error_message">{formik.errors.message}</div>) : null}
-                        </Form.Group>
-                    </Form.Row>
 
-                    <Form.Row>
-                        <Button variant="warning" type="submit">  &nbsp;&nbsp;Send a message&nbsp;&nbsp;</Button>
-                    </Form.Row>
-                </form>
-                </Col></Row>
+                <br/>
+                {user_isloggedin && (userID != product_author_id) &&(
+                    <Row>
+                        <Col md={{ span: 5, offset: 1 }}>
+                            <Form className="message_form" onSubmit={formik.handleSubmit}>
+                                <Form.Row>
+                                    <Form.Group as={Col}>
+                                        <Form.Label>Message</Form.Label>
+                                            <Form.Control
+                                                name="message"
+                                                as="textarea"
+                                                className="textarea"
+                                                placeholder="Enter message here..."
+                                                onFocus={(e) => {e.currentTarget.placeholder=""}}
+                                                onBlur={(e) => {e.currentTarget.placeholder="Enter message here..."}}
+                                                onChange={(e) => {formik.setFieldValue("message", e.currentTarget.value); setMessage(e.currentTarget.value)}}
+                                         />
+                                        {formik.touched.message && formik.errors.message ? (<div className="error_message">{formik.errors.message}</div>) : null}
+                                    </Form.Group>
+                                </Form.Row>
+
+                                <Form.Row>
+                                    <Button variant="warning" type="submit">  &nbsp;&nbsp;Send &nbsp;&nbsp;</Button>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                )}
                 <br/><br/><br/><br/><br/>
             </Container>
         </div>

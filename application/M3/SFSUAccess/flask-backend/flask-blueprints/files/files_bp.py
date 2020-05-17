@@ -8,7 +8,7 @@ from db_credentials import cur, connection
 
 files_bp = Blueprint('files_bp', import_name=__name__)
 
-ALLOWED_EXTENSIONS = {'pdf', 'mp3', 'mp4'}
+ALLOWED_EXTENSIONS = {'pdf', 'mp3', 'mp4', 'jpg', 'png'}
 
 
 def allowed_file(filename):
@@ -36,33 +36,42 @@ def upload_file(request, product_id):
             from sfsuaccess import app
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             generate_thumbnail(filename,product_id,file_extension[1])
-            status_code = Response(status=200)
-            return status_code
+            return Response(status=200)
 
 def generate_thumbnail(filename,product_id, extension):
     from sfsuaccess import app
     if extension == ".mp3":
-        file = File(app.config['UPLOAD_FOLDER'] +"/"+filename)
+        file = File(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         artwork = file.tags['APIC:'].data  # access APIC frame and grab the image
-        with open(app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png', 'wb') as img:
+        with open(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'), 'wb') as img:
             img.write(artwork)  # write artwork to new image
     elif extension == ".pdf":
         img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename, resolution=300, width=600)
+        img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
+    elif extension == ".jpg" or extension == ".png":
+        img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename)
+        img.thumbnail(img.size[0]/10, img.size[1]/10) # set thumbnail sizing to 1/10th resolution
         img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".mp4":
         #TODO
         print ("issa video")
 
+def get_filename(product_id):
+    from sfsuaccess import app
+    path = app.config['UPLOAD_FOLDER']
+    for filename in os.listdir(path):
+        if filename.startswith(product_id):
+            return(filename)
+
 #downloading the file
-@files_bp.route('/uploads/<filename>')
-def uploaded_file(filename):
+@files_bp.route('/uploads/<product_id>')
+def uploaded_file(product_id):
     from sfsuaccess import app
     return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+                               get_filename(product_id))
 
 #downloading the thumbnails
 @files_bp.route('/thumbnails/<product_id>')
 def uploaded_file_thumbnail(product_id):
     from sfsuaccess import app
-    return send_from_directory(app.config['UPLOAD_FOLDER'] + "/thumbnails/",
-                               product_id+'.png')
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails"),product_id+'.png')

@@ -3,7 +3,6 @@
 import React, {useState} from 'react';
 import { useCookies } from 'react-cookie';
 import ReactGA from "react-ga";
-import { connect } from 'react-redux';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Navbar } from 'react-bootstrap';
 import { Link } from "react-router-dom";
@@ -14,13 +13,12 @@ import Notice from '../components/Notice';
 var md5 = require('md5');
 
 const SignIn = () => {
-  const [message, setMessage] = useState('');               //Error message
   const [isLoading, setLoading] = useState(false);          //Loading state for the login button
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   //cookies
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type', 'isLoggedin', 'itemID']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id','first_name', 'isLoggedin', 'product_id', 'privelege_type']);
 
   return (
     <Formik
@@ -45,11 +43,9 @@ const SignIn = () => {
                 let res = response.data[0];
                 console.log(response.data[0])
                 setCookies('id', res.id, { expires: 0});
-                setCookies('email', res.email, { expires: 0});
                 setCookies('first_name', res.first_name, { expires: 0});
-                setCookies('last_name', res.last_name, { expires: 0});
-                setCookies('privelege_type', res.privelege_type, { expires: 0});
                 setCookies('isLoggedin', true, { expires: 0 });
+                setCookies('privelege_type', res.privelege_type, { expires: 0 });
                 setLoading(true);
                 ReactGA.initialize('UA-163580713-1', { // set new tracking id for logged in user
                     debug: true,
@@ -61,8 +57,8 @@ const SignIn = () => {
                 });
                 if(cookies.post_item)
                     setTimeout(function(){ window.location.href = '/Postitem'},1000);
-                else if(cookies.itemID)
-                    setTimeout(function(){ window.location.href = '/ItemDetail?itemId=' + cookies.itemID},1000);
+                else if(cookies.product_id)
+                    setTimeout(function(){ window.location.href = '/ItemDetail?itemId=' + cookies.product_id},1000);
                 else
                     setTimeout(function(){ window.location.href = '/'},1000);
 

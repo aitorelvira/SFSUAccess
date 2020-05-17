@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
+import Spinner from 'react-bootstrap/Spinner'
 import '../css/Dashboard.css';
 import Header from '../components/Header';
 
@@ -15,6 +16,8 @@ const Postitem = () => {
     const username = cookies.first_name;
     const [list, setList] = useState([]);
     const [show, setShow] = useState(false);
+    const [posting_item, setPosting] = useState(false);
+    const [post_successully, setSuccessully] = useState(false);
     const [product_name, setName] = useState('');
     const [product_category, setCategory] = useState('');
     const [product_file, setFile] = useState({});
@@ -26,6 +29,7 @@ const Postitem = () => {
     const history = useHistory();
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
+
 
     useEffect (() => {
         axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
@@ -58,10 +62,12 @@ const Postitem = () => {
         form_data.append("product_author", cookies.first_name);
         form_data.append("file", product_file);
 
+        setPosting(true);
+
         axios.post('/api/product',form_data)
             .then((response) =>{
                 console.log("Item has been posted successfully.");
-                alert("Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
+                setSuccessully(true);
                 setFileName('Upload File here...');
                 removeCookies('post_item');
             })
@@ -86,12 +92,11 @@ const Postitem = () => {
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
             product_name: Yup.string()
-                .max(15, 'Must be 15 characters or less')
-                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
+                .max(30, 'Must be 30 characters or less') // increased limit
+                .matches(/^[a-zA-Z0-9\s]*$/gm, 'Alphanumeric characters only')
                 .required('Required'),
             product_category: Yup.string()
-                .oneOf(['Notes', 'Video', 'Music'])
-                .matches(/^[a-zA-Z0-9]*$/gm, 'Please close the whitespace')
+                .oneOf(['Other', 'Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
             file: Yup.mixed()
                 .required('A file is required'),
@@ -99,7 +104,7 @@ const Postitem = () => {
                 .required("Please enter a price")
                 .matches(/^\s*(?=.*[0-9])\d*(?:\.\d{1,2})?\s*$/g, 'Must be a positive number'),
             product_license: Yup.string()
-                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'For sale'])
+                .oneOf(['Free use & modification', 'Free to SFSU related projects', 'Copyrighted'])
                 .required("Please indicate your license preference"),
             product_description: Yup.string()
                 .max(500, 'Must be 500 characters or less')
@@ -116,12 +121,13 @@ const Postitem = () => {
             form_data.append(key, values[key]);
             }
 
+            setPosting(true);
+
            axios.post('/api/product',form_data)
                .then((response) =>{
                    console.log("Item has been posted successfully.");
-                   alert( 
-                   " Item has been posted successfully and waiting for approval. You can find it on dashboard, pending item list.");
                    removeCookies('post_item');
+                   setSuccessully(true);
                })
                .catch((error) => console.log(error))  
             resetForm();
@@ -138,7 +144,33 @@ const Postitem = () => {
         <div>
             <Header/>
             <Container className="dashboard">
-                <h3>Post item page</h3><br/>
+                <h3>Post an item</h3><br/>
+                <Alert show = {posting_item} variant="dark">
+                    { !post_successully &&
+                        <div>
+                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting the following item, please wait..</Alert.Heading> 
+                            <b>Name : </b>{product_name}<br/>
+                            <b>File : </b>{product_fileName}<br/>
+                            <b>Price : </b>{product_price}<br/>
+                            <b>Category : </b>{product_category}<br/>
+                            <b>License : </b>{product_license}<br/>
+                            <b>Description : </b>{product_description}<br/>
+                        </div>
+                    }
+                    { post_successully &&
+                    <div>
+                        <Alert.Heading>Item has been posted successfully. </Alert.Heading><hr/>
+                        <p>You can find it on dashboard, pending item list.</p>
+                        <p>Notice: all item might take up to 24 hours to be approved.</p>
+                        <Button onClick={()=>{history.push("/Dashboard")}} variant="warning">
+                            Dashboard
+                        </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Button onClick={cancelItem} variant="warning">
+                            Post another item
+                        </Button>
+                    </div>
+                    }   
+                </Alert>
                 
                 {/* display when a user try to post an item without log in. */}
                 <Alert show={show} variant="dark"> 
@@ -166,7 +198,7 @@ const Postitem = () => {
 
                 {/* display when a user logged in, and having an existing post item which saved in cookies. */}
                 {(cookies.post_item && user_isloggedin) &&
-                    <Alert variant="dark">
+                    <Alert show={!posting_item} variant="dark">
                     <Alert.Heading>You tried to post the following item. Do you want to continue?</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
                         <b>Price : </b>{product_price}<br/>
@@ -177,7 +209,7 @@ const Postitem = () => {
                     <form id = "itemForm">
                     <Form.Row>
                         <Form.Group controlId="file">
-                            <Form.Label>Upload your file here again, then you good to go.</Form.Label>
+                            <Form.Label>Upload your file here again, then you are good to go.</Form.Label>
                                 <div className="input-group">
                                     <div className="custom-file">
                                         <input
@@ -208,7 +240,7 @@ const Postitem = () => {
                 }
 
                 {/* default post item form  */}
-                {!cookies.post_item &&        
+                {(!cookies.post_item && !posting_item) &&        
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Label>All fields are required</Form.Label>
                             <Form.Row>
@@ -238,11 +270,11 @@ const Postitem = () => {
                                             onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); 
                                             setCategory(e.currentTarget.value)}}
                                         >
-                                            {list.map((x) => {
-                                                return (
-                                                    <option value={x.product_category_name} key={x.product_category_name}>
-                                                    {x.product_category_name}</option>)
-                                                }).reverse()}
+                                            <option value="Choose...">Choose...</option>
+                                            <option value="Notes">Notes</option>
+                                            <option value="Video">Video</option>
+                                            <option value="Music">Music</option>
+                                            <option value="Other">Other</option>
                                         </Form.Control>
                                     <Form.Text className="text-muted"> 
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}

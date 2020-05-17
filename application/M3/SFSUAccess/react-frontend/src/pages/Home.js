@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import ReactGA from "react-ga";
 import axios from 'axios';
-import { Nav, NavItem, Container, Card, CardBody, CardTitle, CardText} from 'reactstrap';
+import { Container, Card, CardBody, CardTitle, CardText} from 'reactstrap';
 import { Navbar, Button, Col, Row, Form } from 'react-bootstrap';
 import { Switch, Route } from "react-router-dom";
 import Image from 'react-bootstrap/Image';
@@ -19,10 +19,10 @@ import AboutSFSU from '../components/AboutSFSU';
 import '../css/Home.css';
 
 const Home = ({ dispatch, username, searchinfo}) => {
-  const item_perpage = 8;
+  const item_perpage = 4;
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
-  const [cookies, setCookies, removeCookies] = useCookies(['id', 'email','first_name','last_name','privelege_type']);
+  const [cookies, setCookies, removeCookies] = useCookies(['id','first_name', 'product_id','privelege_type']);
 
   const [notes_list, set_notes_list] = useState([]);      //default page arrays for three categories.
   const [video_list, set_video_list] = useState([]);
@@ -31,7 +31,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
-      await axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search/').then(response =>{setList(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/video').then(response =>{set_video_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/music').then(response =>{set_music_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/notes').then(response =>{set_notes_list(response.data)}).catch(error=>console.log(error));
@@ -67,13 +67,11 @@ const Home = ({ dispatch, username, searchinfo}) => {
   // Use to log out. Clear the cookies and redux value.
   const logOut =()=>{
     removeCookies('first_name');
-    removeCookies('last_name');
     removeCookies('id');
-    removeCookies('email');
-    removeCookies('privelege_type');
     removeCookies('isLoggedin');
     removeCookies('post_item');
-    removeCookies('itemID')
+    removeCookies('product_id');
+    removeCookies('privelege_type');
     ReactGA.event({
      category: 'LogOut',
      action: 'User Logged Out',
@@ -86,7 +84,6 @@ const Home = ({ dispatch, username, searchinfo}) => {
   //Use to redirecting to item detail page with an item id.
   const goItemDetail =(id) => {
        window.open("/ItemDetail?itemId=" + id);
-
   };
 
   //Formatting the item posted date on the card
@@ -94,11 +91,16 @@ const Home = ({ dispatch, username, searchinfo}) => {
     return dateString.replace('GMT','')
   }
 
+  const get_thumbnails = (item_id) => {
+    return '/api/thumbnails/' + item_id;
+  }
+
   return (
     <Formik
         initialValues={{searchItem: ''}}
         validationSchema={Yup.object({
             searchItem: Yup.string()
+                .required('Please enter term in order to search.')
                 .max(40, 'Must be 40 character or less.'),
         })}
 
@@ -131,10 +133,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
                   axios.get('/api/search/'+ category)
                     .then(response => {
                        getRange_last(response.data);
-                       if(category === "All" && product_name.length == ''){
+                       if(category === "All" && product_name.length === ''){
                            dispatch(setSearchInfo('Here are all items listed. '));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
-                       } else if(product_name.length == '') {
+                       } else if(product_name.length === '') {
                            dispatch(setSearchInfo('Here are items in the same category.'));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
                        } else if(category === "All"){
@@ -149,7 +151,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                 else{ // If something was found, return items.
                    console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
                    getRange_last(response.data);
-                   if(product_name.length == '') {
+                   if(product_name.length === '') {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
                    } else {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));
@@ -251,8 +253,8 @@ const Home = ({ dispatch, username, searchinfo}) => {
                       if(item_number < item_perpage){ // initialized how many items per page.
                           return(
                             <Col  sm="3" key={item_number} >
-                              <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                              <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
+                                <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                 <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
                                     <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -272,8 +274,8 @@ const Home = ({ dispatch, username, searchinfo}) => {
                         if(item_number < item_perpage){ // initialized how many items per page.
                             return(
                               <Col  sm="3" key={item_number} >
-                                  <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                    <Image src="https://www.w3schools.com/html/img_chania.jpg" className="thumbnails"/>
+                                  <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
+                                    <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                     <CardTitle className="card_text">{x.product_name}</CardTitle>
                                     <CardText className="card_user">by&nbsp;{x.product_author}</CardText>
@@ -293,8 +295,8 @@ const Home = ({ dispatch, username, searchinfo}) => {
                         if(item_number < item_perpage){ // initialized how many items per page.
                             return(
                               <Col  sm="3" key={item_number} >
-                                <Card id = {x.id} onClick = {e => goItemDetail(x.id)}  border="light" className = "card_div">
-                                    <Image src="http://hdwpro.com/wp-content/uploads/2015/12/Widescreen-Image.jpg" className="thumbnails"/>
+                                <Card id = {x.id} onClick = {e => {goItemDetail(x.id); setCookies('product_id', x.id, {expires: 0})}}  border="light" className = "card_div">
+                                    <Image src = {get_thumbnails(x.id)} className="thumbnails"/>
                                     <CardBody>
                                         <CardTitle className="card_text">{x.product_name}</CardTitle>
                                         <CardText className="card_user">by&nbsp;{x.product_author}</CardText>

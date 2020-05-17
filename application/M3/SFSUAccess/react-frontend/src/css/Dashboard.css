@@ -1,5 +1,9 @@
-.image{
-    height:5%;
+
+.thumbnails{
+    height:180px;
+    overflow: hidden;
+    object-fit: cover;
+    cursor:pointer;
 }
 
 .cardButton{
@@ -30,6 +34,61 @@
     align-items: right;
 }
 
+.messageContent p{
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+  margin: 0 5px 0 0px;
+  text-align: center;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #000;
+}
+
+
+.messageReply {
+    resize: none;
+    width: 100%;
+}
+
 .textarea {
     resize: none;
+}
+
+.messageBox{
+    border: 1px solid grey;
+    border-radius: 5px;
+    overflow-y: scroll;
+    padding-top:15px;
+    height:500px;
+}
+
+.message_date{
+    color: grey;
+    font-size: 13px;
+}
+
+
+.message_recipient{
+    width:40%;
+}
+
+.message_sender{
+    position: relative;
+    left:60%;
+    width:40%;
+}
+
+.recipient{
+    background-color: #e6e6e6;
+    border-radius: 5px;
+    padding:15px;
+}
+
+.sender{
+    background-color:#f2f2f2;
+    border-radius: 5px;
+    padding:15px;
 }
