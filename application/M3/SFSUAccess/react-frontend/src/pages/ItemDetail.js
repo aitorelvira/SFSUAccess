@@ -127,7 +127,10 @@ const ItemDetail = () => {
                             <div>License:&nbsp;&nbsp;{product_license}</div>
                             <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
                             <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
-                            <div>{product_price == '0'? <Button onClick ={(e) => downloadItem()}> Free download</Button> : ''}</div>
+                            <div><b>{product_price == '0'?  "This item is free for registered users." : null}</b></div><br/>
+                            {user_isloggedin &&(
+                                <div>{product_price == '0'? <Button onClick ={(e) => downloadItem()}> Free download</Button> : ''}</div>
+                            )}
                         </Figure.Caption>
                         <br/>
                         {!user_isloggedin && (
