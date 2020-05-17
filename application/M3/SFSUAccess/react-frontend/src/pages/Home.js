@@ -31,7 +31,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
-      await axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search/').then(response =>{setList(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/video').then(response =>{set_video_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/music').then(response =>{set_music_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/notes').then(response =>{set_notes_list(response.data)}).catch(error=>console.log(error));
@@ -92,7 +92,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
   }
 
   const get_thumbnails = (item_id) => {
-    return '/api/thumbnails/' + item_id + '-0';
+    return '/api/thumbnails/' + item_id;
   }
 
   return (

@@ -127,7 +127,7 @@ const Dashboard = () => {
 
 
   const get_thumbnails = (item_id) => {
-      return '/api/thumbnails/' + item_id + '-0';
+      return '/api/thumbnails/' + item_id;
   }
 
   const open_originalImage = (id) =>{
@@ -179,7 +179,7 @@ const Dashboard = () => {
     .catch(error => console.log('delete message error ' + error))
 
   }
-  
+
 
   return (
     <Formik
@@ -214,7 +214,7 @@ const Dashboard = () => {
               get_message_list()
             })
             .catch(error => console.log("sent message error..."))
-           
+
             setSubmitting(false);
         }}
     >
@@ -353,7 +353,7 @@ const Dashboard = () => {
               show={show}
               onHide={handleClose}
           >
-          
+
           <Modal.Body>
           <Container className="messageBox">
           { message_history.map((data, number) =>{
@@ -387,12 +387,12 @@ const Dashboard = () => {
            </Row>
            <Modal.Footer>
               <Button variant="danger" onClick={handleClose}>Close</Button>
-           
+
         <Button variant="warning" type="submit">Send</Button>
             </Modal.Footer>
           </form>
         </Modal>
-    
+
       </Container>
     </div>
    )}

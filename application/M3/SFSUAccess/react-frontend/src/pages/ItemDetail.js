@@ -32,7 +32,7 @@ const ItemDetail = () => {
     const [product_category, setCategory] = useState('');
     const [product_price, setPrice] = useState('');
     const [product_author_id, setAuthorID] = useState('');
-    
+
     const [message, setMessage] = useState('');
 
     useEffect (()=>{
@@ -49,9 +49,9 @@ const ItemDetail = () => {
                 setCategory(response.data[0].product_category);
                 setLicense(response.data[0].product_license);
                 setAuthorID(response.data[0].registered_user_id);
-                setPrice(response.data[0].price); 
+                setPrice(response.data[0].price);
          });
-        setURL('/api/thumbnails/' + id + '-0');
+        setURL('/api/thumbnails/' + id);
         }
        },[cookies.first_name, id, username]);
 
@@ -68,9 +68,9 @@ const ItemDetail = () => {
         let file_type = response.data.type;
         let pos = file_type.lastIndexOf("/");
         let slice_index = pos - file_type.length + 1;
-        
+
         file_type = file_type.slice(slice_index)
-       
+
         const url = window.URL.createObjectURL(file);
         const link = document.createElement('a');
         link.href = url;

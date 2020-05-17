@@ -1,2 +1,7 @@
 
 *.pyc
+.DS_Store
+application/M3/SFSUAccess/.idea
+application/M3/SFSUAccess/venv
+application/M3/SFSUAccess/flask-backend/deprecated\ code
+*.lock
