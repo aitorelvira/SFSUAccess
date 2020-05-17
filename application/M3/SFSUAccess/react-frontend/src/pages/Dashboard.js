@@ -244,7 +244,7 @@ const Dashboard = () => {
                         <tr key = {y+1}>
                           <td width ="10%"> {y+1} </td>
                           <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails" onClick = {(e) =>{open_originalImage(item.id)}}/></td>
-                          <td width ="55%"> {item.product_name}<br/>{item.product_description} <br/>by : {item.date_time_added}</td>
+                          <td width ="55%"> {item.product_name}<br/>{item.product_description} <br/>by : {formatDate(item.date_time_added)}</td>
                           <td width ="15%"> <Button variant="danger" id = {item.id} onClick={()=>remove_activeitem(item.id)}>
                             Remove</Button>  &nbsp; &nbsp;</td>
                         </tr>
@@ -291,9 +291,8 @@ const Dashboard = () => {
               <thead>
                 <tr>
                 <th>Number</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Post time</th>
+                <th>Thumbnails</th>
+                <th>Item detail</th>
                 <th>Approve/Deny item</th>
                 </tr>
               </thead>
@@ -301,12 +300,11 @@ const Dashboard = () => {
                 {admin_pending_item.map((item,y) => {
                   return (
                     <tr key = {y + 1}>
-                      <td> {y + 1} </td>
-                      <td> {item.product_name} </td>
-                      <td> {item.product_description} </td>
-                      <td> {item.date_time_added}</td>
-                      <td> <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
-                            <Button variant="warning" onClick = {()=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
+                      <td width ="10%"> {y+1} </td>
+                      <td width ="20%"> <Image src = {get_thumbnails(item.id)} className="thumbnails" onClick = {(e) =>{open_originalImage(item.id)}}/></td>
+                      <td width ="45%"> {item.product_name}<br/>{item.product_description} <br/>by : {formatDate(item.date_time_added)}</td>
+                      <td> <Button variant="warning" onClick = {(e)=>admin_approve_deny(item.id,'Approve')}>Approve</Button>  &nbsp; &nbsp;
+                            <Button variant="danger" onClick = {(e)=>admin_approve_deny(item.id,'Deny')}>Deny</Button>  &nbsp; &nbsp;</td>
                     </tr>
                   )})
                 }
