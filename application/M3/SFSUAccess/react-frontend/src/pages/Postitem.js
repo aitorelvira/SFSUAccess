@@ -10,6 +10,7 @@ import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner'
 import '../css/Dashboard.css';
 import Header from '../components/Header';
+import ReactGA from "react-ga";
 
 const Postitem = () => {
     const [cookies, setCookies, removeCookies] = useCookies(['first_name', 'post_item']);
@@ -70,6 +71,11 @@ const Postitem = () => {
                 setSuccessully(true);
                 setFileName('Upload File here...');
                 removeCookies('post_item');
+                ReactGA.event({
+                 category: 'PostItem',
+                 action: 'Item Posted',
+                 transport: 'beacon'
+                });
             })
             .catch((error) => console.log(error))  
         setShow(false);
@@ -312,7 +318,7 @@ const Postitem = () => {
                                             <option value="Choose...">Choose...</option>
                                             <option value="Free use & modification">Free use & modification</option>
                                             <option value="Free to SFSU related projects">Free to SFSU related projects</option>
-                                            <option value="For sale">For sale</option>
+                                            <option value="Copyrighted">Copyrighted</option>
                                          </Form.Control>
                                     <Form.Text className="text-muted">   
                                         {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}

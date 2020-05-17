@@ -20,6 +20,7 @@ import '../css/Home.css';
 
 const Home = ({ dispatch, username, searchinfo}) => {
   const item_perpage = 4;
+  const max_item_perpage = 8; // shows upto 8 per page (search results only)
   const [lists, setList] = useState([]);                   // The list of categroies.
   const [product_name, setProduct_name] = useState('');    // user input for searching.
   const [cookies, setCookies, removeCookies] = useCookies(['id','first_name', 'product_id','privelege_type']);
@@ -31,7 +32,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
 //Loading the init categories from the db to the Nav bar and dropdowns and three categories arrays.
   useEffect (()=>{
     const fetchData = async() =>{
-      await axios.get('/api/search/').then(response =>{setList(response.data)}).catch(error=>console.log(error));
+      await axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error)); // /api/search retrieves category dropdown
       await axios.get('/api/search/video').then(response =>{set_video_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/music').then(response =>{set_music_list(response.data)}).catch(error=>console.log(error));
       await axios.get('/api/search/notes').then(response =>{set_notes_list(response.data)}).catch(error=>console.log(error));
@@ -59,7 +60,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
     if(item_perpage > data.length)
       last = data.length;
     else
-      last = item_perpage;
+      last = max_item_perpage;
     dispatch(setShow_number_of_items('Showing ' + 1 + '-' + last + ' out of ' + data.length + '.')); // Showing 1-4 out of 5..
     return last;
   }
@@ -100,7 +101,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
         initialValues={{searchItem: ''}}
         validationSchema={Yup.object({
             searchItem: Yup.string()
-                .required('Please enter term in order to search.')
+                // no search term required so we can search ALL items
                 .max(40, 'Must be 40 character or less.'),
         })}
 
@@ -133,10 +134,10 @@ const Home = ({ dispatch, username, searchinfo}) => {
                   axios.get('/api/search/'+ category)
                     .then(response => {
                        getRange_last(response.data);
-                       if(category === "All" && product_name.length === ''){
+                       if(category === "All" && product_name === ''){
                            dispatch(setSearchInfo('Here are all items listed. '));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
-                       } else if(product_name.length === '') {
+                       } else if(product_name === '') {
                            dispatch(setSearchInfo('Here are items in the same category.'));
                            setErrors({searchItem: 'Nothing found with search key:  \'' + category +'\' and \'' + license + '\'.'})
                        } else if(category === "All"){
@@ -151,7 +152,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                 else{ // If something was found, return items.
                    console.log("Something found in Category: " + category + ". SearchKey: " + product_name);
                    getRange_last(response.data);
-                   if(product_name.length === '') {
+                   if(product_name === '') {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category + '\' ,\'' + license + '\'. '));
                    } else {
                         dispatch(setSearchInfo('   Results with search key:   \'' + category +'\', \'' + product_name + '\' and \'' + license + '\'.'));

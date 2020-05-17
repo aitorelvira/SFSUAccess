@@ -50,7 +50,7 @@ def generate_thumbnail(filename,product_id, extension):
         img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".jpg" or extension == ".png":
         img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename)
-        img.thumbnail(img.size[0]/10, img.size[1]/10) # set thumbnail sizing to 1/10th resolution
+        img.thumbnail(img.size[0]/8, img.size[1]/8) # set thumbnail sizing to 1/8th resolution
         img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".mp4":
         #TODO
