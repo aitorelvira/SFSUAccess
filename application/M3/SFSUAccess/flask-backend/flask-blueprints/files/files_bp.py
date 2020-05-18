@@ -54,7 +54,7 @@ def generate_thumbnail(filename,product_id, extension):
         img.thumbnail(img.size[0]/8, img.size[1]/8) # set thumbnail sizing to 1/8th resolution
         img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".mp4":
-        ff = FFmpeg(inputs={os.path.join(app.config['UPLOAD_FOLDER'], filename): None}, outputs={app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'): ['-ss', '00:00:4', '-vframes', '1']})
+        ff = FFmpeg(inputs={os.path.join(app.config['UPLOAD_FOLDER'], filename): None}, outputs={os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'): ['-ss', '00:00:4', '-vframes', '1']})
         ff.run()
 
 def get_filename(product_id):
