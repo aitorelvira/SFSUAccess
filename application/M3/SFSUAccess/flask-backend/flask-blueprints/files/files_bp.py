@@ -1,4 +1,5 @@
 import os
+from ffmpy import FFmpeg
 from flask import Blueprint, request, jsonify, flash, redirect, url_for, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from mutagen import File
@@ -53,8 +54,8 @@ def generate_thumbnail(filename,product_id, extension):
         img.thumbnail(img.size[0]/8, img.size[1]/8) # set thumbnail sizing to 1/8th resolution
         img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
     elif extension == ".mp4":
-        #TODO
-        print ("issa video")
+        ff = FFmpeg(inputs={os.path.join(app.config['UPLOAD_FOLDER'], filename): None}, outputs={app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'): ['-ss', '00:00:4', '-vframes', '1']})
+        ff.run()
 
 def get_filename(product_id):
     from sfsuaccess import app
