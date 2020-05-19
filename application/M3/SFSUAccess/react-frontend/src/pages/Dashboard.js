@@ -269,7 +269,7 @@ const Dashboard = () => {
               <thead>
                 <tr>
                 <th>Number</th>
-                <th>Name</th>
+                <th>Title</th>
                 <th>Description</th>
                 <th>Post time</th>
                 <th>Remove item</th>

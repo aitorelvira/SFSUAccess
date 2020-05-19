@@ -40,10 +40,11 @@ def post_product():
     product_description = request.form['product_description']
     registered_user_id = request.form['user_id']
     product_license = request.form['product_license']
+    product_price = request.form['product_price']
     file = request.files['file']
-    sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license,date_time_added,product_status) VALUES (%s,%s,%s,%s,%s,%s,NOW(),'PENDING')"
+    sql = "INSERT INTO products(product_name,product_category,product_author,product_description,registered_user_id,product_license,date_time_added,product_status,price) VALUES (%s,%s,%s,%s,%s,%s,NOW(),'PENDING',%s)"
     cur.execute(sql, (
-    product_name, product_category, product_author, product_description, registered_user_id, product_license))
+    product_name, product_category, product_author, product_description, registered_user_id, product_license, product_price))
     connection.commit()
     cur.fetchall()
     #get the new product id number to rename upload

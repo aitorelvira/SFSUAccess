@@ -53,7 +53,7 @@ const Postitem = () => {
 
   //this function is used to post cookies item
   const postItem =()=>{
-    if(document.getElementById("file").files.length !== 0 ){
+    if(document.getElementById("file").files.length !== 0){
         var form_data = new FormData();
         for ( var key in cookies.post_item ) {
             if(key !== "file")
@@ -79,8 +79,7 @@ const Postitem = () => {
             })
             .catch((error) => console.log(error))  
         setShow(false);
-    }
-     else
+    } else
         setErrormessage('A file is required');
   }
 
@@ -355,8 +354,18 @@ const Postitem = () => {
                                                      className="custom-file-input"
                                                      id="file"
                                                      aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);  
-                                                     setFileName(e.currentTarget.files[0].name);}}
+                                                     onChange={(e) => {
+                                                         if (typeof e.currentTarget.files[0] !== 'undefined') {
+                                                             formik.setFieldValue("file", e.currentTarget.files[0]);
+                                                             setFileName(e.currentTarget.files[0].name);}
+                                                             let fileType = (e.currentTarget.files[0].name).substr((e.currentTarget.files[0].name).lastIndexOf('.')+1,(e.currentTarget.files[0].name).length);
+                                                             if (['pdf', 'mp3', 'mp4', 'jpg', 'png'].indexOf(fileType) < 0) {
+                                                                 document.getElementById("file").value = null;
+                                                                 formik.setFieldValue("file", null);
+                                                                 setFileName('Invalid file type: ' + fileType);
+                                                         }
+                                                         }
+                                                     }
                                                 />
                                                 <label className="custom-file-label" htmlFor="inputGroupFile01">
                                                     {product_fileName}
