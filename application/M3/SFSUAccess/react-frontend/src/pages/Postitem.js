@@ -10,6 +10,7 @@ import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner'
 import '../css/Dashboard.css';
 import Header from '../components/Header';
+import ReactGA from "react-ga";
 
 const Postitem = () => {
     const [cookies, setCookies, removeCookies] = useCookies(['first_name', 'post_item']);
@@ -30,11 +31,12 @@ const Postitem = () => {
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
 
-    const FILE_SIZE = 200 * 1024;
+    const FILE_SIZE = 5120 * 1024; // 5 MB file size
     const SUPPORTED_FORMATS = [
       "image/jpg",
       "audio/mp3",
       "image/png",
+      "application/pdf",
       "video/mp4"
     ];
 
@@ -77,6 +79,11 @@ const Postitem = () => {
                 setSuccessully(true);
                 setFileName('Upload File here...');
                 removeCookies('post_item');
+                ReactGA.event({
+                 category: 'PostItem',
+                 action: 'Item Posted',
+                 transport: 'beacon'
+                });
             })
             .catch((error) => console.log(error))
         setShow(false);
@@ -109,7 +116,7 @@ const Postitem = () => {
                 .required('A file is required')
                 .test(
                   "fileSize",
-                  "File too large",
+                  "File too large: must be under 5 MB",
                   value => product_file && product_file.size <= FILE_SIZE
                 )
                 .test(
@@ -328,7 +335,7 @@ const Postitem = () => {
                                             <option value="Choose...">Choose...</option>
                                             <option value="Free use & modification">Free use & modification</option>
                                             <option value="Free to SFSU related projects">Free to SFSU related projects</option>
-                                            <option value="For sale">For sale</option>
+                                            <option value="Copyrighted">Copyrighted</option>
                                          </Form.Control>
                                     <Form.Text className="text-muted">
                                         {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
@@ -365,8 +372,19 @@ const Postitem = () => {
                                                      className="custom-file-input"
                                                      id="file"
                                                      aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);
-                                                     setFileName(e.currentTarget.files[0].name); setFile(e.currentTarget.files[0])}}
+                                                     onChange={(e) => {
+                                                         // this only changes the FileName and File if the file is picked
+                                                         // if the user CANCELS the file picker, it will return undefined
+                                                         // which is why this is needed
+                                                         if (typeof e.currentTarget.files[0] !== 'undefined') {
+                                                             formik.setFieldValue("file", e.currentTarget.files[0]);
+                                                             setFileName(e.currentTarget.files[0].name);
+                                                             setFile(e.currentTarget.files[0])
+                                                         } else { // if the user did cancel, reset file field
+                                                             formik.setFieldValue("file", null);
+                                                             setFileName('Upload File here...');
+                                                         }}
+                                                     }
                                                 />
                                                 <label className="custom-file-label" htmlFor="inputGroupFile01">
                                                     {product_fileName}
