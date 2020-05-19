@@ -13,6 +13,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import { Container, Row, Col, Figure, Button, Form } from 'react-bootstrap';
 import '../css/ItemDetail.css'
+import ReactGA from "react-ga";
 
 const ItemDetail = () => {
 
@@ -50,10 +51,13 @@ const ItemDetail = () => {
                 setLicense(response.data[0].product_license);
                 setAuthorID(response.data[0].registered_user_id);
                 setPrice(response.data[0].price);
-         });
+         }).catch((error) => { // send 404 if user tries to access an item that does not exist
+             window.open(/404/, "_self", true)
+        });
         setURL('/api/thumbnails/' + id);
         }
        },[cookies.first_name, id, username]);
+
 
 
     const open_originalImage = () =>{
@@ -74,9 +78,15 @@ const ItemDetail = () => {
         const url = window.URL.createObjectURL(file);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'file.'+ file_type);
+        link.setAttribute('download', product_name + '.' + file_type);
         document.body.appendChild(link);
         link.click();
+        ReactGA.event({
+             category: 'Download',
+             action: 'Item Download',
+             label: 'Download item: ' + product_name,
+             transport: 'beacon'
+            });
     })
     }
 
@@ -102,6 +112,12 @@ const ItemDetail = () => {
             })
             .then(res => {
                 if(res.status === 200){
+                    ReactGA.event({
+                     category: 'Messaging',
+                     action: 'User Messaged Seller',
+                     label: 'Product name: ' + product_name + '. From ' + sender_user_id + ' to ' + recipient_user_id,
+                     transport: 'beacon'
+                    });
                     //take user back to home page after sending the message
                     setTimeout(function(){ window.location.href='/' },1000);
                 }
@@ -127,16 +143,19 @@ const ItemDetail = () => {
                             <div>License:&nbsp;&nbsp;{product_license}</div>
                             <div>Price:&nbsp;&nbsp;{product_price == '0'? "Free" : product_price}</div>
                             <div>Description: &nbsp;&nbsp;{product_description}</div><hr/>
-                            <div><b>{product_price == '0'?  "This item is free for registered users." : null}</b></div><br/>
+                            {!user_isloggedin && (product_price == '0') &&(
+                                <div><b>This item is free for registered users. <a href={'/signup'}>Signup now</a>!</b></div>
+                            )}
+                            <br/>
                             {user_isloggedin &&(
                                 <div>{product_price == '0'? <Button onClick ={(e) => downloadItem()}> Free download</Button> : ''}</div>
                             )}
                         </Figure.Caption>
                         <br/>
                         {!user_isloggedin && (
-                            <Button onClick={()=>{history.push("/SignIn")}} variant="warning">
+                            <div>{!product_price == '0'? <Button onClick={()=>{history.push("/SignIn")}} variant="warning">
                                 Contact Seller
-                            </Button>
+                            </Button> : ''}</div>
                         )}
                     </Col>
                 </Row>

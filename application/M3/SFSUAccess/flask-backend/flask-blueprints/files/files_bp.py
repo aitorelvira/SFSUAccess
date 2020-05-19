@@ -1,4 +1,5 @@
 import os
+from ffmpy import FFmpeg
 from flask import Blueprint, request, jsonify, flash, redirect, url_for, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from mutagen import File
@@ -40,21 +41,24 @@ def upload_file(request, product_id):
 
 def generate_thumbnail(filename,product_id, extension):
     from sfsuaccess import app
-    if extension == ".mp3":
-        file = File(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-        artwork = file.tags['APIC:'].data  # access APIC frame and grab the image
-        with open(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'), 'wb') as img:
-            img.write(artwork)  # write artwork to new image
-    elif extension == ".pdf":
-        img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename, resolution=300, width=600)
-        img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
-    elif extension == ".jpg" or extension == ".png":
-        img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename)
-        img.thumbnail(img.size[0]/10, img.size[1]/10) # set thumbnail sizing to 1/10th resolution
-        img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
-    elif extension == ".mp4":
-        #TODO
-        print ("issa video")
+    try:
+        if extension == ".mp3":
+            file = File(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            artwork = file.tags['APIC:'].data  # access APIC frame and grab the image
+            with open(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'), 'wb') as img:
+                img.write(artwork)  # write artwork to new image
+        elif extension == ".pdf":
+            img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename, resolution=300, width=600)
+            img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
+        elif extension == ".jpg" or extension == ".png":
+            img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename)
+            img.thumbnail(img.size[0]/8, img.size[1]/8) # set thumbnail sizing to 1/8th resolution
+            img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
+        elif extension == ".mp4":
+            ff = FFmpeg(inputs={os.path.join(app.config['UPLOAD_FOLDER'], filename): None}, outputs={os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'): ['-ss', '00:00:4', '-vframes', '1']})
+            ff.run()
+    except:
+        print("no thumbnail generated")
 
 def get_filename(product_id):
     from sfsuaccess import app
@@ -74,4 +78,7 @@ def uploaded_file(product_id):
 @files_bp.route('/thumbnails/<product_id>')
 def uploaded_file_thumbnail(product_id):
     from sfsuaccess import app
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails"),product_id+'.png')
+    try:
+        return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails"),product_id+'.png')
+    except:
+        return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails"),'thumbnail.png')

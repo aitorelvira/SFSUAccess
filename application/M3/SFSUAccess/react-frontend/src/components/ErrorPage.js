@@ -3,13 +3,29 @@
 import React from "react";
 import { Navbar, Button } from 'react-bootstrap';
 import Notice from './Notice';
+import ReactGA from "react-ga";
 
 const ErrorPage =()=>{
+    if (window.location.href.indexOf("/404/") > -1) { // from redirection to /404/ from invalid ItemDetail page
+        ReactGA.event({
+            category: 'ErrorEncountered',
+            action: '404 Page Hit',
+            label: 'Page: ' + window.location.href + ' from Referrer: ' + document.referrer,
+            transport: 'beacon'
+        });
+    } else { // all other 404 page hits
+        ReactGA.event({
+            category: 'ErrorEncountered',
+            action: '404 Page Hit',
+            label: 'Page: ' + window.location.href,
+            transport: 'beacon'
+        });
+    }
     return(
 
         <div>
          <Navbar bg="dark" variant="dark" className="navbar">
-          <Navbar.Brand>SFSUAccess</Navbar.Brand>
+          <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
         </Navbar>
         <Notice/>
 

@@ -10,6 +10,7 @@ import { Form, Button, Container, Col, Alert, Row } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner'
 import '../css/Dashboard.css';
 import Header from '../components/Header';
+import ReactGA from "react-ga";
 
 const Postitem = () => {
     const [cookies, setCookies, removeCookies] = useCookies(['first_name', 'post_item']);
@@ -30,6 +31,14 @@ const Postitem = () => {
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
 
+    const FILE_SIZE = 5120 * 1024; // 5 MB file size
+    const SUPPORTED_FORMATS = [
+      "image/jpg",
+      "audio/mp3",
+      "image/png",
+      "application/pdf",
+      "video/mp4"
+    ];
 
     useEffect (() => {
         axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
@@ -70,8 +79,13 @@ const Postitem = () => {
                 setSuccessully(true);
                 setFileName('Upload File here...');
                 removeCookies('post_item');
+                ReactGA.event({
+                 category: 'PostItem',
+                 action: 'Item Posted',
+                 transport: 'beacon'
+                });
             })
-            .catch((error) => console.log(error))  
+            .catch((error) => console.log(error))
         setShow(false);
     }
      else
@@ -88,7 +102,7 @@ const Postitem = () => {
     return (
         <Formik
         initialValues={{product_name: product_name, product_category: product_category,
-        file: null, product_price: '', 
+        file: product_fileName, product_price: '',
         product_license: product_license, product_description: product_description }}
         validationSchema={Yup.object({
             product_name: Yup.string()
@@ -99,7 +113,17 @@ const Postitem = () => {
                 .oneOf(['Other', 'Notes', 'Video', 'Music'])
                 .required('Please indicate your category preference'),
             file: Yup.mixed()
-                .required('A file is required'),
+                .required('A file is required')
+                .test(
+                  "fileSize",
+                  "File too large: must be under 5 MB",
+                  value => product_file && product_file.size <= FILE_SIZE
+                )
+                .test(
+                  "fileFormat",
+                  "Unsupported Format",
+                  value => product_file && SUPPORTED_FORMATS.includes(product_file.type)
+                ),
             product_price: Yup.string()
                 .required("Please enter a price")
                 .matches(/^\s*(?=.*[0-9])\d*(?:\.\d{1,2})?\s*$/g, 'Must be a positive number'),
@@ -110,7 +134,7 @@ const Postitem = () => {
                 .max(500, 'Must be 500 characters or less')
                 .required('Please enter description'),
         })}
-        
+
         onSubmit={(values, {setSubmitting}) => {
         if(user_isloggedin){
            values.user_id = user_id;
@@ -129,15 +153,14 @@ const Postitem = () => {
                    removeCookies('post_item');
                    setSuccessully(true);
                })
-               .catch((error) => console.log(error))  
+               .catch((error) => console.log(error))
             resetForm();
-            setSubmitting(false);          
+            setSubmitting(false);
         }
         else{
             setCookies('post_item', values, { expires: 0});
             setShow(true);
         }
-     
     }}
     >
     {formik => (
@@ -148,7 +171,7 @@ const Postitem = () => {
                 <Alert show = {posting_item} variant="dark">
                     { !post_successully &&
                         <div>
-                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting the following item, please wait..</Alert.Heading> 
+                            <Alert.Heading><Spinner animation="border" />&nbsp;&nbsp;Posting the following item, please wait..</Alert.Heading>
                             <b>Name : </b>{product_name}<br/>
                             <b>File : </b>{product_fileName}<br/>
                             <b>Price : </b>{product_price}<br/>
@@ -169,11 +192,11 @@ const Postitem = () => {
                             Post another item
                         </Button>
                     </div>
-                    }   
+                    }
                 </Alert>
-                
+
                 {/* display when a user try to post an item without log in. */}
-                <Alert show={show} variant="dark"> 
+                <Alert show={show} variant="dark">
                     <Alert.Heading>Unauthorized action. You tried to post the following item.</Alert.Heading>
                         <b>Name : </b>{product_name}<br/>
                         <b>File : </b>{product_fileName}<br/>
@@ -193,7 +216,7 @@ const Postitem = () => {
                     <Button onClick={cancelItem} variant="danger">
                         Not now
                     </Button>
-                    </div>                   
+                    </div>
                 </Alert>
 
                 {/* display when a user logged in, and having an existing post item which saved in cookies. */}
@@ -217,7 +240,7 @@ const Postitem = () => {
                                             type="file"
                                             className="custom-file-input"
                                             id="file"
-                                            onChange={(e) => {  
+                                            onChange={(e) => {
                                             setFileName(e.currentTarget.files[0].name); setFile(e.currentTarget.files[0])
                                             }}
                                         />
@@ -235,12 +258,12 @@ const Postitem = () => {
                             <Button onClick={cancelItem} variant="danger">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="warning" onClick={postItem}>Post item</Button>
                         </Col>
-                    </Row>                   
+                    </Row>
                 </Alert>
                 }
 
                 {/* default post item form  */}
-                {(!cookies.post_item && !posting_item) &&        
+                {(!cookies.post_item && !posting_item) &&
                         <form className="postItem" id = "itemForm" onSubmit={formik.handleSubmit}>
                             <Form.Label>All fields are required</Form.Label>
                             <Form.Row>
@@ -252,7 +275,7 @@ const Postitem = () => {
                                         onFocus={(e) => e.target.placeholder = ""}
                                         onBlur={(e) => e.target.placeholder = "Enter title"}
                                         placeholder="Enter title"
-                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value); 
+                                        onChange={(e) => {formik.setFieldValue("product_name", e.currentTarget.value);
                                         setName(e.currentTarget.value)}}
                                     />
                                     <Form.Text className="text-muted">
@@ -267,7 +290,7 @@ const Postitem = () => {
                                         <Form.Control
                                             name="product_category"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value); 
+                                            onChange={(e) => {formik.setFieldValue("product_category", e.currentTarget.value);
                                             setCategory(e.currentTarget.value)}}
                                         >
                                             <option value="Choose...">Choose...</option>
@@ -276,7 +299,7 @@ const Postitem = () => {
                                             <option value="Music">Music</option>
                                             <option value="Other">Other</option>
                                         </Form.Control>
-                                    <Form.Text className="text-muted"> 
+                                    <Form.Text className="text-muted">
                                         {formik.touched.product_category && formik.errors.product_category ? (<div className="error_message">{formik.errors.product_category}</div>) : null}
                                     </Form.Text>
                                 </Form.Group>
@@ -291,10 +314,10 @@ const Postitem = () => {
                                             placeholder="$0"
                                             onFocus={(e) => e.target.placeholder = ""}
                                             onBlur={(e) => e.target.placeholder = "$0"}
-                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value); 
+                                            onChange={(e) => {formik.setFieldValue("product_price", e.currentTarget.value);
                                             setPrice(e.currentTarget.value)}}
                                         />
-                                    <Form.Text className="text-muted"> 
+                                    <Form.Text className="text-muted">
                                         {formik.touched.product_price && formik.errors.product_price ? (<div className="error_message">{formik.errors.product_price}</div>) : null}
                                     </Form.Text>
                                 </Form.Group>
@@ -306,15 +329,15 @@ const Postitem = () => {
                                         <Form.Control
                                             name="product_license"
                                             as="select"
-                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value); 
+                                            onChange={(e) => {formik.setFieldValue("product_license", e.currentTarget.value);
                                             setLicense(e.currentTarget.value)}}
                                         >
                                             <option value="Choose...">Choose...</option>
                                             <option value="Free use & modification">Free use & modification</option>
                                             <option value="Free to SFSU related projects">Free to SFSU related projects</option>
-                                            <option value="For sale">For sale</option>
+                                            <option value="Copyrighted">Copyrighted</option>
                                          </Form.Control>
-                                    <Form.Text className="text-muted">   
+                                    <Form.Text className="text-muted">
                                         {formik.touched.product_license && formik.errors.product_license ? (<div className="error_message">{formik.errors.product_license}</div>) : null}
                                     </Form.Text>
                                 </Form.Group>
@@ -330,12 +353,12 @@ const Postitem = () => {
                                         placeholder=""
                                         onFocus={(e) => e.target.placeholder = ""}
                                         onBlur={(e) => e.target.placeholder = ""}
-                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value); 
+                                        onChange={(e) => {formik.setFieldValue("product_description", e.currentTarget.value);
                                         setDescription(e.currentTarget.value)}}
                                     />
-                                <Form.Text className="text-muted">    
+                                <Form.Text className="text-muted">
                                     {formik.touched.product_description && formik.errors.product_description ? (<div className="error_message">{formik.errors.product_description}</div>) : null}
-                                </Form.Text>                
+                                </Form.Text>
                             </Form.Group>
 
                             <Form.Row>
@@ -349,8 +372,19 @@ const Postitem = () => {
                                                      className="custom-file-input"
                                                      id="file"
                                                      aria-describedby="inputGroupFileAddon01"
-                                                     onChange={(e) => {formik.setFieldValue("file", e.currentTarget.files[0]);  
-                                                     setFileName(e.currentTarget.files[0].name);}}
+                                                     onChange={(e) => {
+                                                         // this only changes the FileName and File if the file is picked
+                                                         // if the user CANCELS the file picker, it will return undefined
+                                                         // which is why this is needed
+                                                         if (typeof e.currentTarget.files[0] !== 'undefined') {
+                                                             formik.setFieldValue("file", e.currentTarget.files[0]);
+                                                             setFileName(e.currentTarget.files[0].name);
+                                                             setFile(e.currentTarget.files[0])
+                                                         } else { // if the user did cancel, reset file field
+                                                             formik.setFieldValue("file", null);
+                                                             setFileName('Upload File here...');
+                                                         }}
+                                                     }
                                                 />
                                                 <label className="custom-file-label" htmlFor="inputGroupFile01">
                                                     {product_fileName}
@@ -359,7 +393,7 @@ const Postitem = () => {
                                          </div>
                                     <Form.Text className="text-muted">
                                         {formik.touched.file && formik.errors.file ? (<div className="error_message">{formik.errors.file}</div>) : null}
-                                    </Form.Text>        
+                                    </Form.Text>
                                 </Form.Group>
                             </Form.Row>
                             <Form.Label><p>Notice: all item might take up to 24 hours to be approved.</p></Form.Label><br/>
@@ -372,7 +406,7 @@ const Postitem = () => {
                                 </Col>
                             </Form.Row>
                         </form>
-                    }   
+                    }
                   </Container>
                   <br/><br/><br/><br/><br/>
               </div>
