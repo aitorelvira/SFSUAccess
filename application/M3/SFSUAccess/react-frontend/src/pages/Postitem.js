@@ -34,7 +34,9 @@ const Postitem = () => {
     const FILE_SIZE = 5120 * 1024; // 5 MB file size
     const SUPPORTED_FORMATS = [
       "image/jpg",
+      "image/jpeg",
       "audio/mp3",
+      "audio/mpeg",
       "image/png",
       "application/pdf",
       "video/mp4"
