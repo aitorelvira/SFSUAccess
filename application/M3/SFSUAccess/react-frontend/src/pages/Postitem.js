@@ -31,16 +31,7 @@ const Postitem = () => {
     const user_id = cookies.id;
     const user_isloggedin = cookies.isLoggedin;
 
-    const FILE_SIZE = 5120 * 1024; // 5 MB file size
-    const SUPPORTED_FORMATS = [
-      "image/jpg",
-      "image/jpeg",
-      "audio/mp3",
-      "audio/mpeg",
-      "image/png",
-      "application/pdf",
-      "video/mp4"
-    ];
+    const FILE_SIZE = 51200 * 1024; // 50 MB file size
 
     useEffect (() => {
         axios.get('/api/search').then(response =>{setList(response.data)}).catch(error=>console.log(error));
@@ -118,13 +109,8 @@ const Postitem = () => {
                 .required('A file is required')
                 .test(
                   "fileSize",
-                  "File too large: must be under 5 MB",
+                  "File too large: must be under 50 MB",
                   value => product_file && product_file.size <= FILE_SIZE
-                )
-                .test(
-                  "fileFormat",
-                  "Unsupported Format",
-                  value => product_file && SUPPORTED_FORMATS.includes(product_file.type)
                 ),
             product_price: Yup.string()
                 .required("Please enter a price")

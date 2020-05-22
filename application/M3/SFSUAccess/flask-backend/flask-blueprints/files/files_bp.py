@@ -13,8 +13,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'mp3', 'mp4', 'jpg', 'png'}
 
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def upload_file(request, product_id):
     if request.method == 'POST':
@@ -48,6 +47,7 @@ def generate_thumbnail(filename,product_id, extension):
             with open(os.path.join(app.config['UPLOAD_FOLDER'],"thumbnails",str(product_id)+'.png'), 'wb') as img:
                 img.write(artwork)  # write artwork to new image
         elif extension == ".pdf":
+            # only grabs if it is a one-paged pdf
             img = Image(filename=app.config['UPLOAD_FOLDER'] +"/"+filename, resolution=300, width=600)
             img.save(filename=app.config['UPLOAD_FOLDER'] + "/thumbnails/"+str(product_id)+'.png')
         elif extension == ".jpg" or extension == ".png":

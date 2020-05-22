@@ -175,7 +175,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
             <div>
                 <Navbar bg="dark" variant="dark" className="navbar"><Notice/></Navbar>
                 {/* Navbar section  */}
-                <Navbar bg="dark" variant="dark" className="navbar">
+                <Navbar bg="dark" variant="dark" className="navbar" id="brand-bar">
                     <Navbar.Brand  href="/" className="navLogo">SFSUAccess</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
@@ -215,7 +215,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                         </Form>
 
 
-                            <Navbar.Collapse className="justify-content-end">
+                            <Navbar bg="dark" variant="dark" className="navbar justify-content-end navbar-collapse collapse">
                                 {/* Display signIn, signUp, signOut buttons according to the user status */}
                                 {!username &&(
                                   <div>
@@ -232,7 +232,7 @@ const Home = ({ dispatch, username, searchinfo}) => {
                                     <Button id="nav_bar_button" variant="warning" size="sm" onClick ={logOut}>Log out</Button>
                                   </div>
                                 )}
-                            </Navbar.Collapse>
+                            </Navbar>
                         </Navbar.Collapse>
                     </Navbar>
 

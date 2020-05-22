@@ -15,10 +15,10 @@ const Header = () => {
             <Navbar bg="dark" variant="dark" className="navbar">
             <Navbar.Brand href="/">SFSUAccess</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" /> 
-             <Navbar.Collapse className="justify-content-end"> 
+             <Navbar className="navbar justify-content-sm-end navbar-collapse collapse">
              Welcome{typeof cookies.first_name === 'undefined'? '': ', ' + cookies.first_name }  &nbsp;&nbsp;
                 <Button variant="warning" href="/">Home Page</Button>&nbsp;&nbsp;
-            </Navbar.Collapse>
+            </Navbar>
             </Navbar><br/>
             </div>
         )
